@@ -1,0 +1,91 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@reference "tailwindcss";
+
+@layer base {
+  body {
+    margin: 0;
+    font-family: var(--font-sans);
+    background-color: var(--color-gray-50);
+    color: var(--color-gray-900);
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-weight: bold;
+    color: var(--color-primary-500);
+  }
+  
+  h1 {
+    font-size: 2.25rem;
+    margin-bottom: 1.5rem;
+    margin-top: 1rem;
+  }
+  
+  h2 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    margin-top: 0.75rem;
+  }
+}
+
+@layer components {
+  .lotto-ball {
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.125rem;
+    font-weight: bold;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s;
+  }
+  
+  .lotto-ball-regular {
+    background-color: var(--color-primary-100);
+    color: var(--color-primary-700);
+    border: 2px solid var(--color-primary-500);
+  }
+  
+  .lotto-ball-bonus {
+    background-color: var(--color-secondary-100);
+    color: var(--color-secondary-700);
+    border: 2px solid var(--color-secondary-500);
+  }
+  
+  .btn {
+    padding: 0.5rem 1rem;
+    border-radius: 0.375rem;
+    font-weight: 500;
+    transition: colors 0.2s;
+  }
+  
+  .btn-primary {
+    background-color: var(--color-primary-500);
+    color: white;
+  }
+  .btn-primary:hover {
+    background-color: var(--color-primary-600);
+  }
+  
+  .btn-secondary {
+    background-color: var(--color-secondary-500);
+    color: white;
+  }
+  .btn-secondary:hover {
+    background-color: var(--color-secondary-600);
+  }
+  
+  .card {
+    background-color: white;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 1.5rem;
+    transition: box-shadow 0.3s;
+  }
+  .card:hover {
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.15);
+  }
+}

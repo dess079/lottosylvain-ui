@@ -1,0 +1,38 @@
+# Lotto-Sylvain UI Prompt
+
+Utilisez les données disponibles dans le répertoire `essais` du projet Lottoquebec, qui contient les classes Java exploitant 
+les données du tirage de la Lotto 6/49, pour créer une interface utilisateur 
+moderne, attrayante et interactive qui prédit la prochaine combinaison gagnante de 
+la Lotto 6/49. L'interface doit inclure les éléments suivants :
+
+## Très, très, très important 
+- En aucun cas tu génère des jeu de données codé en dure, jamais au grand jamais
+- En aucun cas des données hard codées se retrouveront dans le code.
+- Lors de la construction du UI, ne me demande pas l'authorsation ou d'appuyer sur le bouton continue, fait le.
+
+## Page principale
+- Afficher le résultat précédent de la Lotto 6/49, incluant les numéros gagnants et la date du tirage.
+- Mettre en évidence la date du prochain tirage de manière claire et visible.
+- Utiliser une mise en page engageante avec des graphiques, des animations ou des visualisations pour montrer les tendances et les modèles des résultats passés.
+
+## Section de prédiction
+- Fournir une zone interactive où les utilisateurs peuvent explorer les prédictions pour la prochaine combinaison gagnante.
+- Utiliser des visualisations avancées (ex. : cartes de chaleur, graphiques de probabilité) pour présenter l'analyse et les raisonnements de l'IA.
+- Permettre aux utilisateurs d'entrer des paramètres ou des filtres personnalisés pour affiner les prédictions.
+
+## Exigences de conception
+- Assurer que l'interface est responsive et optimisée pour les appareils de bureau et mobiles.
+- Utiliser des technologies web modernes telles que React 19+, TypeScript, TailwindCSS et shadcn/ui pour le style et les composants.
+- Intégrer les meilleures pratiques d'accessibilité (a11y) pour rendre l'interface utilisable par tous.
+
+## Expérience utilisateur
+- Rendre l'interface intuitive et facile à naviguer.
+- Inclure des infobulles, des effets de survol et des animations pour améliorer l'interactivité.
+- Fournir des explications claires et concises sur les données et les prédictions.
+
+## Implémentation technique
+- Utiliser Vite pour un développement rapide et des builds optimisés.
+- Intégrer Vitest pour les tests et React Router v7 pour la navigation.
+- Récupérer dynamiquement les données du backend en utilisant l'API Fetch.
+
+L'objectif est de créer une interface utilisateur qui engage les utilisateurs tout en fournissant des prédictions précises et exploitables pour la Lotto 6/49.
