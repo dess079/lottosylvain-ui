@@ -9,43 +9,81 @@ interface LottoBallProps {
   number: number;
   /** Whether this ball is the bonus number */
   isBonus?: boolean;
+  /** Whether to highlight this ball with glow effect */
+  isHighlighted?: boolean;
+  /** Size of the ball: 'sm', 'md', or 'lg' */
+  size?: 'sm' | 'md' | 'lg';
   /** Additional Tailwind CSS classes */
   className?: string;
+  /** Optional click handler */
+  onClick?: () => void;
+  /** Whether the ball should animate */
+  animate?: boolean;
 }
 
 /**
  * Renders a lottery ball with the given number.
+ * Follows the 2025 UI/UX standards with modern design trends.
  *
  * @param number - The lottery number to display.
  * @param isBonus - Highlights the ball if it's the bonus number.
+ * @param isHighlighted - Adds a glow effect to the ball.
+ * @param size - Size variant of the ball.
  * @param className - Additional Tailwind CSS classes.
+ * @param onClick - Optional click handler for interactive balls.
+ * @param animate - Whether the ball should have animation effects.
  */
 const LottoBall = ({
   number,
   isBonus = false,
-  className = ''
+  isHighlighted = false,
+  size = 'md',
+  className = '',
+  onClick,
+  animate = false
 }: LottoBallProps): ReactElement => {
+  // Base lotto ball class using our UI component class
+  const baseClass = 'lotto-ball';
+  
+  // Type class (regular or bonus)
+  const typeClass = isBonus ? 'lotto-ball-bonus' : 'lotto-ball-regular';
+  
+  // Size classes
+  const sizeClass = {
+    sm: 'lotto-ball-sm',
+    md: '',  // Default size, no class needed
+    lg: 'lotto-ball-lg'
+  }[size];
+  
+  // Highlight class
+  const highlightClass = isHighlighted ? 'lotto-ball-highlight' : '';
+  
+  // Animation class
+  const animationClass = animate ? 'animate-float' : '';
+  
+  // Interactive class if onClick is provided
+  const interactiveClass = onClick ? 'cursor-pointer' : '';
+  
+  // Combine all classes
   const ballClass = cn(
-    // Base styles: responsive size, circular, flex-center, font, base shadow, and smooth transitions
-    'w-12 h-12 md:w-14 md:h-14 lg:w-16 lg:h-16 rounded-full flex items-center justify-center font-bold text-lg md:text-xl shadow-lg transition-all duration-300',
-    // Subtle border for a 3D effect
-    'border-2 border-white/20',
-    // Conditional styling for a standard ball with enhanced hover effects
-    !isBonus &&
-      'bg-gradient-to-br from-primary-400 to-primary-600 text-white hover:shadow-xl hover:scale-105 hover:brightness-110',
-    // Conditional styling for a bonus ball with a glowing ring and pulse animation
-    isBonus &&
-      'bg-gradient-to-br from-yellow-400 to-yellow-500 text-white ring-4 ring-yellow-300/50 animate-pulse',
-    // Additional user-provided classes
+    baseClass,
+    typeClass,
+    sizeClass,
+    highlightClass,
+    animationClass,
+    interactiveClass,
     className
   );
 
   return (
     <div
       role="status"
-      aria-label={`Lotto number ${number}${isBonus ? ' (bonus)' : ''}`}
+      aria-label={`Lotto number ${number}${isBonus ? ' (bonus)' : ''}${isHighlighted ? ' (highlighted)' : ''}`}
       data-testid="lotto-ball"
       className={ballClass}
+      onClick={onClick}
+      tabIndex={onClick ? 0 : undefined}
+      onKeyDown={onClick ? (e) => e.key === 'Enter' && onClick() : undefined}
     >
       {number}
     </div>

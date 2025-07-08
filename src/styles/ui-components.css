@@ -1,0 +1,209 @@
+/* 
+  ui-components.css
+  Styles de base pour les composants UI suivant les standards UX/UI 2025
+*/
+
+@layer components {
+  /* 
+   * BOUTONS
+   * Styles de boutons suivant les standards modernes d'accessibilité et d'UX
+   */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border-radius: var(--radius-lg);
+    font-weight: var(--font-weight-medium);
+    font-family: var(--font-sans);
+    padding: 0.625rem 1.25rem;
+    position: relative;
+    cursor: pointer;
+    transition: all var(--transition-normal) var(--ease-default);
+    letter-spacing: 0.01em;
+    line-height: 1.5;
+    border: none;
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    text-align: center;
+    user-select: none;
+  }
+  
+  .btn:focus-visible {
+    outline: 2px solid var(--color-primary-medium);
+    outline-offset: 2px;
+  }
+  
+  .btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+  
+  .btn:active {
+    transform: translateY(1px);
+  }
+  
+  .btn::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background: linear-gradient(rgba(255,255,255,0.1), rgba(255,255,255,0));
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+  
+  .btn:hover::after {
+    opacity: 1;
+  }
+  
+  /* Variantes de boutons */
+  .btn-primary {
+    background: linear-gradient(135deg, var(--color-primary-medium), var(--color-primary-dark));
+    color: white;
+  }
+  
+  .btn-secondary {
+    background: linear-gradient(135deg, var(--color-secondary-medium), var(--color-secondary-dark));
+    color: white;
+  }
+  
+  .btn-accent {
+    background: linear-gradient(135deg, var(--color-accent-medium), var(--color-accent-dark));
+    color: white;
+  }
+  
+  .btn-outline {
+    background: transparent;
+    color: var(--color-text-primary);
+    border: 1px solid var(--color-border-medium);
+  }
+  
+  .btn-outline:hover {
+    background-color: var(--color-bg-tertiary);
+  }
+  
+  .dark .btn-outline {
+    color: var(--color-text-secondary);
+    border-color: var(--color-border-light);
+  }
+  
+  .dark .btn-outline:hover {
+    background-color: var(--color-bg-tertiary);
+  }
+  
+  .btn-ghost {
+    background: transparent;
+    color: var(--color-text-primary);
+  }
+
+  /* 
+   * LOTTO BALLS
+   * Styles tendance 2025 pour les boules de loto avec effets visuels avancés
+   */
+  .lotto-ball {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    font-weight: var(--font-weight-bold);
+    font-family: var(--font-sans);
+    position: relative;
+    user-select: none;
+    transition: all 0.3s ease;
+    color: white;
+    font-size: 1.25rem;
+    box-shadow: inset 0 -4px 8px rgba(0, 0, 0, 0.2), 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
+    
+    /* Effet de verre mat */
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 100%);
+    
+    /* Effet de brillance */
+    &::before {
+      content: '';
+      position: absolute;
+      top: 8%;
+      left: 15%;
+      width: 25%;
+      height: 25%;
+      background: rgba(255, 255, 255, 0.6);
+      border-radius: 50%;
+      filter: blur(2px);
+    }
+  }
+  
+  /* Tailles variées */
+  .lotto-ball-sm {
+    width: 2.25rem;
+    height: 2.25rem;
+    font-size: 1rem;
+  }
+  
+  .lotto-ball-lg {
+    width: 4rem;
+    height: 4rem;
+    font-size: 1.75rem;
+  }
+  
+  /* Types de boules (régulière ou bonus) */
+  .lotto-ball-regular {
+    background-color: var(--color-primary-medium);
+  }
+  
+  .lotto-ball-bonus {
+    background-color: var(--color-secondary-medium);
+    /* Effet pulsant subtil pour le bonus */
+    animation: subtle-pulse 3s infinite alternate;
+  }
+  
+  /* Effet de surbrillance */
+  .lotto-ball-highlight {
+    box-shadow: 0 0 0 2px white, 0 0 10px 2px var(--color-primary-light), 0 8px 16px rgba(0, 0, 0, 0.2);
+    transform: scale(1.05);
+  }
+  
+  /* Interaction au survol */
+  .lotto-ball:hover {
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: inset 0 -4px 8px rgba(0, 0, 0, 0.2), 0 8px 16px rgba(0, 0, 0, 0.15);
+  }
+  
+  /* Effet de pression au clic */
+  .lotto-ball:active {
+    transform: translateY(1px) scale(0.98);
+    box-shadow: inset 0 -2px 4px rgba(0, 0, 0, 0.2), 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Animation de pulsation subtile */
+  @keyframes subtle-pulse {
+    0% {
+      box-shadow: inset 0 -4px 8px rgba(0, 0, 0, 0.2), 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    100% {
+      box-shadow: inset 0 -4px 8px rgba(0, 0, 0, 0.2), 0 4px 8px rgba(0, 0, 0, 0.3), 0 0 15px var(--color-secondary-light);
+    }
+  }
+  
+  /* Amélioration du mode sombre */
+  .dark .lotto-ball {
+    box-shadow: inset 0 -4px 8px rgba(0, 0, 0, 0.3), 0 4px 12px rgba(0, 0, 0, 0.35);
+  }
+  
+  .dark .lotto-ball-regular {
+    background-color: var(--color-primary-dark);
+  }
+  
+  .dark .lotto-ball-bonus {
+    background-color: var(--color-secondary-dark);
+  }
+  
+  .dark .lotto-ball-highlight {
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.1), 0 0 15px 2px var(--color-primary-medium), 0 8px 16px rgba(0, 0, 0, 0.4);
+  }
+}

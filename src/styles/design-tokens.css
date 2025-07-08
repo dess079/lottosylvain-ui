@@ -1,0 +1,280 @@
+/* 
+  design-tokens.css
+  Ce fichier définit les variables et tokens de design globaux pour notre application,
+  en suivant les standards UI/UX modernes 2025
+*/
+
+:root {
+  /* 
+   * TYPOGRAPHIE
+   * Système typographique hiérarchique et cohérent
+   */
+  --font-sans: 'Space Grotesk', 'Inter', sans-serif;
+  --font-display: 'Syne', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  
+  --font-weight-light: 300;
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  
+  --line-height-tight: 1.1;
+  --line-height-snug: 1.25;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.75;
+  --line-height-loose: 2;
+
+  /* 
+   * ESPACEMENT
+   * Système d'espacement cohérent basé sur une échelle de 4px
+   */
+  --space-0: 0;
+  --space-1: 0.25rem;  /* 4px */
+  --space-2: 0.5rem;   /* 8px */
+  --space-3: 0.75rem;  /* 12px */
+  --space-4: 1rem;     /* 16px */
+  --space-5: 1.25rem;  /* 20px */
+  --space-6: 1.5rem;   /* 24px */
+  --space-8: 2rem;     /* 32px */
+  --space-10: 2.5rem;  /* 40px */
+  --space-12: 3rem;    /* 48px */
+  --space-16: 4rem;    /* 64px */
+  --space-20: 5rem;    /* 80px */
+  --space-24: 6rem;    /* 96px */
+  --space-32: 8rem;    /* 128px */
+  
+  /* 
+   * TAILLES ET DIMENSIONS
+   * Tailles standards pour les composants d'interface
+   */
+  --button-height-sm: 32px;
+  --button-height-md: 40px;
+  --button-height-lg: 48px;
+  
+  --input-height-sm: 32px;
+  --input-height-md: 40px;
+  --input-height-lg: 48px;
+  
+  --icon-size-xs: 16px;
+  --icon-size-sm: 20px;
+  --icon-size-md: 24px;
+  --icon-size-lg: 32px;
+  --icon-size-xl: 48px;
+  
+  --max-width-content: 1280px;
+  
+  /* 
+   * BORDES ET ARRONDIS
+   * Système cohérent de bordures et rayons
+   */
+  --border-width-thin: 1px;
+  --border-width-medium: 2px;
+  --border-width-thick: 4px;
+  
+  --radius-sm: 0.25rem;  /* 4px */
+  --radius-md: 0.5rem;   /* 8px */
+  --radius-lg: 0.75rem;  /* 12px */
+  --radius-xl: 1rem;     /* 16px */
+  --radius-2xl: 1.5rem;  /* 24px */
+  --radius-3xl: 2rem;    /* 32px */
+  --radius-full: 9999px;
+  
+  /* 
+   * ANIMATIONS ET TRANSITIONS
+   * Durées et courbes d'animation standardisées
+   */
+  --transition-fast: 150ms;
+  --transition-normal: 250ms;
+  --transition-slow: 350ms;
+  --transition-very-slow: 500ms;
+  
+  --ease-default: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-bounce: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  
+  /* 
+   * OMBRES
+   * Système d'élévation avec ombres cohérentes
+   */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  --shadow-inner: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06);
+  
+  /* 
+   * Z-INDEX
+   * Système cohérent de gestion de l'empilement
+   */
+  --z-negative: -1;
+  --z-0: 0;
+  --z-10: 10;
+  --z-20: 20;
+  --z-30: 30;
+  --z-40: 40;
+  --z-50: 50;
+  --z-tooltip: 100;
+  --z-toast: 200;
+  --z-modal: 300;
+  --z-dropdown: 400;
+  --z-popover: 500;
+  --z-overlay: 900;
+  --z-max: 9999;
+  
+  /* 
+   * BREAKPOINTS
+   * Points de rupture pour la conception responsive
+   */
+  --breakpoint-xs: 320px;
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+  --breakpoint-2xl: 1536px;
+}
+
+/* Mode Clair (par défaut) */
+:root {
+  /* 
+   * COULEURS SÉMANTIQUES
+   * Palette de couleurs sémantiques pour le mode clair
+   */
+  --color-bg-primary: #ffffff;
+  --color-bg-secondary: #f9fafb;
+  --color-bg-tertiary: #f3f4f6;
+  --color-bg-accent: #eef2ff;
+  
+  --color-text-primary: #111827;
+  --color-text-secondary: #4b5563;
+  --color-text-tertiary: #6b7280;
+  --color-text-muted: #9ca3af;
+  
+  --color-border-light: #e5e7eb;
+  --color-border-medium: #d1d5db;
+  --color-border-dark: #9ca3af;
+  
+  --color-primary-light: #a5b4fc;
+  --color-primary-medium: #6366f1;
+  --color-primary-dark: #4f46e5;
+  
+  --color-secondary-light: #fcd34d;
+  --color-secondary-medium: #f59e0b;
+  --color-secondary-dark: #d97706;
+  
+  --color-accent-light: #6ee7b7;
+  --color-accent-medium: #10b981;
+  --color-accent-dark: #059669;
+  
+  --color-success-light: #86efac;
+  --color-success-medium: #22c55e;
+  --color-success-dark: #16a34a;
+  
+  --color-warning-light: #fde047;
+  --color-warning-medium: #eab308;
+  --color-warning-dark: #ca8a04;
+  
+  --color-error-light: #fca5a5;
+  --color-error-medium: #ef4444;
+  --color-error-dark: #dc2626;
+  
+  --color-info-light: #93c5fd;
+  --color-info-medium: #3b82f6;
+  --color-info-dark: #2563eb;
+}
+
+/* Mode Sombre */
+.dark {
+  /* 
+   * COULEURS SÉMANTIQUES - MODE SOMBRE
+   * Palette de couleurs sémantiques pour le mode sombre
+   */
+  --color-bg-primary: #111827;
+  --color-bg-secondary: #1f2937;
+  --color-bg-tertiary: #374151;
+  --color-bg-accent: #1e1b4b;
+  
+  --color-text-primary: #f9fafb;
+  --color-text-secondary: #e5e7eb;
+  --color-text-tertiary: #d1d5db;
+  --color-text-muted: #9ca3af;
+  
+  --color-border-light: #374151;
+  --color-border-medium: #4b5563;
+  --color-border-dark: #6b7280;
+  
+  --color-primary-light: #818cf8;
+  --color-primary-medium: #6366f1;
+  --color-primary-dark: #4f46e5;
+  
+  --color-secondary-light: #fbbf24;
+  --color-secondary-medium: #f59e0b;
+  --color-secondary-dark: #d97706;
+  
+  --color-accent-light: #34d399;
+  --color-accent-medium: #10b981;
+  --color-accent-dark: #059669;
+  
+  --color-success-light: #4ade80;
+  --color-success-medium: #22c55e;
+  --color-success-dark: #16a34a;
+  
+  --color-warning-light: #facc15;
+  --color-warning-medium: #eab308;
+  --color-warning-dark: #ca8a04;
+  
+  --color-error-light: #f87171;
+  --color-error-medium: #ef4444;
+  --color-error-dark: #dc2626;
+  
+  --color-info-light: #60a5fa;
+  --color-info-medium: #3b82f6;
+  --color-info-dark: #2563eb;
+  
+  /* Ajustement des ombres pour le mode sombre */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
+  --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
+}
+
+/* Préférences de réduction de mouvement */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Polyfill pour les anciennes propriétés CSS */
+@supports not (backdrop-filter: blur(8px)) {
+  .glass {
+    background-color: var(--color-bg-primary);
+    opacity: 0.95;
+  }
+}
+
+/* Focus visible pour l'accessibilité */
+:focus-visible {
+  outline: 2px solid var(--color-primary-medium);
+  outline-offset: 2px;
+}
+
+/* Accessibilité - lecteurs d'écran */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
