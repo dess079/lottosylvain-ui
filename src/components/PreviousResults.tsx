@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { fetchPreviousResults, fetchLottoStatistics } from '../services/api';
-import Card from './ui/Card';
-import LottoBall from './ui/LottoBall';
+import { 
+  Skeleton, 
+  Card, 
+  LottoBall 
+} from './shadcn';
 import { formatDate } from '../lib/utils';
 import { LOTTO_CONFIG } from '../config';
 import type { LottoDraw, DrawStatistics } from '../types';
@@ -87,14 +90,14 @@ const PreviousResults: React.FC = () => {
   if (isLoading) {
     return (
       <div className="flex justify-center items-center p-8">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-500"></div>
+        <Skeleton className="h-12 w-12 rounded-full" />
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="bg-red-100 text-red-700 p-4 rounded-md mb-6">
+      <div className="bg-destructive/10 text-destructive p-4 rounded-md mb-6">
         {error}
       </div>
     );
@@ -106,7 +109,7 @@ const PreviousResults: React.FC = () => {
 
   return (
     <section className="py-8">
-      <Card className="max-w-4xl mx-auto">
+      <Card className="max-w-4xl mx-auto p-6">
         <div className="flex flex-col items-center">
           <h2 className="text-3xl font-bold mb-2">Dernier tirage {LOTTO_CONFIG.GAME_NAME}</h2>
           <p className="text-lg text-gray-600 mb-6">

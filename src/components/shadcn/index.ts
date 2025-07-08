@@ -3,6 +3,7 @@
  */
 
 // Composants shadcn/ui
+export { default as LottoBall } from './ui/lotto-ball';
 export { Button, buttonVariants } from './ui/button';
 export {
   Card,
@@ -58,8 +59,6 @@ export {
 } from './ui/dialog';
 export {
   Sheet,
-  SheetPortal,
-  SheetOverlay,
   SheetTrigger,
   SheetClose,
   SheetContent,
@@ -68,7 +67,7 @@ export {
   SheetTitle,
   SheetDescription,
 } from './ui/sheet';
-export { Toaster, toast } from './ui/sonner';
+export { Toaster } from './ui/sonner';
 export { Separator } from './ui/separator';
 export { Progress } from './ui/progress';
 export { Skeleton } from './ui/skeleton';
@@ -114,5 +113,6 @@ export {
   RadioGroup,
   RadioGroupItem
 } from './ui/radio-group';
+export { default as ThemeToggle } from './ui/theme-toggle';
 
 // À mesure que vous ajoutez d'autres composants shadcn/ui, vous pouvez les exporter ici

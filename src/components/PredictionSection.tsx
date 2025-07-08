@@ -1,13 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { fetchPredictions, fetchCustomPredictions } from '../services/api';
-import Button from './ui/Button';
-import Card from './ui/Card';
-import LottoBall from './ui/LottoBall';
-import Tooltip from './ui/Tooltip';
+import { 
+  Card,
+  Progress,
+  Alert,
+  AlertDescription,
+  Tabs,
+  TabsList,
+  TabsTrigger,
+  TabsContent,
+  LottoBall,
+  Button,
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from './shadcn';
 import { formatDate, getNextDrawDate } from '../lib/utils';
 import { APP_CONFIG, LOTTO_CONFIG } from '../config';
 import type { PredictionData } from '../types';
+import { Loader2 } from 'lucide-react';
 
 /**
  * Component that displays lottery predictions and allows for customization
@@ -21,8 +34,6 @@ const PredictionSection: React.FC = () => {
   const [selectedNumbers, setSelectedNumbers] = useState<number[]>([]);
   const [excludedNumbers, setExcludedNumbers] = useState<number[]>([]);
   const [historicalWeight, setHistoricalWeight] = useState(50);
-  const [showCustomOptions, setShowCustomOptions] = useState(false);
-  const [activeTab, setActiveTab] = useState<'standard' | 'custom'>('standard');
   const nextDrawDate = getNextDrawDate();
 
   // Fetch predictions on component mount
@@ -114,11 +125,18 @@ const PredictionSection: React.FC = () => {
               >
                 {number}
               </button>
-              <Tooltip content="Right-click to exclude number">
-                <div className="absolute top-0 right-0 w-4 h-4 flex items-center justify-center bg-gray-800 text-white text-xs rounded-full cursor-help">
-                  ?
-                </div>
-              </Tooltip>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <div className="absolute top-0 right-0 w-4 h-4 flex items-center justify-center bg-gray-800 text-white text-xs rounded-full cursor-help">
+                      ?
+                    </div>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Right-click to exclude number</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </div>
           );
         })}
@@ -145,11 +163,8 @@ const PredictionSection: React.FC = () => {
 
   const renderConfidenceBar = (score: number) => {
     return (
-      <div className="w-full bg-gray-200 rounded-full h-2.5 mb-2">
-        <div 
-          className="bg-primary-500 h-2.5 rounded-full"
-          style={{ width: `${score * 100}%` }}
-        ></div>
+      <div className="w-full mb-2">
+        <Progress value={score * 100} className="h-2.5" />
         <div className="text-sm text-right">
           Confidence: {(score * 100).toFixed(1)}%
         </div>
@@ -159,178 +174,176 @@ const PredictionSection: React.FC = () => {
 
   return (
     <section className="py-8">
-      <Card className="max-w-4xl mx-auto">
+      <Card className="max-w-4xl mx-auto p-6">
         <div className="flex flex-col items-center">
           <h2 className="text-3xl font-bold mb-2">Prédiction pour le prochain tirage</h2>
           <p className="text-lg text-gray-600 mb-6">
             Date du prochain tirage: <span className="font-semibold">{formatDate(nextDrawDate)}</span>
           </p>
           
-          <div className="w-full mb-6">
-            <div className="flex border-b border-gray-200">
-              <button
-                className={`py-2 px-4 font-medium ${
-                  activeTab === 'standard'
-                    ? 'text-primary-600 border-b-2 border-primary-600'
-                    : 'text-gray-500 hover:text-gray-700'
-                }`}
-                onClick={() => setActiveTab('standard')}
-              >
-                Prédictions standard
-              </button>
-              <button
-                className={`py-2 px-4 font-medium ${
-                  activeTab === 'custom'
-                    ? 'text-primary-600 border-b-2 border-primary-600'
-                    : 'text-gray-500 hover:text-gray-700'
-                }`}
-                onClick={() => setActiveTab('custom')}
-              >
-                Prédictions personnalisées
-              </button>
-            </div>
-          </div>
-          
-          {activeTab === 'standard' && (
-            <div className="w-full">
-              <div className="flex justify-center mb-6">
-                <Button 
-                  onClick={loadPredictions} 
-                  isLoading={isLoading}
-                  size="lg"
-                >
-                  Générer des prédictions
-                </Button>
-              </div>
-              
-              {error && (
-                <div className="bg-red-100 text-red-700 p-4 rounded-md mb-6">
-                  {error}
+          <Tabs defaultValue="standard" className="w-full mb-6">
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="standard">Prédictions standard</TabsTrigger>
+              <TabsTrigger value="custom">Prédictions personnalisées</TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="standard">
+              <div className="w-full">
+                <div className="flex justify-center mb-6">
+                  <Button 
+                    onClick={loadPredictions} 
+                    disabled={isLoading}
+                    size="lg"
+                    className="relative"
+                  >
+                    {isLoading ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        <span>Chargement...</span>
+                      </>
+                    ) : (
+                      <span>Générer des prédictions</span>
+                    )}
+                  </Button>
                 </div>
-              )}
-              
-              {!isLoading && predictions.length > 0 && (
-                <div className="space-y-8">
-                  {predictions.map((prediction, index) => (
-                    <motion.div
-                      key={index}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: index * 0.2 }}
-                      className="p-4 border border-gray-200 rounded-lg"
-                    >
-                      <h3 className="text-xl font-semibold mb-3">Combinaison #{index + 1}</h3>
-                      {renderPredictionBalls(prediction)}
-                      {renderConfidenceBar(prediction.confidenceScore)}
-                      
-                      <div className="mt-4 text-sm text-gray-700 bg-gray-50 p-3 rounded">
-                        <h4 className="font-medium mb-2">Analyse:</h4>
-                        <p>{prediction.reasoning}</p>
-                      </div>
-                      
-                      {prediction.analysisFactors && (
-                        <div className="mt-4">
-                          <button
-                            className="text-primary-600 text-sm hover:underline"
-                            onClick={() => {
-                              // Toggle detailed analysis view
-                            }}
-                          >
-                            Voir l'analyse détaillée
-                          </button>
+                
+                {error && (
+                  <Alert variant="destructive">
+                    <AlertDescription>{error}</AlertDescription>
+                  </Alert>
+                )}
+                
+                {!isLoading && predictions.length > 0 && (
+                  <div className="space-y-8">
+                    {predictions.map((prediction, index) => (
+                      <motion.div
+                        key={index}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: index * 0.2 }}
+                        className="p-4 border border-gray-200 rounded-lg"
+                      >
+                        <h3 className="text-xl font-semibold mb-3">Combinaison #{index + 1}</h3>
+                        {renderPredictionBalls(prediction)}
+                        {renderConfidenceBar(prediction.confidenceScore)}
+                        
+                        <div className="mt-4 text-sm text-gray-700 bg-gray-50 p-3 rounded">
+                          <h4 className="font-medium mb-2">Analyse:</h4>
+                          <p>{prediction.reasoning}</p>
                         </div>
+                        
+                        {prediction.analysisFactors && (
+                          <div className="mt-4">
+                            <button
+                              className="text-primary-600 text-sm hover:underline"
+                              onClick={() => {
+                                // Toggle detailed analysis view
+                              }}
+                            >
+                              Voir l'analyse détaillée
+                            </button>
+                          </div>
+                        )}
+                      </motion.div>
+                    ))}
+                  </div>
+                )}
+                
+                {!isLoading && !predictions.length && !error && (
+                  <p className="text-center text-gray-500">
+                    Cliquez sur le bouton ci-dessus pour générer des prédictions.
+                  </p>
+                )}
+              </div>
+            </TabsContent>
+            
+            <TabsContent value="custom">
+              <div className="w-full">
+                <div className="mb-6 p-4 bg-gray-50 rounded-lg">
+                  <h3 className="text-lg font-medium mb-4">Personnalisez vos prédictions</h3>
+                  
+                  <div className="mb-4">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Sélectionnez des numéros à inclure (clic gauche) ou exclure (clic droit):
+                    </label>
+                    {renderNumberGrid()}
+                  </div>
+                  
+                  <div className="mb-6">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Importance des données historiques: {historicalWeight}%
+                    </label>
+                    <input
+                      type="range"
+                      min="0"
+                      max="100"
+                      value={historicalWeight}
+                      onChange={(e) => setHistoricalWeight(Number(e.target.value))}
+                      className="w-full"
+                    />
+                    <div className="flex justify-between text-xs text-gray-500">
+                      <span>Aléatoire</span>
+                      <span>Équilibré</span>
+                      <span>Historique</span>
+                    </div>
+                  </div>
+                  
+                  <div className="flex justify-center">
+                    <Button
+                      onClick={loadCustomPredictions}
+                      disabled={isCustomLoading}
+                      variant="secondary"
+                      className="relative"
+                    >
+                      {isCustomLoading ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          <span>Chargement...</span>
+                        </>
+                      ) : (
+                        <span>Générer des prédictions personnalisées</span>
                       )}
-                    </motion.div>
-                  ))}
-                </div>
-              )}
-              
-              {!isLoading && !predictions.length && !error && (
-                <p className="text-center text-gray-500">
-                  Cliquez sur le bouton ci-dessus pour générer des prédictions.
-                </p>
-              )}
-            </div>
-          )}
-          
-          {activeTab === 'custom' && (
-            <div className="w-full">
-              <div className="mb-6 p-4 bg-gray-50 rounded-lg">
-                <h3 className="text-lg font-medium mb-4">Personnalisez vos prédictions</h3>
-                
-                <div className="mb-4">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Sélectionnez des numéros à inclure (clic gauche) ou exclure (clic droit):
-                  </label>
-                  {renderNumberGrid()}
-                </div>
-                
-                <div className="mb-6">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Importance des données historiques: {historicalWeight}%
-                  </label>
-                  <input
-                    type="range"
-                    min="0"
-                    max="100"
-                    value={historicalWeight}
-                    onChange={(e) => setHistoricalWeight(Number(e.target.value))}
-                    className="w-full"
-                  />
-                  <div className="flex justify-between text-xs text-gray-500">
-                    <span>Aléatoire</span>
-                    <span>Équilibré</span>
-                    <span>Historique</span>
+                    </Button>
                   </div>
                 </div>
                 
-                <div className="flex justify-center">
-                  <Button
-                    onClick={loadCustomPredictions}
-                    isLoading={isCustomLoading}
-                    variant="secondary"
-                  >
-                    Générer des prédictions personnalisées
-                  </Button>
-                </div>
+                {error && (
+                  <Alert variant="destructive">
+                    <AlertDescription>{error}</AlertDescription>
+                  </Alert>
+                )}
+                
+                {!isCustomLoading && customPredictions.length > 0 && (
+                  <div className="space-y-8">
+                    {customPredictions.map((prediction, index) => (
+                      <motion.div
+                        key={index}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: index * 0.2 }}
+                        className="p-4 border border-gray-200 rounded-lg"
+                      >
+                        <h3 className="text-xl font-semibold mb-3">Combinaison personnalisée #{index + 1}</h3>
+                        {renderPredictionBalls(prediction)}
+                        {renderConfidenceBar(prediction.confidenceScore)}
+                        
+                        <div className="mt-4 text-sm text-gray-700 bg-gray-50 p-3 rounded">
+                          <h4 className="font-medium mb-2">Analyse:</h4>
+                          <p>{prediction.reasoning}</p>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
+                )}
+                
+                {!isCustomLoading && !customPredictions.length && !error && (
+                  <p className="text-center text-gray-500">
+                    Personnalisez vos critères et cliquez sur le bouton pour générer des prédictions.
+                  </p>
+                )}
               </div>
-              
-              {error && (
-                <div className="bg-red-100 text-red-700 p-4 rounded-md mb-6">
-                  {error}
-                </div>
-              )}
-              
-              {!isCustomLoading && customPredictions.length > 0 && (
-                <div className="space-y-8">
-                  {customPredictions.map((prediction, index) => (
-                    <motion.div
-                      key={index}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: index * 0.2 }}
-                      className="p-4 border border-gray-200 rounded-lg"
-                    >
-                      <h3 className="text-xl font-semibold mb-3">Combinaison personnalisée #{index + 1}</h3>
-                      {renderPredictionBalls(prediction)}
-                      {renderConfidenceBar(prediction.confidenceScore)}
-                      
-                      <div className="mt-4 text-sm text-gray-700 bg-gray-50 p-3 rounded">
-                        <h4 className="font-medium mb-2">Analyse:</h4>
-                        <p>{prediction.reasoning}</p>
-                      </div>
-                    </motion.div>
-                  ))}
-                </div>
-              )}
-              
-              {!isCustomLoading && !customPredictions.length && !error && (
-                <p className="text-center text-gray-500">
-                  Personnalisez vos critères et cliquez sur le bouton pour générer des prédictions.
-                </p>
-              )}
-            </div>
-          )}
+            </TabsContent>
+          </Tabs>
         </div>
       </Card>
     </section>

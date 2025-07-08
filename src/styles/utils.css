@@ -65,6 +65,16 @@
   padding-right: 1rem;
 }
 
+/* Conteneur 2025 avec design moderne */
+.container-2025 {
+  width: 100%;
+  max-width: 1280px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+}
+
 @media (min-width: 640px) {
   .container-responsive {
     padding-left: 2rem;
@@ -126,6 +136,11 @@
 
 .floating-fast {
   animation: float 4s ease-in-out infinite;
+}
+
+/* Animation de flottement */
+.animate-float {
+  animation: float 6s ease-in-out infinite;
 }
 
 /* Rotation infinie */
@@ -266,4 +281,26 @@
 
 .dark .dark-mode-invert {
   filter: invert(1);
+}
+
+/* Pour les keyframes manquants */
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }

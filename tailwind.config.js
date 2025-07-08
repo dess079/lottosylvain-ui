@@ -8,8 +8,14 @@ module.exports = {
   theme: {
     extend: {
       colors: {
+        border: "hsl(var(--border))",
+        input: "hsl(var(--input))",
+        ring: "hsl(var(--ring))",
+        background: "hsl(var(--background))",
+        foreground: "hsl(var(--foreground))",
         primary: {
-          DEFAULT: '#6366f1', // Indigo modernisé
+          DEFAULT: "hsl(var(--primary))",
+          foreground: "hsl(var(--primary-foreground))",
           50: '#eef2ff',
           100: '#e0e7ff',
           200: '#c7d2fe',
@@ -23,7 +29,8 @@ module.exports = {
           950: '#1e1b4b',
         },
         secondary: {
-          DEFAULT: '#f59e0b', // Ambre modernisé
+          DEFAULT: "hsl(var(--secondary))",
+          foreground: "hsl(var(--secondary-foreground))",
           50: '#fffbeb',
           100: '#fef3c7',
           200: '#fde68a',
@@ -36,8 +43,17 @@ module.exports = {
           900: '#78350f',
           950: '#451a03',
         },
+        destructive: {
+          DEFAULT: "hsl(var(--destructive))",
+          foreground: "hsl(var(--destructive-foreground))",
+        },
+        muted: {
+          DEFAULT: "hsl(var(--muted))",
+          foreground: "hsl(var(--muted-foreground))",
+        },
         accent: {
-          DEFAULT: '#10b981', // Émeraude 2025
+          DEFAULT: "hsl(var(--accent))",
+          foreground: "hsl(var(--accent-foreground))",
           50: '#ecfdf5',
           100: '#d1fae5',
           200: '#a7f3d0',
@@ -49,6 +65,14 @@ module.exports = {
           800: '#065f46',
           900: '#064e3b',
           950: '#022c22',
+        },
+        popover: {
+          DEFAULT: "hsl(var(--popover))",
+          foreground: "hsl(var(--popover-foreground))",
+        },
+        card: {
+          DEFAULT: "hsl(var(--card))",
+          foreground: "hsl(var(--card-foreground))",
         },
         // Couleurs sémantiques pour les interfaces utilisateur
         success: {

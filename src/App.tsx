@@ -1,7 +1,7 @@
 import React from 'react';
 import PreviousResults from './components/PreviousResults';
 import PredictionSection from './components/PredictionSection';
-import ThemeToggle from './components/ui/ThemeToggle';
+import { ThemeToggle } from './components/shadcn';
 import { getNextDrawDate, formatDate } from './lib/utils';
 
 const App: React.FC = () => {
