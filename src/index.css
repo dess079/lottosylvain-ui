@@ -1,91 +1,366 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-@reference "tailwindcss";
+
+/* Ajouter des polices Google Fonts tendance 2025 */
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&display=swap');
 
 @layer base {
+  :root {
+    --blur-amount: 8px;
+    --border-radius: 1rem;
+    --transition-speed: 0.3s;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+  
   body {
     margin: 0;
-    font-family: var(--font-sans);
-    background-color: var(--color-gray-50);
-    color: var(--color-gray-900);
+    font-family: 'Space Grotesk', sans-serif;
+    background: linear-gradient(to bottom right, white, #f3f4f6);
+    color: #111827;
+    transition: background-color 0.3s, color 0.3s;
+  }
+  
+  .dark body {
+    background: linear-gradient(to bottom right, #111827, #030712);
+    color: #f9fafb;
   }
   
   h1, h2, h3, h4, h5, h6 {
+    font-family: 'Syne', sans-serif;
     font-weight: bold;
-    color: var(--color-primary-500);
   }
   
   h1 {
     font-size: 2.25rem;
+    line-height: 2.5rem;
     margin-bottom: 1.5rem;
     margin-top: 1rem;
+    color: #4f46e5;
+  }
+  
+  .dark h1 {
+    color: #818cf8;
   }
   
   h2 {
     font-size: 1.5rem;
+    line-height: 2rem;
     margin-bottom: 1rem;
     margin-top: 0.75rem;
+    color: #4f46e5;
+  }
+  
+  .dark h2 {
+    color: #818cf8;
+  }
+
+  h3 {
+    font-size: 1.25rem;
+    line-height: 1.75rem;
+    margin-bottom: 0.75rem;
+    margin-top: 0.5rem;
+    color: #4f46e5;
+  }
+  
+  .dark h3 {
+    color: #818cf8;
+  }
+
+  /* Style moderne pour les scrollbars */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background-color: #f3f4f6;
+  }
+  
+  .dark ::-webkit-scrollbar-track {
+    background-color: #1f2937;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: #a5b4fc;
+    border-radius: 9999px;
+    transition: background-color 0.3s;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: #818cf8;
+  }
+  
+  .dark ::-webkit-scrollbar-thumb {
+    background-color: #4338ca;
+  }
+  
+  .dark ::-webkit-scrollbar-thumb:hover {
+    background-color: #4f46e5;
+  }
+
+  /* Sélection de texte */
+  ::selection {
+    background-color: #e0e7ff;
+    color: #312e81;
+  }
+  
+  .dark ::selection {
+    background-color: #312e81;
+    color: #e0e7ff;
   }
 }
 
 @layer components {
+  /* Styles tendance 2025 pour les boules de lotto */
   .lotto-ball {
-    width: 3rem;
-    height: 3rem;
+    width: 3.5rem;
+    height: 3.5rem;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.125rem;
+    font-size: 1.25rem;
     font-weight: bold;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    position: relative;
+    transition: all 0.4s ease;
+    overflow: hidden;
+  }
+  
+  .lotto-ball::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle at center, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0) 60%);
+    opacity: 0.6;
+    transform: scale(0);
+    transition: transform 0.6s ease-out;
+  }
+  
+  .lotto-ball:hover::before {
+    transform: scale(1);
   }
   
   .lotto-ball-regular {
-    background-color: var(--color-primary-100);
-    color: var(--color-primary-700);
-    border: 2px solid var(--color-primary-500);
+    background: linear-gradient(135deg, #a5b4fc, #6366f1);
+    color: #ffffff;
+    border: 2px solid #4f46e5;
+  }
+  
+  .dark .lotto-ball-regular {
+    background: linear-gradient(135deg, #4338ca, #3730a3);
+    border-color: #4f46e5;
   }
   
   .lotto-ball-bonus {
-    background-color: var(--color-secondary-100);
-    color: var(--color-secondary-700);
-    border: 2px solid var(--color-secondary-500);
+    background: linear-gradient(135deg, #fcd34d, #f59e0b);
+    color: #ffffff;
+    border: 2px solid #d97706;
   }
   
+  .dark .lotto-ball-bonus {
+    background: linear-gradient(135deg, #b45309, #92400e);
+    border-color: #d97706;
+  }
+  
+  .lotto-ball-highlight {
+    animation: glow 2s ease-in-out infinite alternate;
+  }
+  
+  /* Styles tendance 2025 pour les boutons */
   .btn {
-    padding: 0.5rem 1rem;
-    border-radius: 0.375rem;
-    font-weight: 500;
-    transition: colors 0.2s;
+    padding: 0.625rem 1.25rem;
+    border-radius: 0.75rem;
+    font-weight: 600;
+    font-family: 'Space Grotesk', sans-serif;
+    letter-spacing: 0.01em;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    font-size: 0.875rem;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  }
+  
+  .btn::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background: linear-gradient(rgba(255,255,255,0.2), rgba(255,255,255,0));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  
+  .btn:hover::after {
+    opacity: 1;
+  }
+  
+  .btn:active {
+    transform: translateY(2px);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
   }
   
   .btn-primary {
-    background-color: var(--color-primary-500);
+    background: linear-gradient(135deg, #6366f1, #4f46e5);
     color: white;
   }
-  .btn-primary:hover {
-    background-color: var(--color-primary-600);
+  
+  .dark .btn-primary {
+    background: linear-gradient(135deg, #4f46e5, #3730a3);
   }
   
   .btn-secondary {
-    background-color: var(--color-secondary-500);
+    background: linear-gradient(135deg, #f59e0b, #d97706);
     color: white;
   }
-  .btn-secondary:hover {
-    background-color: var(--color-secondary-600);
+  
+  .dark .btn-secondary {
+    background: linear-gradient(135deg, #d97706, #b45309);
   }
   
+  .btn-accent {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+  }
+  
+  .dark .btn-accent {
+    background: linear-gradient(135deg, #059669, #047857);
+  }
+  
+  /* Styles tendance 2025 pour les cartes */
   .card {
     background-color: white;
-    border-radius: 0.5rem;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    padding: 1.5rem;
-    transition: box-shadow 0.3s;
+    border-radius: 1.25rem;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    padding: 1.75rem;
+    transition: all 0.4s ease;
+    border: 1px solid rgba(229, 231, 235, 0.5);
+    position: relative;
+    overflow: hidden;
   }
+  
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 50%);
+    pointer-events: none;
+  }
+  
   .card:hover {
-    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 16px 32px rgba(0, 0, 0, 0.12);
+    transform: translateY(-4px);
+  }
+  
+  .dark .card {
+    background-color: #1f2937;
+    border-color: rgba(31, 41, 55, 0.5);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  }
+  
+  .dark .card::before {
+    background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0) 50%);
+  }
+  
+  .dark .card:hover {
+    box-shadow: 0 16px 32px rgba(0, 0, 0, 0.3);
+  }
+  
+  /* Styles pour les éléments de thème sombre/clair */
+  .theme-toggle {
+    cursor: pointer;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.1);
+    transition: background-color 0.3s;
+  }
+  
+  .theme-toggle:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+  }
+  
+  .dark .theme-toggle {
+    background-color: rgba(0, 0, 0, 0.2);
+  }
+  
+  .dark .theme-toggle:hover {
+    background-color: rgba(0, 0, 0, 0.3);
+  }
+  
+  /* Effet de glassmorphisme tendance 2025 */
+  .glass {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+  
+  .dark .glass {
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+  }
+  
+  /* Animations tendance 2025 */
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+  
+  @keyframes glow {
+    0% { box-shadow: 0 0 5px rgba(99, 102, 241, 0.5); }
+    100% { box-shadow: 0 0 20px rgba(99, 102, 241, 0.8); }
+  }
+  
+  .float {
+    animation: float 6s ease-in-out infinite;
+  }
+  
+  .glow {
+    animation: glow 2s ease-in-out infinite alternate;
+  }
+  
+  /* Conteneur principal avec un max-width pour les grands écrans */
+  .container-2025 {
+    width: 100%;
+    max-width: 1280px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  
+  @media (min-width: 640px) {
+    .container-2025 {
+      padding-left: 2rem;
+      padding-right: 2rem;
+    }
+  }
+  
+  @media (min-width: 1024px) {
+    .container-2025 {
+      padding-left: 3rem;
+      padding-right: 3rem;
+    }
   }
 }
