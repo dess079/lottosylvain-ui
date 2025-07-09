@@ -1,80 +1,196 @@
 import React from 'react';
-import PreviousResults from './components/PreviousResults';
-import PredictionSection from './components/PredictionSection';
-import { ThemeToggle } from './components/shadcn';
-import { getNextDrawDate, formatDate } from './lib/utils';
+import { 
+  FuturisticToolbar, 
+  FuturisticDataDisplay, 
+  FuturisticChart,
+  LottoBall
+} from './components/shadcn';
+import { LineChartIcon, TrendingUpIcon, PercentIcon, BarChart3Icon } from 'lucide-react';
 
+/**
+ * Page principale démontrant l'interface futuriste 2026
+ */
 const App: React.FC = () => {
-  const nextDrawDate = getNextDrawDate();
+  // Données de démonstration pour les graphiques
+  const frequencyData = [14, 23, 8, 17, 9, 31, 26, 19, 12, 7];
+  const frequencyLabels = ['1', '7', '13', '19', '25', '31', '37', '43', '45', '49'];
   
   return (
-    <div className="min-h-screen bg-gradient-to-br from-white to-gray-100 text-gray-900 transition-colors duration-300 dark:bg-gradient-to-br dark:from-gray-900 dark:to-gray-950 dark:text-gray-50">
-      <header className="bg-gradient-to-r from-primary-600 to-primary-500 dark:from-primary-800 dark:to-primary-700 text-white py-8 shadow-lg relative overflow-hidden">
-        {/* Éléments décoratifs */}
-        <div className="absolute -top-20 -right-20 w-64 h-64 bg-white opacity-5 rounded-full"></div>
-        <div className="absolute -bottom-32 -left-32 w-96 h-96 bg-white opacity-5 rounded-full"></div>
+    <div className="min-h-screen bg-background text-foreground overflow-x-hidden">
+      {/* Barre d'outils futuriste */}
+      <FuturisticToolbar />
+      
+      <main className="container-2025 py-8">
+        <div className="mb-10">
+          <h1 className="text-3xl font-bold mb-2">Prédiction Lotto 649</h1>
+          <p className="text-lg opacity-70">Analyse des tendances et prévisions pour le prochain tirage</p>
+        </div>
         
-        <div className="container-2025 mx-auto relative z-10">
-          <div className="flex flex-col md:flex-row md:justify-between md:items-center">
-            <div className="flex-1">
-              <h1 className="text-4xl md:text-5xl font-bold text-white mb-2 font-display">Lotto-Sylvain</h1>
-              <p className="text-primary-100 text-lg">Prédictions intelligentes pour la Lotto 6/49</p>
+        {/* Cartes de statistiques */}
+        <section className="mb-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <FuturisticDataDisplay 
+            title="Fréquence moyenne"
+            value="26.4%"
+            subtitle="Augmentation de 3.1% cette semaine"
+            trend="up"
+            trendValue="3.1%"
+            icon={<PercentIcon size={18} />}
+            variant="primary"
+          />
+          
+          <FuturisticDataDisplay 
+            title="Confiance prédictive"
+            value="87.2%"
+            subtitle="Basée sur 749 tirages historiques"
+            trend="up"
+            trendValue="2.5%"
+            icon={<TrendingUpIcon size={18} />}
+            variant="secondary"
+          />
+          
+          <FuturisticDataDisplay 
+            title="Précision modèle"
+            value="93.5%"
+            subtitle="Derniers 12 tirages"
+            trend="up"
+            trendValue="1.2%"
+            icon={<LineChartIcon size={18} />}
+            variant="accent"
+          />
+          
+          <FuturisticDataDisplay 
+            title="Tirages analysés"
+            value="749"
+            subtitle="Dernière mise à jour: aujourd'hui"
+            icon={<BarChart3Icon size={18} />}
+            variant="primary"
+          />
+        </section>
+        
+        {/* Graphiques futuristes */}
+        <section className="mb-16 grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <div className="futuristic-card">
+            <h2 className="text-xl font-bold mb-6 gradient-text">Fréquence des numéros</h2>
+            <FuturisticChart 
+              data={frequencyData} 
+              labels={frequencyLabels}
+              title="Top 10 des numéros les plus fréquents"
+              variant="cosmic"
+              width={500}
+              height={300}
+            />
+          </div>
+          
+          <div className="futuristic-card">
+            <h2 className="text-xl font-bold mb-6 accent-gradient-text">Prédictions générées</h2>
+            
+            {/* Grille de numéros avec boules 3D */}
+            <div className="mb-6">
+              <h3 className="text-sm font-medium mb-3 opacity-70">Prédiction principale</h3>
+              <div className="flex flex-wrap justify-center gap-4">
+                <LottoBall number={7} size="lg" isHighlighted />
+                <LottoBall number={13} size="lg" isHighlighted />
+                <LottoBall number={19} size="lg" isHighlighted />
+                <LottoBall number={27} size="lg" isHighlighted />
+                <LottoBall number={35} size="lg" isHighlighted />
+                <LottoBall number={42} size="lg" isHighlighted />
+                <LottoBall number={47} size="lg" isBonus isHighlighted />
+              </div>
             </div>
             
-            <div className="flex items-center space-x-4 mt-6 md:mt-0">
-              <div className="glass px-6 py-4 rounded-2xl backdrop-blur-md">
-                <p className="text-sm uppercase tracking-wider font-medium text-primary-100">Prochain tirage</p>
-                <p className="text-2xl font-bold">{formatDate(nextDrawDate)}</p>
+            <div className="grid grid-cols-2 gap-6">
+              <div>
+                <h3 className="text-sm font-medium mb-3 opacity-70">Prédiction alternative 1</h3>
+                <div className="flex flex-wrap justify-center gap-2">
+                  <LottoBall number={3} size="md" />
+                  <LottoBall number={14} size="md" />
+                  <LottoBall number={23} size="md" />
+                  <LottoBall number={31} size="md" />
+                  <LottoBall number={38} size="md" />
+                  <LottoBall number={45} size="md" />
+                  <LottoBall number={11} size="md" isBonus />
+                </div>
               </div>
               
-              <ThemeToggle />
+              <div>
+                <h3 className="text-sm font-medium mb-3 opacity-70">Prédiction alternative 2</h3>
+                <div className="flex flex-wrap justify-center gap-2">
+                  <LottoBall number={5} size="md" />
+                  <LottoBall number={18} size="md" />
+                  <LottoBall number={24} size="md" />
+                  <LottoBall number={29} size="md" />
+                  <LottoBall number={36} size="md" />
+                  <LottoBall number={43} size="md" />
+                  <LottoBall number={16} size="md" isBonus />
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-      </header>
-      
-      <main className="container-2025 mx-auto py-12">
-        <div className="space-y-12">
-          <PreviousResults />
-          <PredictionSection />
-        </div>
+        </section>
+        
+        {/* Sélection personnalisée */}
+        <section className="mb-16">
+          <div className="futuristic-card">
+            <h2 className="text-xl font-bold mb-6 gradient-text">Sélection personnalisée</h2>
+            
+            <div className="futuristic-number-grid">
+              <LottoBall number={1} size="sm" />
+              <LottoBall number={2} size="sm" />
+              <LottoBall number={3} size="sm" />
+              <LottoBall number={4} size="sm" />
+              <LottoBall number={5} size="sm" />
+              <LottoBall number={6} size="sm" />
+              <LottoBall number={7} size="sm" isSelected />
+              <LottoBall number={8} size="sm" />
+              <LottoBall number={9} size="sm" />
+              <LottoBall number={10} size="sm" />
+              <LottoBall number={11} size="sm" isExcluded />
+              <LottoBall number={12} size="sm" />
+              <LottoBall number={13} size="sm" isSelected />
+              <LottoBall number={14} size="sm" />
+              <LottoBall number={15} size="sm" isExcluded />
+              <LottoBall number={16} size="sm" />
+              <LottoBall number={17} size="sm" />
+              <LottoBall number={18} size="sm" />
+              <LottoBall number={19} size="sm" isSelected />
+              <LottoBall number={20} size="sm" />
+              <LottoBall number={21} size="sm" />
+              <LottoBall number={22} size="sm" isExcluded />
+              <LottoBall number={23} size="sm" />
+              <LottoBall number={24} size="sm" />
+              <LottoBall number={25} size="sm" />
+              <LottoBall number={26} size="sm" />
+              <LottoBall number={27} size="sm" isSelected />
+              <LottoBall number={28} size="sm" />
+              <LottoBall number={29} size="sm" />
+              <LottoBall number={30} size="sm" isExcluded />
+              <LottoBall number={31} size="sm" />
+              <LottoBall number={32} size="sm" />
+              <LottoBall number={33} size="sm" />
+              <LottoBall number={34} size="sm" />
+              <LottoBall number={35} size="sm" isSelected />
+              <LottoBall number={36} size="sm" />
+              <LottoBall number={37} size="sm" />
+              <LottoBall number={38} size="sm" />
+              <LottoBall number={39} size="sm" />
+              <LottoBall number={40} size="sm" />
+              <LottoBall number={41} size="sm" />
+              <LottoBall number={42} size="sm" isSelected />
+              <LottoBall number={43} size="sm" />
+              <LottoBall number={44} size="sm" />
+              <LottoBall number={45} size="sm" />
+              <LottoBall number={46} size="sm" />
+              <LottoBall number={47} size="sm" isBonus isSelected />
+              <LottoBall number={48} size="sm" />
+              <LottoBall number={49} size="sm" />
+            </div>
+          </div>
+        </section>
       </main>
       
-      <footer className="bg-gray-900 dark:bg-gray-950 text-white py-12 mt-16">
-        <div className="container-2025 mx-auto">
-          <div className="flex flex-col md:flex-row justify-between items-center">
-            <div className="mb-8 md:mb-0">
-              <h2 className="text-2xl font-bold text-white mb-4 font-display">Lotto-Sylvain UI</h2>
-              <p className="text-gray-400 max-w-md">
-                Une interface moderne et intuitive pour explorer les prédictions Lotto 6/49 avec un design tendance 2025
-              </p>
-            </div>
-            
-            <div className="flex flex-col items-center md:items-end">
-              <div className="flex space-x-4 mb-4">
-                <a href="#" className="text-gray-400 hover:text-white transition-colors">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
-                  </svg>
-                </a>
-                <a href="#" className="text-gray-400 hover:text-white transition-colors">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
-                    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
-                    <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
-                  </svg>
-                </a>
-                <a href="#" className="text-gray-400 hover:text-white transition-colors">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-1-4.8 4-7.6 7-3.8 1.1 0 3-1.2 3-1.2z"></path>
-                  </svg>
-                </a>
-              </div>
-              <p className="text-gray-500 text-sm">
-                © {new Date().getFullYear()} Lotto-Sylvain. Tous droits réservés.
-              </p>
-            </div>
-          </div>
+      <footer className="container-2025 py-6 border-t border-border/20">
+        <div className="text-center text-sm opacity-60">
+          © 2026 Lotto Sylvain - Visualisation futuriste des données de loterie
         </div>
       </footer>
     </div>

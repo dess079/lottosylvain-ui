@@ -1,99 +1,60 @@
-import { memo, ReactElement } from 'react';
+import React from 'react';
 import { cn } from '../../../lib/utils';
 
-/**
- * Extended prop definitions with JSDoc
- */
 interface LottoBallProps {
-  /** The number to display inside the ball */
   number: number;
-  /** Whether this ball is the bonus number */
-  isBonus?: boolean;
-  /** Whether to highlight this ball with glow effect */
-  isHighlighted?: boolean;
-  /** Size of the ball: 'sm', 'md', or 'lg' */
   size?: 'sm' | 'md' | 'lg';
-  /** Additional Tailwind CSS classes */
+  type?: 'regular' | 'bonus' | 'prediction';
+  isHighlighted?: boolean;
   className?: string;
-  /** Optional click handler */
-  onClick?: () => void;
-  /** Whether the ball should animate */
-  animate?: boolean;
 }
 
 /**
- * Renders a lottery ball with the given number.
- * Follows the 2025 UI/UX standards with modern design trends.
- *
- * @param number - The lottery number to display.
- * @param isBonus - Highlights the ball if it's the bonus number.
- * @param isHighlighted - Adds a glow effect to the ball.
- * @param size - The size of the ball: 'sm', 'md', or 'lg'.
- * @param className - Additional CSS classes.
- * @param onClick - Click handler function.
- * @param animate - Whether to apply animation effects.
+ * Composant de boule de lotto avec effet 3D et animations
+ * Utilisé pour afficher les numéros tirés et les prédictions
  */
-const LottoBall = memo(({
+const LottoBall: React.FC<LottoBallProps> = ({
   number,
-  isBonus = false,
-  isHighlighted = false,
   size = 'md',
-  className = '',
-  onClick,
-  animate = false,
-}: LottoBallProps): ReactElement => {
+  type = 'regular',
+  isHighlighted = false,
+  className
+}) => {
+  // Tailles des boules
   const sizeClasses = {
-    sm: 'w-8 h-8 text-xs',
-    md: 'w-12 h-12 text-base',
-    lg: 'w-16 h-16 text-xl',
-  }[size];
+    sm: 'w-10 h-10 text-sm',
+    md: 'w-14 h-14 text-base',
+    lg: 'w-20 h-20 text-xl'
+  };
   
-  // Determine background color based on ball number ranges
-  let bgColorClass = 'bg-white text-gray-800';
-  if (number >= 1 && number <= 10) {
-    bgColorClass = 'bg-primary-100 text-primary-800';
-  } else if (number >= 11 && number <= 20) {
-    bgColorClass = 'bg-blue-100 text-blue-800';
-  } else if (number >= 21 && number <= 30) {
-    bgColorClass = 'bg-teal-100 text-teal-800';
-  } else if (number >= 31 && number <= 40) {
-    bgColorClass = 'bg-pink-100 text-pink-800';
-  } else if (number >= 41 && number <= 49) {
-    bgColorClass = 'bg-amber-100 text-amber-800';
-  }
-  
-  // Special styling for bonus ball
-  if (isBonus) {
-    bgColorClass = 'bg-yellow-300 text-yellow-900';
-  }
-  
-  // Glow effect for highlighted balls
-  const glowEffect = isHighlighted
-    ? 'shadow-lg shadow-primary-400/50 dark:shadow-primary-300/30 animate-pulse-glow'
-    : '';
-  
-  // Animation classes
-  const animationClass = animate ? 'animate-float' : '';
+  // Types de boules
+  const typeClasses = {
+    regular: 'bg-gradient-to-b from-indigo-500 to-indigo-700 shadow-indigo-500/50',
+    bonus: 'bg-gradient-to-b from-amber-500 to-amber-700 shadow-amber-500/50',
+    prediction: 'bg-gradient-to-b from-emerald-500 to-emerald-700 shadow-emerald-500/50'
+  };
   
   return (
-    <div
+    <div 
       className={cn(
-        'flex items-center justify-center rounded-full font-bold',
-        'border border-gray-200 dark:border-gray-700',
-        'transition-all duration-300',
-        bgColorClass,
-        sizeClasses,
-        glowEffect,
-        animationClass,
+        'rounded-full flex items-center justify-center font-bold text-white shadow-lg transform transition-all duration-300',
+        sizeClasses[size],
+        typeClasses[type],
+        isHighlighted && 'ring-2 ring-white/50 animate-pulse-glow scale-110',
         className
       )}
-      onClick={onClick}
+      style={{
+        textShadow: '0 1px 2px rgba(0,0,0,0.3)',
+        boxShadow: `
+          inset 0 -4px 8px rgba(0,0,0,0.2),
+          inset 0 2px 4px rgba(255,255,255,0.4),
+          0 8px 16px -2px rgba(0,0,0,0.2)
+        `
+      }}
     >
       {number}
     </div>
   );
-});
-
-LottoBall.displayName = 'LottoBall';
+};
 
 export default LottoBall;

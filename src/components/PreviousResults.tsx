@@ -54,11 +54,11 @@ const PreviousResults: React.FC = () => {
       const minFreq = Math.min(...Object.values(statistics.numbersFrequency));
       const normalized = (frequency - minFreq) / (maxFreq - minFreq);
       
-      if (normalized < 0.2) return 'bg-blue-100 text-blue-800';
-      if (normalized < 0.4) return 'bg-blue-200 text-blue-800';
-      if (normalized < 0.6) return 'bg-blue-300 text-blue-800';
-      if (normalized < 0.8) return 'bg-blue-400 text-blue-900';
-      return 'bg-blue-500 text-white';
+      if (normalized < 0.2) return 'bg-blue-200 text-blue-800 border-blue-300';
+      if (normalized < 0.4) return 'bg-blue-300 text-blue-800 border-blue-400';
+      if (normalized < 0.6) return 'bg-blue-400 text-blue-900 border-blue-500';
+      if (normalized < 0.8) return 'bg-blue-500 text-white border-blue-600';
+      return 'bg-blue-600 text-white border-blue-700';
     };
     
     const numbers = Array.from(
@@ -66,19 +66,23 @@ const PreviousResults: React.FC = () => {
       (_, i) => i + LOTTO_CONFIG.MIN_NUMBER
     );
     
-    return (
-      <div className="mt-6">
-        <h3 className="text-lg font-medium mb-3">Fréquence des numéros</h3>
-        <div className="grid grid-cols-7 gap-2">
+    return (              <div className="mt-8 bg-white dark:bg-gray-800 p-8 rounded-xl 
+        shadow-[0_15px_35px_-15px_rgba(0,0,0,0.3)] 
+        hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.4)] 
+        transition-all duration-300 
+        border border-gray-100 dark:border-gray-700
+        relative before:absolute before:inset-0 before:rounded-xl before:bg-gradient-to-br before:from-white/20 before:to-white/5 before:content-['']
+        dark:before:from-gray-800/20 dark:before:to-gray-900/10"
+      >              <h3 className="text-xl font-bold mb-6 text-gray-800 dark:text-gray-200">Fréquence des numéros</h3>              <div className="grid grid-cols-7 md:grid-cols-10 gap-4">
           {numbers.map(num => {
             const frequency = statistics.numbersFrequency[num] || 0;
             return (
               <div 
                 key={num}
-                className={`p-2 rounded-md flex flex-col items-center ${getColorClass(frequency)}`}
+                className={`p-3 rounded-lg flex flex-col items-center ${getColorClass(frequency)} border shadow-md transition-transform hover:scale-110 hover:shadow-lg`}
               >
-                <span className="font-bold">{num}</span>
-                <span className="text-xs">{frequency}</span>
+                <span className="font-bold text-lg">{num}</span>
+                <span className="text-xs font-medium mt-1">{frequency}</span>
               </div>
             );
           })}
@@ -109,15 +113,15 @@ const PreviousResults: React.FC = () => {
 
   return (
     <section className="py-8">
-      <Card className="max-w-4xl mx-auto p-6">
+      <Card className="max-w-4xl mx-auto p-8 card-shimmer shadow-lg">
         <div className="flex flex-col items-center">
-          <h2 className="text-3xl font-bold mb-2">Dernier tirage {LOTTO_CONFIG.GAME_NAME}</h2>
-          <p className="text-lg text-gray-600 mb-6">
+          <h2 className="text-4xl font-bold mb-3 text-center gradient-text">Dernier tirage {LOTTO_CONFIG.GAME_NAME}</h2>
+          <p className="text-lg text-gray-600 dark:text-gray-400 mb-8">
             Date du tirage: <span className="font-semibold">{formatDate(previousResult.drawDate)}</span> - 
-            Tirage #{previousResult.drawNumber}
+            Tirage <span className="font-bold bg-primary-100 dark:bg-primary-900/30 text-primary-800 dark:text-primary-300 px-2 py-1 rounded-md">#{previousResult.drawNumber}</span>
           </p>
           
-          <div className="flex flex-wrap justify-center gap-3 mb-8">
+          <div className="flex flex-wrap justify-center gap-4 mb-10">
             {previousResult.winningNumbers.map((number, index) => (
               <motion.div
                 key={index}
@@ -127,10 +131,11 @@ const PreviousResults: React.FC = () => {
                   type: "spring", 
                   stiffness: 260, 
                   damping: 20,
-                  delay: index * 0.1 
+                  delay: index * 0.15 
                 }}
+                className="filter drop-shadow-lg"
               >
-                <LottoBall number={number} />
+                <LottoBall number={number} size="lg" />
               </motion.div>
             ))}
             
@@ -142,24 +147,25 @@ const PreviousResults: React.FC = () => {
                   type: "spring", 
                   stiffness: 260, 
                   damping: 20,
-                  delay: 0.7
+                  delay: previousResult.winningNumbers.length * 0.15
                 }}
+                className="filter drop-shadow-lg"
               >
                 <div className="flex items-center">
-                  <span className="mr-2 text-gray-500">+</span>
-                  <LottoBall number={previousResult.bonusNumber} isBonus={true} />
+                  <span className="mr-3 text-2xl font-bold text-gray-500 dark:text-gray-400">+</span>
+                  <LottoBall number={previousResult.bonusNumber} isBonus={true} size="lg" />
                 </div>
               </motion.div>
             )}
           </div>
           
           <button
-            className="text-primary-600 flex items-center gap-1 hover:underline"
+            className="mt-4 py-3 px-6 bg-primary-100 dark:bg-primary-900/20 text-primary-700 dark:text-primary-300 font-medium rounded-full flex items-center gap-2 hover:bg-primary-200 dark:hover:bg-primary-900/30 transition-colors shadow-sm"
             onClick={() => setShowStats(!showStats)}
           >
-            <span>{showStats ? 'Masquer les statistiques' : 'Afficher les statistiques'}</span>
+            <span>{showStats ? 'Masquer les statistiques' : 'Afficher les statistiques détaillées'}</span>
             <svg 
-              className={`w-4 h-4 transition-transform ${showStats ? 'rotate-180' : ''}`} 
+              className={`w-5 h-5 transition-transform duration-300 ${showStats ? 'rotate-180' : ''}`} 
               fill="none" 
               stroke="currentColor" 
               viewBox="0 0 24 24"
@@ -173,35 +179,67 @@ const PreviousResults: React.FC = () => {
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
-              className="w-full mt-6"
+              className="w-full mt-8"
             >
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <h3 className="text-lg font-medium mb-3">Numéros les plus fréquents</h3>
-                  <div className="flex flex-wrap gap-2">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div className="bg-white dark:bg-gray-800 p-8 rounded-xl 
+                  shadow-[0_15px_35px_-15px_rgba(0,0,0,0.3)] 
+                  hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.4)] 
+                  transition-all duration-300 
+                  hover:translate-y-[-8px] 
+                  border border-gray-100 dark:border-gray-700
+                  relative before:absolute before:inset-0 before:rounded-xl before:bg-gradient-to-br before:from-white/20 before:to-white/5 before:content-['']
+                  dark:before:from-gray-800/20 dark:before:to-gray-900/10"
+                >
+                  <h3 className="text-xl font-bold mb-6 text-gray-800 dark:text-gray-200">Numéros les plus fréquents</h3>
+                  <div className="flex flex-wrap gap-4 justify-center">
                     {Object.entries(statistics.mostFrequentNumbers)
                       .sort((a, b) => b[1] - a[1])
                       .slice(0, 6)
-                      .map(([number, frequency]) => (
-                        <div key={number} className="flex flex-col items-center">
-                          <LottoBall number={parseInt(number)} className="mb-1" />
-                          <span className="text-xs text-gray-600">{frequency} fois</span>
-                        </div>
+                      .map(([number, frequency], index) => (
+                        <motion.div 
+                          key={number} 
+                          className="flex flex-col items-center"
+                          initial={{ scale: 0 }}
+                          animate={{ scale: 1 }}
+                          transition={{ delay: index * 0.1, type: "spring" }}
+                        >
+                          <LottoBall number={parseInt(number)} className="mb-2 shadow-lg" />
+                          <span className="text-sm font-medium px-3 py-1 bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 rounded-full shadow-sm">
+                            {frequency} fois
+                          </span>
+                        </motion.div>
                       ))}
                   </div>
                 </div>
                 
-                <div>
-                  <h3 className="text-lg font-medium mb-3">Numéros les moins fréquents</h3>
-                  <div className="flex flex-wrap gap-2">
+                <div className="bg-white dark:bg-gray-800 p-8 rounded-xl 
+                  shadow-[0_15px_35px_-15px_rgba(0,0,0,0.3)] 
+                  hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.4)] 
+                  transition-all duration-300 
+                  hover:translate-y-[-8px] 
+                  border border-gray-100 dark:border-gray-700
+                  relative before:absolute before:inset-0 before:rounded-xl before:bg-gradient-to-br before:from-white/20 before:to-white/5 before:content-['']
+                  dark:before:from-gray-800/20 dark:before:to-gray-900/10"
+                >
+                  <h3 className="text-xl font-bold mb-6 text-gray-800 dark:text-gray-200">Numéros les moins fréquents</h3>
+                  <div className="flex flex-wrap gap-4 justify-center">
                     {Object.entries(statistics.leastFrequentNumbers)
                       .sort((a, b) => a[1] - b[1])
                       .slice(0, 6)
-                      .map(([number, frequency]) => (
-                        <div key={number} className="flex flex-col items-center">
-                          <LottoBall number={parseInt(number)} className="mb-1" />
-                          <span className="text-xs text-gray-600">{frequency} fois</span>
-                        </div>
+                      .map(([number, frequency], index) => (
+                        <motion.div 
+                          key={number} 
+                          className="flex flex-col items-center"
+                          initial={{ scale: 0 }}
+                          animate={{ scale: 1 }}
+                          transition={{ delay: index * 0.1, type: "spring" }}
+                        >
+                          <LottoBall number={parseInt(number)} className="mb-2 shadow-lg" />
+                          <span className="text-sm font-medium px-3 py-1 bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300 rounded-full shadow-sm">
+                            {frequency} fois
+                          </span>
+                        </motion.div>
                       ))}
                   </div>
                 </div>

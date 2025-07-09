@@ -45,9 +45,9 @@
     "zod": "^3.25.75"
   },
   "scripts": {
-    "start": "vite",
-    "build": "vite build",
-    "dev": "vite",
+    "start": "vite --config vite.config.mjs",
+    "build": "vite build --config vite.config.mjs",
+    "dev": "vite --config vite.config.mjs",
     "test": "vitest",
     "shadcn:add": "npx shadcn@latest add"
   },

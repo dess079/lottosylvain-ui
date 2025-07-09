@@ -1,112 +1,507 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
-@layer base {
-  :root {
-    --background: 0 0% 100%;
-    --foreground: 240 10% 3.9%;
+/* Palette de couleurs futuristes tendance 2026 */
+:root {
+  /* Couleur principale: Violet cosmique */
+  --cosmic-violet: hsl(270, 80%, 60%);
+  --cosmic-violet-dark: hsl(270, 80%, 50%);
+  --cosmic-violet-light: hsl(270, 80%, 70%);
+  
+  /* Couleur secondaire: Aqua électrique */
+  --electric-aqua: hsl(180, 100%, 50%);
+  --electric-aqua-dark: hsl(180, 100%, 40%);
+  --electric-aqua-light: hsl(180, 100%, 70%);
+  
+  /* Couleur accentuation: Néon corail */
+  --neon-coral: hsl(5, 90%, 65%);
+  --neon-coral-dark: hsl(5, 90%, 55%);
+  --neon-coral-light: hsl(5, 90%, 75%);
 
-    --card: 0 0% 100%;
-    --card-foreground: 240 10% 3.9%;
+  /* Variables systèmes pour shadcn/ui */
+  --background: hsl(260, 15%, 5%);
+  --foreground: hsl(210, 20%, 98%);
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 3.9%;
+  --card: hsl(260, 15%, 10%);
+  --card-foreground: hsl(210, 20%, 98%);
 
-    --primary: 240 5.9% 10%;
-    --primary-foreground: 0 0% 98%;
+  --popover: hsl(260, 15%, 10%);
+  --popover-foreground: hsl(210, 20%, 98%);
 
-    --secondary: 240 4.8% 95.9%;
-    --secondary-foreground: 240 5.9% 10%;
+  --primary: var(--cosmic-violet);
+  --primary-foreground: hsl(0, 0%, 100%);
 
-    --muted: 240 4.8% 95.9%;
-    --muted-foreground: 240 3.8% 46.1%;
+  --secondary: var(--electric-aqua);
+  --secondary-foreground: hsl(260, 15%, 10%);
 
-    --accent: 240 4.8% 95.9%;
-    --accent-foreground: 240 5.9% 10%;
+  --muted: hsl(260, 15%, 15%);
+  --muted-foreground: hsl(210, 20%, 80%);
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
+  --accent: var(--neon-coral);
+  --accent-foreground: hsl(260, 15%, 10%);
 
-    --border: 240 5.9% 90%;
-    --input: 240 5.9% 90%;
-    --ring: 240 10% 3.9%;
+  --destructive: hsl(0, 84.2%, 60.2%);
+  --destructive-foreground: hsl(0, 0%, 98%);
 
-    --radius: 0.5rem;
-  }
-
-  .dark {
-    --background: 240 10% 3.9%;
-    --foreground: 0 0% 98%;
-
-    --card: 240 10% 3.9%;
-    --card-foreground: 0 0% 98%;
-
-    --popover: 240 10% 3.9%;
-    --popover-foreground: 0 0% 98%;
-
-    --primary: 0 0% 98%;
-    --primary-foreground: 240 5.9% 10%;
-
-    --secondary: 240 3.7% 15.9%;
-    --secondary-foreground: 0 0% 98%;
-
-    --muted: 240 3.7% 15.9%;
-    --muted-foreground: 240 5% 64.9%;
-
-    --accent: 240 3.7% 15.9%;
-    --accent-foreground: 0 0% 98%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-
-    --border: 240 3.7% 15.9%;
-    --input: 240 3.7% 15.9%;
-    --ring: 240 4.9% 83.9%;
-  }
+  --border: hsl(260, 15%, 20%);
+  --input: hsl(260, 15%, 20%);
+  --ring: var(--cosmic-violet);
+  --radius: 1rem;
 }
 
-@layer base {
-  * {
-    @apply border-border;
-  }
-  body {
-    @apply bg-background text-foreground;
-  }
+/* Mode clair alternatif */
+.light {
+  --background: hsl(260, 15%, 95%);
+  --foreground: hsl(260, 15%, 10%);
+
+  --card: hsl(260, 15%, 98%);
+  --card-foreground: hsl(260, 15%, 10%);
+
+  --popover: hsl(260, 15%, 98%);
+  --popover-foreground: hsl(260, 15%, 10%);
+
+  --primary: var(--cosmic-violet);
+  --primary-foreground: hsl(0, 0%, 100%);
+
+  --secondary: var(--electric-aqua);
+  --secondary-foreground: hsl(260, 15%, 10%);
+
+  --muted: hsl(260, 15%, 90%);
+  --muted-foreground: hsl(260, 15%, 40%);
+
+  --accent: var(--neon-coral);
+  --accent-foreground: hsl(260, 15%, 10%);
+
+  --destructive: hsl(0, 84.2%, 60.2%);
+  --destructive-foreground: hsl(0, 0%, 98%);
+
+  --border: hsl(260, 15%, 85%);
+  --input: hsl(260, 15%, 85%);
+  --ring: var(--cosmic-violet);
+}
+
+/* Styles de base */
+* {
+  border-color: var(--border);
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-feature-settings: "rlig" 1, "calt" 1;
+  background-image: 
+    radial-gradient(circle at 10% 20%, rgba(var(--cosmic-violet), 0.05) 0%, transparent 50%),
+    radial-gradient(circle at 90% 80%, rgba(var(--electric-aqua), 0.05) 0%, transparent 50%),
+    radial-gradient(circle at 50% 50%, rgba(var(--neon-coral), 0.03) 0%, transparent 80%);
+  background-attachment: fixed;
+}
+
+.light body {
+  background-image: 
+    radial-gradient(circle at 10% 20%, rgba(var(--cosmic-violet), 0.03) 0%, transparent 50%),
+    radial-gradient(circle at 90% 80%, rgba(var(--electric-aqua), 0.03) 0%, transparent 50%),
+    radial-gradient(circle at 50% 50%, rgba(var(--neon-coral), 0.02) 0%, transparent 80%);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display, system-ui);
+  letter-spacing: -0.025em;
+  background: linear-gradient(90deg, var(--cosmic-violet), var(--electric-aqua));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-weight: 700;
+}
+
+/* Barre d'outils futuriste */
+.toolbar-futuristic {
+  background: rgba(var(--background), 0.7);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(var(--cosmic-violet), 0.3);
+  border-radius: var(--radius);
+  box-shadow: 
+    0 4px 20px rgba(var(--cosmic-violet), 0.2),
+    0 0 0 1px rgba(var(--cosmic-violet), 0.1),
+    inset 0 0 0 1px rgba(var(--cosmic-violet), 0.2);
+  padding: 0.75rem;
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  position: sticky;
+  top: 1rem;
+  z-index: 50;
+}
+
+.toolbar-futuristic::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: calc(var(--radius) + 1px);
+  padding: 1px;
+  background: linear-gradient(45deg, transparent, var(--cosmic-violet), var(--electric-aqua), transparent);
+  -webkit-mask: linear-gradient(#000, #000) content-box, linear-gradient(#000, #000);
+  mask: linear-gradient(#000, #000) content-box, linear-gradient(#000, #000);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
 }
 
 /* Classes personnalisées */
 .container-2025 {
-  @apply px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  max-width: 80rem;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .glass {
-  @apply bg-white/10 backdrop-blur-md border border-white/30 dark:bg-gray-900/20 dark:border-white/5;
+  background-color: rgba(var(--card), 0.1);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(var(--cosmic-violet), 0.1);
+  box-shadow: 
+    0 10px 25px -5px rgba(0, 0, 0, 0.1), 
+    0 10px 10px -5px rgba(0, 0, 0, 0.04),
+    0 0 0 1px rgba(var(--cosmic-violet), 0.1);
+}
+
+.light .glass {
+  background-color: rgba(var(--card), 0.5);
+  border-color: rgba(var(--cosmic-violet), 0.05);
+}
+
+/* Espacement entre sections */
+section {
+  margin-bottom: 5rem;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  border-radius: var(--radius);
+  position: relative;
+  overflow: hidden;
+}
+
+section::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -50%;
+  width: 200%;
+  height: 1px;
+  background: linear-gradient(90deg, 
+    transparent, 
+    rgba(var(--cosmic-violet), 0.2), 
+    var(--electric-aqua), 
+    rgba(var(--cosmic-violet), 0.2),
+    transparent);
+}
+
+section::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: -50%;
+  width: 200%;
+  height: 1px;
+  background: linear-gradient(90deg, 
+    transparent, 
+    rgba(var(--cosmic-violet), 0.2), 
+    var(--neon-coral), 
+    rgba(var(--cosmic-violet), 0.2),
+    transparent);
 }
 
 /* Animation lottoBall */
 @keyframes pulse-glow {
   0%, 100% {
-    box-shadow: 0 0 8px 0 rgba(99, 102, 241, 0.6);
+    box-shadow: 
+      0 0 18px 2px rgba(var(--cosmic-violet), 0.7),
+      0 0 5px 1px rgba(var(--electric-aqua), 0.5),
+      inset 0 0 10px rgba(255, 255, 255, 0.5);
   }
   50% {
-    box-shadow: 0 0 16px 2px rgba(99, 102, 241, 0.8);
+    box-shadow: 
+      0 0 25px 8px rgba(var(--cosmic-violet), 0.9),
+      0 0 10px 2px rgba(var(--electric-aqua), 0.7),
+      inset 0 0 15px rgba(255, 255, 255, 0.7);
   }
 }
 
 .animate-pulse-glow {
-  animation: pulse-glow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  animation: pulse-glow 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Effet 3D des boules de lotto */
+.lotto-ball-3d {
+  background: linear-gradient(135deg, var(--cosmic-violet-light), var(--cosmic-violet-dark));
+  color: white;
+  font-weight: bold;
+  border-radius: 50%;
+  position: relative;
+  transform-style: preserve-3d;
+  perspective: 500px;
+  overflow: visible;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 
+    0 5px 15px rgba(0, 0, 0, 0.3),
+    inset 0 5px 10px rgba(255, 255, 255, 0.5),
+    inset 0 -5px 10px rgba(0, 0, 0, 0.3);
+}
+
+.lotto-ball-3d::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 50%;
+  background: linear-gradient(315deg, transparent 30%, rgba(255, 255, 255, 0.4) 40%, rgba(255, 255, 255, 0.7) 50%, transparent 70%);
+  z-index: 1;
+  pointer-events: none;
+}
+
+.lotto-ball-3d::after {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  top: 5%;
+  left: 5%;
+  background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.3), transparent 70%);
+  z-index: 1;
+  pointer-events: none;
+  filter: blur(2px);
+}
+
+.lotto-ball-3d:hover {
+  transform: translateY(-5px) rotateX(10deg) rotateY(-10deg);
+  box-shadow: 
+    0 10px 20px rgba(0, 0, 0, 0.4),
+    inset 0 5px 10px rgba(255, 255, 255, 0.5),
+    inset 0 -5px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* Variantes de couleurs pour les boules de lotto */
+.lotto-ball-3d-regular {
+  background: linear-gradient(135deg, var(--cosmic-violet-light), var(--cosmic-violet-dark));
+}
+
+.lotto-ball-3d-bonus {
+  background: linear-gradient(135deg, var(--neon-coral-light), var(--neon-coral-dark));
+}
+
+.lotto-ball-3d-selected {
+  background: linear-gradient(135deg, var(--electric-aqua-light), var(--electric-aqua-dark));
+}
+
+.lotto-ball-3d-excluded {
+  background: linear-gradient(135deg, #555, #333);
+  opacity: 0.5;
+}
+
+/* Nouvelles animations et styles */
+.card-hover-effect {
+  transition: all 0.3s ease;
+  transform: translateZ(0);
+  position: relative;
+  overflow: hidden;
+}
+
+.card-hover-effect:hover {
+  box-shadow: 
+    0 20px 30px -15px rgba(0, 0, 0, 0.3),
+    0 0 0 1px rgba(var(--cosmic-violet), 0.2),
+    0 0 20px rgba(var(--cosmic-violet), 0.2);
+  transform: translateY(-5px) translateZ(0);
+}
+
+.futuristic-card {
+  background: rgba(var(--card), 0.2);
+  backdrop-filter: blur(12px);
+  border-radius: calc(var(--radius) + 0.5rem);
+  padding: 1.5rem;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(var(--cosmic-violet), 0.1);
+  box-shadow: 
+    0 10px 30px -5px rgba(0, 0, 0, 0.1),
+    0 0 0 1px rgba(var(--cosmic-violet), 0.05);
+  transition: all 0.3s ease;
+}
+
+.futuristic-card::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: calc(var(--radius) + 0.5rem + 1px);
+  padding: 1px;
+  background: linear-gradient(45deg, 
+    transparent, 
+    rgba(var(--cosmic-violet), 0.3), 
+    rgba(var(--electric-aqua), 0.3), 
+    transparent);
+  -webkit-mask: linear-gradient(#000, #000) content-box, linear-gradient(#000, #000);
+  mask: linear-gradient(#000, #000) content-box, linear-gradient(#000, #000);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0.5;
+  transition: opacity 0.3s ease;
+}
+
+.futuristic-card:hover::before {
+  opacity: 1;
+}
+
+.gradient-text {
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-image: linear-gradient(to right, var(--cosmic-violet), var(--electric-aqua));
+}
+
+.accent-gradient-text {
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-image: linear-gradient(to right, var(--electric-aqua), var(--neon-coral));
+}
+
+.card-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+
+.card-shimmer::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    to right,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.05) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  transform: rotate(30deg);
+  animation: shimmer 6s infinite linear;
+  pointer-events: none;
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%) rotate(30deg);
+  }
+  100% {
+    transform: translateX(100%) rotate(30deg);
+  }
 }
 
 @keyframes float {
   0%, 100% {
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
   }
   50% {
-    transform: translateY(-8px);
+    transform: translateY(-8px) scale(1.01);
   }
 }
 
 .animate-float {
   animation: float 6s ease-in-out infinite;
+}
+
+/* Effet 3D pour les cartes */
+.card-3d-effect {
+  transform-style: preserve-3d;
+  perspective: 1000px;
+  transition: all 0.3s ease;
+}
+
+.card-3d-effect:hover {
+  transform: translateY(-10px) rotateX(2deg) rotateY(2deg);
+  box-shadow:
+    0 20px 30px -10px rgba(0, 0, 0, 0.3),
+    0 0 0 1px rgba(var(--cosmic-violet), 0.1),
+    0 0 20px rgba(var(--cosmic-violet), 0.2);
+}
+
+/* Grille de nombres futuriste */
+.futuristic-number-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(3.5rem, 1fr));
+  gap: 0.75rem;
+  padding: 1rem;
+  border-radius: var(--radius);
+  background: rgba(var(--card), 0.2);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(var(--cosmic-violet), 0.1);
+}
+
+/* Heatmap futuriste */
+.heatmap-cell {
+  border-radius: 0.5rem;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.heatmap-cell::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, transparent, rgba(255, 255, 255, 0.1));
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.heatmap-cell:hover::before {
+  opacity: 1;
+}
+
+/* Barre de confiance améliorée */
+.confidence-bar-container {
+  height: 0.75rem;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 9999px;
+  overflow: hidden;
+  position: relative;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.confidence-bar {
+  height: 100%;
+  border-radius: 9999px;
+  background: linear-gradient(90deg, var(--cosmic-violet), var(--electric-aqua));
+  transition: width 1s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.confidence-bar::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.15) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  animation: shimmer-bar 2s infinite linear;
+  z-index: 1;
+}
+
+@keyframes shimmer-bar {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
 }

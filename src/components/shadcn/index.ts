@@ -4,6 +4,10 @@
 
 // Composants shadcn/ui
 export { default as LottoBall } from './ui/lotto-ball';
+export { default as ThemeToggle } from './ui/theme-toggle';
+export { default as FuturisticToolbar } from './ui/futuristic-toolbar';
+export { default as FuturisticDataDisplay } from './ui/futuristic-data-display';
+export { default as FuturisticChart } from './ui/futuristic-chart';
 export { Button, buttonVariants } from './ui/button';
 export {
   Card,
@@ -113,6 +117,5 @@ export {
   RadioGroup,
   RadioGroupItem
 } from './ui/radio-group';
-export { default as ThemeToggle } from './ui/theme-toggle';
 
 // À mesure que vous ajoutez d'autres composants shadcn/ui, vous pouvez les exporter ici

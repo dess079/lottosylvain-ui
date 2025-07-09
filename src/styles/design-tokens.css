@@ -242,6 +242,24 @@
   --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
 }
 
+/* 
+ * COULEURS SPÉCIALES 2026
+ * Palette de couleurs tendance pour 2026
+ */
+:root {
+  --cosmic-violet: #a855f7;
+  --cosmic-violet-light: #c084fc;
+  --cosmic-violet-dark: #7e22ce;
+  
+  --electric-aqua: #06b6d4;
+  --electric-aqua-light: #22d3ee;
+  --electric-aqua-dark: #0891b2;
+  
+  --neon-coral: #f43f5e;
+  --neon-coral-light: #fb7185;
+  --neon-coral-dark: #be123c;
+}
+
 /* Préférences de réduction de mouvement */
 @media (prefers-reduced-motion: reduce) {
   * {
