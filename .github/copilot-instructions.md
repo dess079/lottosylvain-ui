@@ -10,6 +10,11 @@ The `essais` directory of lottoquebec project contains the API that exploits the
 ## Always start your response
 - Always start your response with the name of the project follow by a line space
 
+## A retenir
+- Jamais au grand jamais utiliser de script pour démarrer le projet.à
+- Toujours utiliser les commandes npm ou yarn pour démarrer le projet.
+- Jamais faire la création de données fictives dans le projet, si tu en vois tu dois les supprimer.
+
 ## Coding Preferences
 - Use TypeScript for type safety
 - Follow ReactJS 19 best practices and hooks patterns

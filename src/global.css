@@ -431,13 +431,19 @@ section::after {
 /* Grille de nombres futuriste */
 .futuristic-number-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(3.5rem, 1fr));
-  gap: 0.75rem;
-  padding: 1rem;
+  grid-template-columns: repeat(7, minmax(3.5rem, 1fr));
+  gap: 3rem 3rem;
+  padding: 3rem;
   border-radius: var(--radius);
   background: rgba(var(--card), 0.2);
   backdrop-filter: blur(10px);
   border: 1px solid rgba(var(--cosmic-violet), 0.1);
+  justify-items: center;
+  align-items: center;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  overflow-x: auto;
 }
 
 /* Heatmap futuriste */

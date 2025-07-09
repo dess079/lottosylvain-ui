@@ -6,12 +6,14 @@
  * API configuration
  */
 export const API_CONFIG = {
-  BASE_URL: '/api/essais',
+  BASE_URL: 'http://localhost:8090/api/essais',
   ENDPOINTS: {
     PREVIOUS_RESULTS: '/lotto-matrix/complete-analysis',
     PREDICTIONS: '/lotto-matrix/recommendations',
     STATISTICS: '/lotto-matrix/stats',
-    CUSTOM_PREDICTIONS: '/lotto-matrix/recommend'
+    CUSTOM_PREDICTIONS: '/lotto-matrix/recommend',
+    DRAW_COUNT: '/lotto-matrix/draw-count', // Endpoint spécifique pour le nombre de tirages
+    DATA_STATS: '/lotto-matrix/data-stats' // Endpoint pour les statistiques de données
   }
 };
 

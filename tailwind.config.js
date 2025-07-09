@@ -145,6 +145,60 @@ module.exports = {
           900: '#171717',
           950: '#0a0a0a',
         },
+        // Nouvelles couleurs futuristes 2026
+        'cosmic-violet': {
+          DEFAULT: '#a855f7',
+          light: '#c084fc',
+          dark: '#7e22ce',
+          50: '#faf5ff',
+          100: '#f3e8ff',
+          200: '#e9d5ff',
+          300: '#d8b4fe',
+          400: '#c084fc',
+          500: '#a855f7',
+          600: '#9333ea',
+          700: '#7e22ce',
+          800: '#6b21a8',
+          900: '#581c87',
+          950: '#3b0764',
+        },
+        'electric-aqua': {
+          DEFAULT: '#06b6d4',
+          light: '#22d3ee',
+          dark: '#0891b2',
+          50: '#ecfeff',
+          100: '#cffafe',
+          200: '#a5f3fc',
+          300: '#67e8f9',
+          400: '#22d3ee',
+          500: '#06b6d4',
+          600: '#0891b2',
+          700: '#0e7490',
+          800: '#155e75',
+          900: '#164e63',
+          950: '#083344',
+        },
+        'neon-coral': {
+          DEFAULT: '#f43f5e',
+          light: '#fb7185',
+          dark: '#be123c',
+          50: '#fff1f2',
+          100: '#ffe4e6',
+          200: '#fecdd3',
+          300: '#fda4af',
+          400: '#fb7185',
+          500: '#f43f5e',
+          600: '#e11d48',
+          700: '#be123c',
+          800: '#9f1239',
+          900: '#881337',
+          950: '#4c0519',
+        },
+        'holographic': {
+          DEFAULT: 'rgba(255, 255, 255, 0.2)',
+          light: 'rgba(255, 255, 255, 0.4)',
+          dark: 'rgba(255, 255, 255, 0.1)',
+        },
       },
       fontFamily: {
         sans: ['Space Grotesk', 'Inter', 'sans-serif'],
@@ -184,6 +238,11 @@ module.exports = {
         'soft': '0 4px 12px rgba(0, 0, 0, 0.08)',
         'dark-sm': '0 1px 2px rgba(255, 255, 255, 0.03)',
         'dark': '0 1px 3px rgba(255, 255, 255, 0.02), 0 1px 2px rgba(255, 255, 255, 0.03)',
+        'lotto-ball': '0 10px 20px -4px rgba(0, 0, 0, 0.3), 0 0 15px rgba(0, 0, 0, 0.2), inset 0 -8px 16px rgba(0, 0, 0, 0.3), inset 0 4px 8px rgba(255, 255, 255, 0.4)',
+        'lotto-ball-hover': '0 15px 30px -6px rgba(0, 0, 0, 0.35), 0 0 20px rgba(255, 255, 255, 0.5), inset 0 -10px 20px rgba(0, 0, 0, 0.4), inset 0 6px 12px rgba(255, 255, 255, 0.6)',
+        'glow-cosmic': '0 0 15px 5px rgba(168, 85, 247, 0.6)',
+        'glow-electric': '0 0 15px 5px rgba(6, 182, 212, 0.6)',
+        'glow-neon': '0 0 15px 5px rgba(244, 63, 94, 0.6)',
       },
       borderRadius: {
         'none': '0',
@@ -216,7 +275,10 @@ module.exports = {
         'bounce-slow': 'bounce 3s infinite',
         'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
         'float': 'float 6s ease-in-out infinite',
+        'float-slow': 'float 8s ease-in-out infinite',
+        'float-fast': 'float 4s ease-in-out infinite',
         'glow': 'glow 2s ease-in-out infinite alternate',
+        'pulse-glow': 'pulseGlow 2s ease-in-out infinite alternate',
         'shimmer': 'shimmer 2s linear infinite',
         'spin-slow': 'spin 4s linear infinite',
         'expand': 'expand 0.3s ease-out',
@@ -226,6 +288,17 @@ module.exports = {
         'slide-down': 'slideDown 0.4s ease-out',
         'slide-in': 'slideIn 0.4s ease-out',
         'scale': 'scale 0.3s ease-in-out',
+        'perspective-rotate': 'perspectiveRotate 6s ease-in-out infinite',
+        '3d-bounce': 'threeDimensionalBounce 2s ease-in-out infinite',
+        'color-cycle': 'colorCycle 8s linear infinite',
+        'appear': 'appear 0.4s cubic-bezier(0.26, 0.53, 0.74, 1.48)',
+        // Nouvelles animations pour les boules de lotto
+        'float-ball': 'floatBall 6s ease-in-out infinite',
+        'pulse-glow-cosmic': 'pulseGlowCosmic 2.5s ease-in-out infinite',
+        'pulse-glow-electric': 'pulseGlowElectric 2.5s ease-in-out infinite',
+        'pulse-glow-neon': 'pulseGlowNeon 2.5s ease-in-out infinite',
+        'rotate-3d': 'rotate3d 8s linear infinite',
+        'appear-ball': 'appearBall 0.5s cubic-bezier(0.26, 0.53, 0.74, 1.48) forwards',
       },
       keyframes: {
         float: {
@@ -235,6 +308,11 @@ module.exports = {
         glow: {
           '0%': { boxShadow: '0 0 5px rgba(99, 102, 241, 0.5)' },
           '100%': { boxShadow: '0 0 20px rgba(99, 102, 241, 0.8)' },
+        },
+        pulseGlow: {
+          '0%, 100%': { boxShadow: '0 0 5px rgba(99, 102, 241, 0.5)', opacity: '0.8' },
+          '50%': { boxShadow: '0 0 20px rgba(99, 102, 241, 0.8)', opacity: '1' },
+          '100%': { boxShadow: '0 0 5px rgba(99, 102, 241, 0.5)', opacity: '0.8' },
         },
         shimmer: {
           '0%': { backgroundPosition: '-1000px 0' },
@@ -268,6 +346,63 @@ module.exports = {
           '0%': { transform: 'scale(0.95)' },
           '100%': { transform: 'scale(1)' },
         },
+        perspectiveRotate: {
+          '0%': { transform: 'perspective(1000px) rotateY(0deg)' },
+          '50%': { transform: 'perspective(1000px) rotateY(15deg)' },
+          '100%': { transform: 'perspective(1000px) rotateY(0deg)' },
+        },
+        threeDimensionalBounce: {
+          '0%, 100%': { 
+            transform: 'translateY(0) scale(1)',
+            boxShadow: '0 10px 20px -4px rgba(0, 0, 0, 0.3)'
+          },
+          '50%': { 
+            transform: 'translateY(-15px) scale(1.05)',
+            boxShadow: '0 20px 30px -8px rgba(0, 0, 0, 0.2)'
+          }
+        },
+        colorCycle: {
+          '0%, 100%': { filter: 'hue-rotate(0deg)' },
+          '50%': { filter: 'hue-rotate(30deg)' }
+        },
+        appear: {
+          '0%': { 
+            transform: 'scale(0) rotate(180deg)',
+            opacity: '0'
+          },
+          '100%': { 
+            transform: 'scale(1) rotate(0deg)',
+            opacity: '1'
+          }
+        },
+        // Nouvelles animations pour les boules de lotto
+        floatBall: {
+          '0%, 100%': { transform: 'translateY(0) rotate(0deg)' },
+          '25%': { transform: 'translateY(-8px) rotate(2deg)' },
+          '50%': { transform: 'translateY(0) rotate(0deg)' },
+          '75%': { transform: 'translateY(8px) rotate(-2deg)' },
+        },
+        pulseGlowCosmic: {
+          '0%, 100%': { boxShadow: '0 0 10px 2px rgba(168, 85, 247, 0.4)' },
+          '50%': { boxShadow: '0 0 25px 8px rgba(168, 85, 247, 0.7)' },
+        },
+        pulseGlowElectric: {
+          '0%, 100%': { boxShadow: '0 0 10px 2px rgba(6, 182, 212, 0.4)' },
+          '50%': { boxShadow: '0 0 25px 8px rgba(6, 182, 212, 0.7)' },
+        },
+        pulseGlowNeon: {
+          '0%, 100%': { boxShadow: '0 0 10px 2px rgba(244, 63, 94, 0.4)' },
+          '50%': { boxShadow: '0 0 25px 8px rgba(244, 63, 94, 0.7)' },
+        },
+        rotate3d: {
+          '0%': { transform: 'rotateY(0deg) rotateX(0deg)' },
+          '50%': { transform: 'rotateY(180deg) rotateX(10deg)' },
+          '100%': { transform: 'rotateY(360deg) rotateX(0deg)' },
+        },
+        appearBall: {
+          '0%': { transform: 'scale(0.5) rotateY(180deg)', opacity: '0', filter: 'blur(10px)' },
+          '100%': { transform: 'scale(1) rotateY(0deg)', opacity: '1', filter: 'blur(0)' },
+        }
       },
       backdropBlur: {
         xs: '2px',
@@ -334,6 +469,22 @@ module.exports = {
         '95': '0.95',
         '100': '1',
       },
+      perspective: {
+        'none': 'none',
+        'sm': '400px',
+        'md': '600px',
+        'lg': '800px',
+        'xl': '1000px',
+        '2xl': '1200px',
+      },
+      transformStyle: {
+        'flat': 'flat',
+        'preserve-3d': 'preserve-3d',
+      },
+      backfaceVisibility: {
+        'visible': 'visible',
+        'hidden': 'hidden',
+      },
     },
   },
   plugins: [
@@ -354,9 +505,33 @@ module.exports = {
     'animate-fade-in',
     'animate-slide-up',
     'animate-pulse',
+    'animate-float',
+    'animate-pulse-glow',
+    'animate-3d-bounce',
+    'animate-appear',
+    // Nouvelles animations pour les boules de lotto
+    'animate-float-ball',
+    'animate-pulse-glow-cosmic',
+    'animate-pulse-glow-electric',
+    'animate-pulse-glow-neon',
+    'animate-rotate-3d',
+    'animate-appear-ball',
+    // Classes de perspective et 3D
+    'perspective-500',
+    'perspective-1000',
+    'perspective-1500',
+    'perspective-2000',
+    'transform-style-preserve-3d',
+    'backface-visibility-hidden',
     // Classes pour l'accessibilité
     'sr-only',
     'focus-visible:ring-2',
     'focus-visible:ring-primary-500',
+    // Classes pour les boules de lotto
+    'shadow-lotto-ball',
+    'shadow-lotto-ball-hover',
+    'shadow-glow-cosmic',
+    'shadow-glow-electric',
+    'shadow-glow-neon',
   ],
 }
