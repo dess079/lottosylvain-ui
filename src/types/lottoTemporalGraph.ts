@@ -21,6 +21,9 @@ export interface TemporalDataPoint {
   category: string;
   momentum: number;
   volatility: number;
+  x: number; // Coordonnée X
+  y: number; // Coordonnée Y
+  size_score: number; // Taille du point
 }
 
 export interface NumberCluster {

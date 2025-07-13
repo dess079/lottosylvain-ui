@@ -1,15 +1,7 @@
+import { OrbitControls, PointMaterial, Points } from '@react-three/drei';
+import { Canvas } from '@react-three/fiber';
 import React, { useState } from 'react';
-import {
-  ResponsiveContainer,
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  Tooltip,
-  Legend,
-  CartesianGrid,
-} from 'recharts';
-import { LottoTemporalGraphData, TemporalDataPoint, TemporalGraphResponse } from '../types/lottoTemporalGraph';
+import { LottoTemporalGraphData, TemporalGraphResponse } from '../types/lottoTemporalGraph';
 import './LottoTemporalGraphScreen.css';
 
 /**
@@ -41,12 +33,16 @@ const LottoTemporalGraphScreen: React.FC = () => {
       if (!response.ok) throw new Error('Erreur lors de la récupération des données');
       const json: TemporalGraphResponse = await response.json();
       console.log('Données récupérées:', json);
+
       if (json && json.graphData) {
+        console.debug('GraphData structure:', json.graphData);
         setData(json.graphData);
       } else {
+        console.error('Format de données inattendu:', json);
         setError('Format de données inattendu.');
       }
     } catch (e: any) {
+      console.error('Erreur lors de la récupération des données:', e);
       setError(e.message || 'Erreur inconnue');
     } finally {
       setLoading(false);
@@ -54,21 +50,23 @@ const LottoTemporalGraphScreen: React.FC = () => {
   };
 
   /**
-   * Filtre les données pour le numéro sélectionné (ou tous si null)
+   * Prépare les données pour le nuage de points 3D avec des coordonnées normalisées
    */
-  /**
-   * Retourne les données filtrées pour le graphique, ou [] si données invalides
-   */
-  /**
-   * Retourne les données filtrées pour le graphique, ou [] si données invalides
-   */
-  const getChartData = (): TemporalDataPoint[] => {
-    if (!data || !Array.isArray(data.timelineData)) {
+  const get3DChartData = (): { x: number; y: number; z: number; size: number }[] => {
+    if (!data || !Array.isArray(data.timelineData) || data.timelineData.length === 0) {
+      console.warn('Aucune donnée disponible pour le graphique:', data);
       return [];
     }
-    return data.timelineData.filter(
-      (d) => selectedNumber == null || d.number === selectedNumber
-    );
+
+    console.debug('TimelineData for 3D chart:', data.timelineData);
+
+    return data.timelineData
+      .map((d) => ({
+        x: d.x,
+        y: d.y,
+        z: d.size_score, // Utilisation de size_score comme z pour la taille
+        size: d.size_score
+      }));
   };
 
   return (
@@ -106,57 +104,22 @@ const LottoTemporalGraphScreen: React.FC = () => {
 
       {error && <div className="error">{error}</div>}
 
-      {/* Affichage du graphique si données valides */}
+      {/* Affichage du nuage de points 3D si données valides */}
       {data && Array.isArray(data.timelineData) ? (
-        <>
-          <div className="number-select">
-            <label>
-              Numéro :
-              <select
-                value={selectedNumber ?? ''}
-                onChange={(e) =>
-                  setSelectedNumber(e.target.value ? Number(e.target.value) : null)
-                }
-              >
-                <option value="">Tous</option>
-                {[...new Set(data.timelineData.map((d) => d.number))].map((num) => {
-                  const n = Number(num);
-                  return (
-                    <option key={n} value={n}>
-                      {n}
-                    </option>
-                  );
-                })}
-              </select>
-            </label>
-          </div>
-          <ResponsiveContainer width="100%" height={400}>
-            <LineChart data={getChartData()}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="date" tickFormatter={(d: string) => d.slice(0, 7)} />
-              <YAxis yAxisId="left" label={{ value: 'Fréquence', angle: -90, position: 'insideLeft' }} />
-              <YAxis yAxisId="right" orientation="right" label={{ value: 'Score priorité', angle: 90, position: 'insideRight' }} />
-              <Tooltip />
-              <Legend />
-              <Line
-                yAxisId="left"
-                type="monotone"
-                dataKey="frequency"
-                stroke="#1976d2"
-                name="Fréquence"
-                dot={false}
-              />
-              <Line
-                yAxisId="right"
-                type="monotone"
-                dataKey="priorityScore"
-                stroke="#ff9800"
-                name="Score priorité"
-                dot={false}
-              />
-            </LineChart>
-          </ResponsiveContainer>
-        </>
+        <Canvas style={{ height: '500px', width: '100%' }} camera={{ position: [50, 50, 100], fov: 50 }}>
+          <OrbitControls enableZoom={true} maxDistance={200} minDistance={5} />
+          <ambientLight intensity={0.5} />
+          <pointLight position={[10, 10, 10]} />
+          <Points>
+            <PointMaterial size={0.5} color="#1976d2" />
+            {get3DChartData().map((point, index) => (
+              <mesh key={index} position={[point.x, point.y, point.z]}>
+                <sphereGeometry args={[point.size, 16, 16]} />
+                <meshStandardMaterial color="#1976d2" />
+              </mesh>
+            ))}
+          </Points>
+        </Canvas>
       ) : data ? (
         <div className="error">Format de données inattendu. Impossible d'afficher le graphique.</div>
       ) : null}

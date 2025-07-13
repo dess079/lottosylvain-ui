@@ -3,7 +3,7 @@ import LottoTemporalGraphScreen from './components/LottoTemporalGraphScreen';
 import { FuturisticToolbar, LottoBall } from './components/shadcn';
 import { fetchAIRecommendation, fetchPreviousResults } from './services/api';
 import { FooterSection } from './components/FooterSection';
-import type { PredictionData, LottoDraw } from './types';
+import type { PredictionData, PreviousResult } from './types';
 
 /**
  * Page principale montrant uniquement la prédiction basée sur l'IA
@@ -14,7 +14,7 @@ const App: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   // Ajout pour la précédente tirage
-  const [previousDraw, setPreviousDraw] = useState<LottoDraw | null>(null);
+  const [previousDraw, setPreviousDraw] = useState<PreviousResult | null>(null);
   const [drawError, setDrawError] = useState<string | null>(null);
   const [drawLoading, setDrawLoading] = useState<boolean>(true);
 
@@ -41,8 +41,11 @@ const App: React.FC = () => {
       try {
         setDrawLoading(true);
         setDrawError(null);
-        const draw = await fetchPreviousResults();
-        setPreviousDraw(draw);
+        const previousResult: PreviousResult = await fetchPreviousResults();
+
+        console.info('Données du dernier tirage récupérées:', previousResult);
+
+        setPreviousDraw(previousResult);
       } catch (err) {
         setDrawError(err instanceof Error ? err.message : 'Erreur lors de la récupération du dernier tirage');
       } finally {
@@ -57,6 +60,34 @@ const App: React.FC = () => {
       {/* Barre d'outils futuriste */}
       <FuturisticToolbar />
       <main className="container-2025 py-8 flex-grow">
+        {/* Section précédente tirage */}
+        <section className="mt-16">
+          <h2 className="text-2xl font-semibold mb-3">Dernier tirage officiel</h2>
+          {drawLoading && (
+            <p className="text-center text-base">Chargement du dernier tirage...</p>
+          )}
+          {drawError && (
+            <div className="mb-4 p-3 bg-red-500/10 border border-red-500/30 rounded-lg">
+              <span className="text-red-500">{drawError}</span>
+            </div>
+          )}
+          {!drawLoading && previousDraw && (
+            <div className="flex flex-col items-center gap-2">
+              <div className="flex flex-wrap justify-center gap-4 mb-2">
+                {previousDraw.drawResult.map((num, idx) => (
+                  <LottoBall key={idx} number={num} size="md" type="regular" />
+                ))}
+                {previousDraw.bonusNumber !== undefined && (
+                  <LottoBall number={previousDraw.bonusNumber} size="md" type="bonus" />
+                )}
+              </div>
+              <div className="text-sm opacity-70">
+                Tirage en date du {previousDraw.previousResultDate}
+              </div>
+            </div>
+          )}
+        </section>
+
         {/* Accès au graphique temporel */}
         <section className="mb-12">
           <h2 className="text-2xl font-semibold mb-4">Graphique temporel Lotto 6/49</h2>
@@ -94,34 +125,6 @@ const App: React.FC = () => {
         {isLoading && (
           <p className="text-center text-lg">Chargement des prédictions IA...</p>
         )}
-
-        {/* Section précédente tirage */}
-        <section className="mt-16">
-          <h2 className="text-2xl font-semibold mb-3">Dernier tirage officiel</h2>
-          {drawLoading && (
-            <p className="text-center text-base">Chargement du dernier tirage...</p>
-          )}
-          {drawError && (
-            <div className="mb-4 p-3 bg-red-500/10 border border-red-500/30 rounded-lg">
-              <span className="text-red-500">{drawError}</span>
-            </div>
-          )}
-          {!drawLoading && previousDraw && (
-            <div className="flex flex-col items-center gap-2">
-              <div className="flex flex-wrap justify-center gap-4 mb-2">
-                {previousDraw.winningNumbers.map((num, idx) => (
-                  <LottoBall key={idx} number={num} size="md" type="default" />
-                ))}
-                {previousDraw.bonusNumber !== undefined && (
-                  <LottoBall number={previousDraw.bonusNumber} size="md" type="bonus" />
-                )}
-              </div>
-              <div className="text-sm opacity-70">
-                Tirage #{previousDraw.drawNumber} &middot; {previousDraw.drawDate}
-              </div>
-            </div>
-          )}
-        </section>
       </main>
       <FooterSection />
     </div>

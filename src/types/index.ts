@@ -12,6 +12,12 @@ export interface LottoDraw {
   bonusNumber?: number;
 }
 
+export interface PreviousResult {
+  previousResultDate: string; // Date du tirage, parsed using date-fns
+  drawResult: number[]; // Numéros gagnants
+  bonusNumber: number;
+}
+
 /**
  * Represents a prediction for a future lottery draw
  */

@@ -1,5 +1,5 @@
-import { API_CONFIG, LOTTO_CONFIG } from '../config';
-import type { LottoDraw, PredictionData, DrawStatistics, CustomPredictionParams } from '../types';
+import { API_CONFIG } from '../config';
+import type { CustomPredictionParams, DrawStatistics, PredictionData, PreviousResult } from '../types';
 
 /**
  * Base API URL for all requests
@@ -9,53 +9,57 @@ const API_BASE_URL = API_CONFIG.BASE_URL;
 /**
  * Fetches previous lottery draw results
  */
-export async function fetchPreviousResults(): Promise<LottoDraw> {
+export async function fetchPreviousResults(): Promise<PreviousResult> {
   try {
-    const response = await fetch(`${API_BASE_URL}${API_CONFIG.ENDPOINTS.PREVIOUS_RESULTS}`);
+    console.info(
+      'fetchPreviousResults: URL utilisée',
+      `${API_BASE_URL}${API_CONFIG.ENDPOINTS.PREVIOUS_RESULTS}`
+    );
+
+    const response = await fetch(
+      `${API_BASE_URL}${API_CONFIG.ENDPOINTS.PREVIOUS_RESULTS}`
+    );
     if (!response.ok) {
-      throw new Error('Failed to fetch previous results');
-    }
-    const data = await response.json();
-
-    // Log pour debug format
-    console.debug('fetchPreviousResults: API response', data);
-
-    // Format 1: { latestDraw: {...} }
-    if (data && data.latestDraw) {
-      const d = data.latestDraw;
-      return {
-        drawDate: d.drawDate,
-        drawNumber: d.drawNumber,
-        winningNumbers: d.numbers ?? d.winningNumbers,
-        bonusNumber: d.bonusNumber
-      };
-    }
-    // Format 2: { drawDate, drawNumber, numbers, bonusNumber }
-    if (data && data.drawDate && data.drawNumber && (data.numbers || data.winningNumbers)) {
-      return {
-        drawDate: data.drawDate,
-        drawNumber: data.drawNumber,
-        winningNumbers: data.numbers ?? data.winningNumbers,
-        bonusNumber: data.bonusNumber
-      };
-    }
-    // Format 3: Tableau [{...}]
-    if (Array.isArray(data) && data.length > 0) {
-      const d = data[0];
-      if (d.drawDate && d.drawNumber && (d.numbers || d.winningNumbers)) {
-        return {
-          drawDate: d.drawDate,
-          drawNumber: d.drawNumber,
-          winningNumbers: d.numbers ?? d.winningNumbers,
-          bonusNumber: d.bonusNumber
-        };
-      }
+      console.error(
+        `fetchPreviousResults: Failed with status ${response.status} - ${response.statusText}`
+      );
+      throw new Error(
+        `Failed to fetch previous results. Status: ${response.status} - ${response.statusText}`
+      );
     }
 
-    throw new Error('Invalid data format from API');
+    console.info('fetchPreviousResults: Response received, parsing JSON', response);
+    const rawData = await response.json();
+
+    // Transform the API response to match the expected type
+    const data: PreviousResult = {
+      previousResultDate: rawData.previousResultDate, // Map to expected field
+      drawResult: rawData.resultNumbers, // Map to expected field
+      bonusNumber: rawData.bonusNumber,
+    };
+
+    // Validate the transformed data
+    if (
+      !data ||
+      typeof data.previousResultDate !== 'string' ||
+      !Array.isArray(data.drawResult) ||
+      typeof data.bonusNumber !== 'number'
+    ) {
+      console.error('fetchPreviousResults: Invalid data format after transformation', data);
+      throw new Error('Invalid data format from API');
+    }
+
+    console.info('fetchPreviousResults: Valid data received after transformation', data);
+    return data;
   } catch (error) {
-    console.error('Error fetching previous results:', error);
-    throw new Error('Le service de résultats précédents n\'est pas disponible actuellement');
+    if (error instanceof TypeError) {
+      console.error('fetchPreviousResults: Network error or server unreachable:', error);
+    } else {
+      console.error('fetchPreviousResults: Error fetching previous results:', error);
+    }
+    throw new Error(
+      "Le service de résultats précédents n'est pas disponible actuellement. Veuillez vérifier votre connexion ou contacter le support."
+    );
   }
 }
 
