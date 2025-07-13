@@ -53,6 +53,30 @@ const LottoBall: React.FC<LottoBallProps> = ({
   
   // Référence pour le suivi de la position de la souris
   const ballRef = useRef<HTMLDivElement>(null);
+
+  // Fonction helper pour générer un style de gradient dynamique
+  const getGradientStyle = (type: 'regular' | 'bonus' | 'prediction') => {
+    const colors = {
+      regular: {
+        from: '#c084fc', // purple-400 (plus lumineux)
+        via: '#a855f7', // purple-500
+        to: '#7e22ce'   // purple-700
+      },
+      bonus: {
+        from: '#f87171', // red-400 (plus lumineux)
+        via: '#ef4444', // red-500
+        to: '#b91c1c'   // red-700
+      },
+      prediction: {
+        from: '#4ade80', // green-400 (plus lumineux)
+        via: '#22c55e', // green-500
+        to: '#15803d'   // green-600
+      }
+    };
+    
+    const color = colors[type];
+    return `radial-gradient(circle at 30% 30%, ${color.from}, ${color.via} 45%, ${color.to})`;
+  };
   
   // Animation d'apparition progressive avec délai basé sur le numéro
   useEffect(() => {
@@ -110,27 +134,22 @@ const LottoBall: React.FC<LottoBallProps> = ({
   
   // Tailles fixes des boules avec ajustements pour meilleur rendu 3D
   const sizeClasses = {
-    sm: 'w-10 h-10 text-sm min-w-[2.5rem] min-h-[2.5rem] max-w-[2.5rem] max-h-[2.5rem]',
+    sm: 'w-12 h-12 text-sm min-w-[3rem] min-h-[3rem] max-w-[3rem] max-h-[3rem]',
     md: 'w-16 h-16 text-base min-w-[4rem] min-h-[4rem] max-w-[4rem] max-h-[4rem]',
-    lg: 'w-24 h-24 text-2xl font-extrabold min-w-[6rem] min-h-[6rem] max-w-[6rem] max-h-[6rem]'
+    lg: 'w-20 h-20 text-xl font-extrabold min-w-[5rem] min-h-[5rem] max-w-[5rem] max-h-[5rem]'
   };
   
   // Détermine le type basé sur les props
   let resolvedType = type;
   if (isBonus) resolvedType = 'bonus';
   
-  // Types de boules avec gradients améliorés et couleurs futuristes
-  const typeClasses = {
-    regular: 'bg-gradient-to-b from-cosmic-violet via-cosmic-violet-700 to-cosmic-violet-900',
-    bonus: 'bg-gradient-to-b from-neon-coral via-neon-coral-700 to-neon-coral-900',
-    prediction: 'bg-gradient-to-b from-electric-aqua via-electric-aqua-700 to-electric-aqua-900'
-  };
+  // Les types de boules sont maintenant gérés par la fonction getGradientStyle
   
-  // Couleurs de brillance pour chaque type
+  // Couleurs de brillance pour chaque type (plus intenses)
   const glowColors = {
-    regular: 'rgba(168, 85, 247, 0.7)', // cosmic-violet
-    bonus: 'rgba(244, 63, 94, 0.7)', // neon-coral
-    prediction: 'rgba(6, 182, 212, 0.7)' // electric-aqua
+    regular: 'rgba(168, 85, 247, 1.0)',  // purple-500 (violet plus lumineux)
+    bonus: 'rgba(239, 68, 68, 1.0)',    // red-500 (rouge plus lumineux)
+    prediction: 'rgba(34, 197, 94, 1.0)' // green-500 (vert plus lumineux)
   };
   
   // États spéciaux avec effets améliorés
@@ -208,25 +227,26 @@ const LottoBall: React.FC<LottoBallProps> = ({
         'relative cursor-pointer transform transition-all perspective-1000',
         'aspect-square flex-shrink-0 flex-grow-0 inline-block', // Garantit que la boule est parfaitement ronde et ne s'étire pas
         sizeClasses[size],
-        typeClasses[resolvedType],
         isHighlighted && 'ring-4 ring-white/70 z-10',
         stateClass,
         className
       )}
       style={{
+        background: getGradientStyle(resolvedType),
         textShadow: '0 2px 4px rgba(0,0,0,0.5)',
         boxShadow: `
-          inset 0 -10px 20px rgba(0,0,0,0.5),
-          inset 0 6px 12px rgba(255,255,255,0.6),
-          0 15px 35px -5px rgba(0,0,0,0.5),
-          0 0 ${isHovered ? '25px' : '15px'} ${glowColors[resolvedType]}
+          inset 0 -15px 25px rgba(0,0,0,0.6),
+          inset 0 8px 15px rgba(255,255,255,0.8),
+          0 15px 35px -5px rgba(0,0,0,0.6),
+          0 0 15px 2px ${glowColors[resolvedType]}
         `,
         overflow: 'hidden',
         perspective: '1200px',
         rotateX: springRotateX,
         rotateY: springRotateY,
         transformStyle: 'preserve-3d',
-        scale: scale.get()
+        scale: scale.get(),
+        border: '1px solid rgba(255,255,255,0.3)' // Ajouter une fine bordure claire
       }}
       variants={variants}
       initial="initial"
@@ -265,28 +285,28 @@ const LottoBall: React.FC<LottoBallProps> = ({
       {/* Effet de brillance supérieure */}
       <div className="absolute inset-0 rounded-full overflow-hidden pointer-events-none">
         <div 
-          className="absolute top-0 left-1/4 w-1/2 h-1/3 bg-white/40 blur-sm"
+          className="absolute top-0 left-1/4 w-1/2 h-1/3 bg-white/50 blur-sm"
           style={{ 
             borderRadius: '100% 100% 50% 50%', 
-            transform: 'translateY(-50%) rotateX(60deg)',
-            background: 'linear-gradient(to bottom, rgba(255,255,255,0.8), rgba(255,255,255,0.2))'
+            transform: 'translateY(-30%) rotateX(70deg)',
+            background: 'linear-gradient(to bottom, rgba(255,255,255,0.9), rgba(255,255,255,0.3))'
           }}
         />
         
         {/* Petit point brillant de réflexion */}
         <div 
-          className="absolute top-[15%] left-[20%] w-[10%] h-[10%] bg-white/90 rounded-full blur-[1px]"
+          className="absolute top-[15%] left-[20%] w-[15%] h-[15%] bg-white rounded-full blur-[1px]"
           style={{ transform: 'translateZ(2px)' }}
         />
         
         {/* Ombre intérieure en bas */}
         <div 
           className={cn(
-            "absolute bottom-0 left-0 right-0 h-1/3 blur-sm opacity-70",
+            "absolute bottom-0 left-0 right-0 h-1/2 blur-sm opacity-80",
             isHighlighted ? "animate-pulse" : ""
           )}
           style={{ 
-            background: 'linear-gradient(to top, rgba(0,0,0,0.7), transparent)',
+            background: 'linear-gradient(to top, rgba(0,0,0,0.8), transparent)',
             transform: 'translateZ(-5px)'
           }}
         />
@@ -315,7 +335,8 @@ const LottoBall: React.FC<LottoBallProps> = ({
           top: 0,
           left: 0,
           right: 0,
-          bottom: 0
+          bottom: 0,
+          color: '#ffffff' // S'assurer que le texte est blanc
         }}
         initial={{ opacity: 0, scale: 0.8 }}
         animate={{ 
@@ -348,7 +369,7 @@ const LottoBall: React.FC<LottoBallProps> = ({
         className="absolute -inset-4 rounded-full pointer-events-none z-[-1]"
         initial={{ opacity: 0 }}
         animate={{ 
-          opacity: isHovered ? 0.7 : isHighlighted ? 0.5 : 0.3,
+          opacity: isHovered ? 0.8 : isHighlighted ? 0.6 : 0.4,
           scale: isHovered ? 1.15 : 1
         }}
         style={{

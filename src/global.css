@@ -18,64 +18,64 @@
   --neon-coral-light: hsl(5, 90%, 75%);
 
   /* Variables systèmes pour shadcn/ui */
-  --background: hsl(260, 15%, 5%);
-  --foreground: hsl(210, 20%, 98%);
+  --background: 260 15% 5%;
+  --foreground: 210 20% 98%;
 
-  --card: hsl(260, 15%, 10%);
-  --card-foreground: hsl(210, 20%, 98%);
+  --card: 260 15% 10%;
+  --card-foreground: 210 20% 98%;
 
-  --popover: hsl(260, 15%, 10%);
-  --popover-foreground: hsl(210, 20%, 98%);
+  --popover: 260 15% 10%;
+  --popover-foreground: 210 20% 98%;
 
   --primary: var(--cosmic-violet);
-  --primary-foreground: hsl(0, 0%, 100%);
+  --primary-foreground: 0 0% 100%;
 
   --secondary: var(--electric-aqua);
-  --secondary-foreground: hsl(260, 15%, 10%);
+  --secondary-foreground: 260 15% 10%;
 
-  --muted: hsl(260, 15%, 15%);
-  --muted-foreground: hsl(210, 20%, 80%);
+  --muted: 260 15% 15%;
+  --muted-foreground: 210 20% 80%;
 
   --accent: var(--neon-coral);
-  --accent-foreground: hsl(260, 15%, 10%);
+  --accent-foreground: 260 15% 10%;
 
-  --destructive: hsl(0, 84.2%, 60.2%);
-  --destructive-foreground: hsl(0, 0%, 98%);
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 0 0% 98%;
 
-  --border: hsl(260, 15%, 20%);
-  --input: hsl(260, 15%, 20%);
+  --border: 260 15% 20%;
+  --input: 260 15% 20%;
   --ring: var(--cosmic-violet);
   --radius: 1rem;
 }
 
 /* Mode clair alternatif */
 .light {
-  --background: hsl(260, 15%, 95%);
-  --foreground: hsl(260, 15%, 10%);
+  --background: 260 15% 95%;
+  --foreground: 260 15% 10%;
 
-  --card: hsl(260, 15%, 98%);
-  --card-foreground: hsl(260, 15%, 10%);
+  --card: 260 15% 98%;
+  --card-foreground: 260 15% 10%;
 
-  --popover: hsl(260, 15%, 98%);
-  --popover-foreground: hsl(260, 15%, 10%);
+  --popover: 260 15% 98%;
+  --popover-foreground: 260 15% 10%;
 
   --primary: var(--cosmic-violet);
-  --primary-foreground: hsl(0, 0%, 100%);
+  --primary-foreground: 0 0% 100%;
 
   --secondary: var(--electric-aqua);
-  --secondary-foreground: hsl(260, 15%, 10%);
+  --secondary-foreground: 260 15% 10%;
 
-  --muted: hsl(260, 15%, 90%);
-  --muted-foreground: hsl(260, 15%, 40%);
+  --muted: 260 15% 90%;
+  --muted-foreground: 260 15% 40%;
 
   --accent: var(--neon-coral);
-  --accent-foreground: hsl(260, 15%, 10%);
+  --accent-foreground: 260 15% 10%;
 
-  --destructive: hsl(0, 84.2%, 60.2%);
-  --destructive-foreground: hsl(0, 0%, 98%);
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 0 0% 98%;
 
-  --border: hsl(260, 15%, 85%);
-  --input: hsl(260, 15%, 85%);
+  --border: 260 15% 85%;
+  --input: 260 15% 85%;
   --ring: var(--cosmic-violet);
 }
 
@@ -84,22 +84,25 @@
   border-color: var(--border);
 }
 
+/* Amélioration de l'arrière-plan */
 body {
-  background-color: var(--background);
-  color: var(--foreground);
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
   font-feature-settings: "rlig" 1, "calt" 1;
   background-image: 
-    radial-gradient(circle at 10% 20%, rgba(var(--cosmic-violet), 0.05) 0%, transparent 50%),
-    radial-gradient(circle at 90% 80%, rgba(var(--electric-aqua), 0.05) 0%, transparent 50%),
-    radial-gradient(circle at 50% 50%, rgba(var(--neon-coral), 0.03) 0%, transparent 80%);
+    radial-gradient(circle at 10% 20%, rgba(168, 85, 247, 0.08) 0%, transparent 50%),
+    radial-gradient(circle at 90% 80%, rgba(6, 182, 212, 0.08) 0%, transparent 50%),
+    radial-gradient(circle at 50% 50%, rgba(244, 63, 94, 0.05) 0%, transparent 80%);
   background-attachment: fixed;
+  background-size: 200% 200%;
+  animation: gradientMovement 30s ease infinite;
 }
 
 .light body {
   background-image: 
-    radial-gradient(circle at 10% 20%, rgba(var(--cosmic-violet), 0.03) 0%, transparent 50%),
-    radial-gradient(circle at 90% 80%, rgba(var(--electric-aqua), 0.03) 0%, transparent 50%),
-    radial-gradient(circle at 50% 50%, rgba(var(--neon-coral), 0.02) 0%, transparent 80%);
+    radial-gradient(circle at 10% 20%, rgba(168, 85, 247, 0.03) 0%, transparent 50%),
+    radial-gradient(circle at 90% 80%, rgba(6, 182, 212, 0.03) 0%, transparent 50%),
+    radial-gradient(circle at 50% 50%, rgba(244, 63, 94, 0.02) 0%, transparent 80%);
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -147,6 +150,25 @@ h1, h2, h3, h4, h5, h6 {
   pointer-events: none;
 }
 
+/* Animation du fond */
+@keyframes gradientMovement {
+  0% {
+    background-position: 0% 0%;
+  }
+  50% {
+    background-position: 100% 100%;
+  }
+  100% {
+    background-position: 0% 0%;
+  }
+}
+
+body {
+  background-size: 300% 300%;
+  animation: gradientMovement 30s ease infinite;
+  background-attachment: fixed;
+}
+
 /* Classes personnalisées */
 .container-2025 {
   padding-left: 1rem;
@@ -157,18 +179,44 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .glass {
-  background-color: rgba(var(--card), 0.1);
+  background-color: rgba(0, 0, 0, 0.05); /* Fond noir très transparent */
   backdrop-filter: blur(12px);
-  border: 1px solid rgba(var(--cosmic-violet), 0.1);
+  border: 1px solid rgba(168, 85, 247, 0.1); /* Utilisation directe de la couleur pour la border */
   box-shadow: 
     0 10px 25px -5px rgba(0, 0, 0, 0.1), 
     0 10px 10px -5px rgba(0, 0, 0, 0.04),
-    0 0 0 1px rgba(var(--cosmic-violet), 0.1);
+    0 0 0 1px rgba(168, 85, 247, 0.1);
 }
 
 .light .glass {
-  background-color: rgba(var(--card), 0.5);
-  border-color: rgba(var(--cosmic-violet), 0.05);
+  background-color: rgba(255, 255, 255, 0.1); /* Fond blanc transparent pour le mode clair */
+  border-color: rgba(168, 85, 247, 0.05);
+}
+
+/* Assurer la transparence de tous les composants */
+.bg-card {
+  background-color: rgba(0, 0, 0, 0.15) !important; /* Forcé à être transparent */
+  backdrop-filter: blur(12px);
+}
+
+.light .bg-card {
+  background-color: rgba(255, 255, 255, 0.2) !important; /* Fond blanc transparent en mode clair */
+}
+
+/* Assurer la transparence des conteneurs principaux */
+.container-2025, section, main {
+  background-color: transparent !important;
+}
+
+/* Améliorations de l'effet de verre */
+.glass-effect {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.01));
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.1),
+    0 0 0 1px rgba(255, 255, 255, 0.05);
+  border-radius: var(--radius);
 }
 
 /* Espacement entre sections */
@@ -318,16 +366,16 @@ section::after {
 }
 
 .futuristic-card {
-  background: rgba(var(--card), 0.2);
+  background: rgba(0, 0, 0, 0.1); /* Fond noir très transparent */
   backdrop-filter: blur(12px);
   border-radius: calc(var(--radius) + 0.5rem);
   padding: 1.5rem;
   position: relative;
   overflow: hidden;
-  border: 1px solid rgba(var(--cosmic-violet), 0.1);
+  border: 1px solid rgba(168, 85, 247, 0.1);
   box-shadow: 
     0 10px 30px -5px rgba(0, 0, 0, 0.1),
-    0 0 0 1px rgba(var(--cosmic-violet), 0.05);
+    0 0 0 1px rgba(168, 85, 247, 0.05);
   transition: all 0.3s ease;
 }
 
@@ -391,6 +439,21 @@ section::after {
   pointer-events: none;
 }
 
+@keyframes fadeInScale {
+  0% {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.fade-in-scale {
+  animation: fadeInScale 0.5s ease-out forwards;
+}
+
 @keyframes shimmer {
   0% {
     transform: translateX(-100%) rotate(30deg);
@@ -424,26 +487,27 @@ section::after {
   transform: translateY(-10px) rotateX(2deg) rotateY(2deg);
   box-shadow:
     0 20px 30px -10px rgba(0, 0, 0, 0.3),
-    0 0 0 1px rgba(var(--cosmic-violet), 0.1),
-    0 0 20px rgba(var(--cosmic-violet), 0.2);
+    0 0 0 1px rgba(168, 85, 247, 0.1),
+    0 0 20px rgba(168, 85, 247, 0.2);
 }
 
 /* Grille de nombres futuriste */
 .futuristic-number-grid {
   display: grid;
   grid-template-columns: repeat(7, minmax(3.5rem, 1fr));
-  gap: 3rem 3rem;
-  padding: 3rem;
+  gap: 1.25rem;
+  padding: 1.5rem;
   border-radius: var(--radius);
-  background: rgba(var(--card), 0.2);
+  background: rgba(0, 0, 0, 0.05); /* Fond noir très transparent */
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(var(--cosmic-violet), 0.1);
+  border: 1px solid rgba(168, 85, 247, 0.1);
   justify-items: center;
   align-items: center;
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
   overflow-x: auto;
+  animation: fadeInScale 0.5s ease-out forwards;
 }
 
 /* Heatmap futuriste */
@@ -465,16 +529,6 @@ section::after {
 
 .heatmap-cell:hover::before {
   opacity: 1;
-}
-
-/* Barre de confiance améliorée */
-.confidence-bar-container {
-  height: 0.75rem;
-  background: rgba(0, 0, 0, 0.2);
-  border-radius: 9999px;
-  overflow: hidden;
-  position: relative;
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .confidence-bar {

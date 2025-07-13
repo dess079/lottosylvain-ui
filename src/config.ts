@@ -8,7 +8,7 @@
 export const API_CONFIG = {
   BASE_URL: 'http://localhost:8090/api/essais',
   ENDPOINTS: {
-    PREVIOUS_RESULTS: '/lotto-matrix/complete-analysis',
+    PREVIOUS_RESULTS: '/lotto-matrix/previous-results',
     PREDICTIONS: '/lotto-matrix/recommendations',
     STATISTICS: '/lotto-matrix/stats',
     CUSTOM_PREDICTIONS: '/lotto-matrix/recommend',

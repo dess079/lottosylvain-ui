@@ -16,22 +16,46 @@ export async function fetchPreviousResults(): Promise<LottoDraw> {
       throw new Error('Failed to fetch previous results');
     }
     const data = await response.json();
-    
-    // Transform the backend response to match our frontend types
-    // Assuming data.latestDraw contains the most recent draw information
+
+    // Log pour debug format
+    console.debug('fetchPreviousResults: API response', data);
+
+    // Format 1: { latestDraw: {...} }
     if (data && data.latestDraw) {
+      const d = data.latestDraw;
       return {
-        drawDate: data.latestDraw.drawDate,
-        drawNumber: data.latestDraw.drawNumber,
-        winningNumbers: data.latestDraw.numbers,
-        bonusNumber: data.latestDraw.bonusNumber
+        drawDate: d.drawDate,
+        drawNumber: d.drawNumber,
+        winningNumbers: d.numbers ?? d.winningNumbers,
+        bonusNumber: d.bonusNumber
       };
     }
-    
+    // Format 2: { drawDate, drawNumber, numbers, bonusNumber }
+    if (data && data.drawDate && data.drawNumber && (data.numbers || data.winningNumbers)) {
+      return {
+        drawDate: data.drawDate,
+        drawNumber: data.drawNumber,
+        winningNumbers: data.numbers ?? data.winningNumbers,
+        bonusNumber: data.bonusNumber
+      };
+    }
+    // Format 3: Tableau [{...}]
+    if (Array.isArray(data) && data.length > 0) {
+      const d = data[0];
+      if (d.drawDate && d.drawNumber && (d.numbers || d.winningNumbers)) {
+        return {
+          drawDate: d.drawDate,
+          drawNumber: d.drawNumber,
+          winningNumbers: d.numbers ?? d.winningNumbers,
+          bonusNumber: d.bonusNumber
+        };
+      }
+    }
+
     throw new Error('Invalid data format from API');
   } catch (error) {
     console.error('Error fetching previous results:', error);
-    throw error;
+    throw new Error('Le service de résultats précédents n\'est pas disponible actuellement');
   }
 }
 
@@ -51,39 +75,27 @@ export async function fetchPredictions(): Promise<PredictionData[]> {
     if (data && data.recommendations) {
       return Object.values(data.recommendations)
         .map((rec: any) => {
-          // Vérifier si les numéros sont complets (au moins 6 numéros)
-          let numbers = rec.numbers || [];
-          
-          // Filtrer les doublons pour éviter des numéros répétés comme [13,13,20,32,39,40]
-          numbers = [...new Set(numbers)];
-          
-          // Si nous avons moins de 6 numéros, compléter avec des numéros aléatoires entre 1 et 49
-          // en s'assurant qu'ils ne sont pas déjà dans la liste
-          while (numbers.length < 6) {
-            const randomNum = Math.floor(Math.random() * 49) + 1;
-            if (!numbers.includes(randomNum)) {
-              numbers.push(randomNum);
-            }
+          // Vérifier que les numéros existent
+          if (!rec.numbers) {
+            throw new Error('Données de prédiction incomplètes: numéros manquants');
           }
+          
+          let numbers = [...rec.numbers];
+          
+          // Filtrer les doublons pour éviter des numéros répétés
+          numbers = [...new Set(numbers)];
           
           // S'assurer que les numéros sont triés
           numbers.sort((a: number, b: number) => a - b);
           
-          // Ajouter un numéro complémentaire s'il n'existe pas
-          // Cela sera soit un numéro généré aléatoirement qui n'est pas déjà dans la liste des 6 principaux
-          if (numbers.length === 6) {
-            let bonusNumber;
-            do {
-              bonusNumber = Math.floor(Math.random() * 49) + 1;
-            } while (numbers.includes(bonusNumber));
-            
-            numbers.push(bonusNumber);
+          if (!rec.confidenceScore) {
+            throw new Error('Données de prédiction incomplètes: score de confiance manquant');
           }
           
           return {
             numbers: numbers,
-            confidenceScore: rec.confidenceScore || 0,
-            reasoning: rec.reasoning || 'Based on statistical analysis of previous draws.',
+            confidenceScore: rec.confidenceScore,
+            reasoning: rec.reasoning || 'Aucune explication fournie',
             analysisFactors: rec.analysisFactors || {
               frequencyAnalysis: {}
             }
@@ -95,52 +107,8 @@ export async function fetchPredictions(): Promise<PredictionData[]> {
     throw new Error('Invalid data format from API');
   } catch (error) {
     console.error('Error fetching predictions:', error);
-    
-    // Fallback: générer des prédictions aléatoires en cas d'erreur
-    return generateFallbackPredictions();
+    throw new Error('Le service de prédictions n\'est pas disponible actuellement');
   }
-}
-
-/**
- * Génère des prédictions aléatoires en cas d'erreur avec l'API
- */
-function generateFallbackPredictions(): PredictionData[] {
-  const predictions: PredictionData[] = [];
-  
-  // Générer 3 prédictions
-  for (let i = 0; i < 3; i++) {
-    const numbers: number[] = [];
-    
-    // Générer 6 numéros principaux uniques
-    while (numbers.length < 6) {
-      const num = Math.floor(Math.random() * 49) + 1;
-      if (!numbers.includes(num)) {
-        numbers.push(num);
-      }
-    }
-    
-    // Trier les numéros
-    numbers.sort((a, b) => a - b);
-    
-    // Ajouter un numéro complémentaire
-    let bonus;
-    do {
-      bonus = Math.floor(Math.random() * 49) + 1;
-    } while (numbers.includes(bonus));
-    
-    numbers.push(bonus);
-    
-    predictions.push({
-      numbers,
-      confidenceScore: Math.floor(Math.random() * 30) + 60, // 60-90%
-      reasoning: 'Fallback prediction generated locally.',
-      analysisFactors: {
-        frequencyAnalysis: {}
-      }
-    });
-  }
-  
-  return predictions;
 }
 
 /**
@@ -157,39 +125,18 @@ export async function fetchLottoStatistics(): Promise<DrawStatistics> {
     // Transform the backend response to match our frontend types
     if (data && data.success) {
       return {
-        mostFrequentNumbers: data.frequentNumbers || {},
-        leastFrequentNumbers: data.rareNumbers || {},
-        numbersFrequency: data.allFrequencies || generateFallbackFrequencies(),
-        numbersLastAppearance: data.lastAppearances || {}
+        mostFrequentNumbers: data.frequentNumbers,
+        leastFrequentNumbers: data.rareNumbers,
+        numbersFrequency: data.allFrequencies,
+        numbersLastAppearance: data.lastAppearances
       };
     }
     
     throw new Error('Invalid data format from API');
   } catch (error) {
     console.error('Error fetching statistics:', error);
-    
-    // Générer des statistiques de secours en cas d'erreur
-    return {
-      mostFrequentNumbers: generateFallbackFrequencies(),
-      leastFrequentNumbers: generateFallbackFrequencies(),
-      numbersFrequency: generateFallbackFrequencies(),
-      numbersLastAppearance: {}
-    };
+    throw new Error('Le service de statistiques n\'est pas disponible actuellement');
   }
-}
-
-/**
- * Génère des fréquences de numéros aléatoires pour le fallback
- */
-function generateFallbackFrequencies(): Record<number, number> {
-  const frequencies: Record<number, number> = {};
-  
-  for (let i = 1; i <= 49; i++) {
-    // Générer une fréquence aléatoire entre 10 et 20%
-    frequencies[i] = Math.floor(Math.random() * 10) + 10;
-  }
-  
-  return frequencies;
 }
 
 /**
@@ -229,7 +176,7 @@ export async function fetchCustomPredictions(params: CustomPredictionParams): Pr
       return [{
         numbers: data.recommendation.recommendedNumbers,
         confidenceScore: data.recommendation.confidenceScore,
-        reasoning: data.recommendation.reasoning || 'Custom prediction based on your parameters.',
+        reasoning: data.recommendation.reasoning || 'Aucune explication fournie pour cette prédiction personnalisée.',
         analysisFactors: {
           frequencyAnalysis: data.recommendation.frequencyData || {}
         }
@@ -239,7 +186,7 @@ export async function fetchCustomPredictions(params: CustomPredictionParams): Pr
     throw new Error('Invalid data format from API');
   } catch (error) {
     console.error('Error fetching custom predictions:', error);
-    throw error;
+    throw new Error('Le service de prédictions personnalisées n\'est pas disponible actuellement');
   }
 }
 
@@ -247,81 +194,34 @@ export async function fetchCustomPredictions(params: CustomPredictionParams): Pr
  * Fetches the total count of draws from the database
  */
 export async function fetchDrawCount(): Promise<number> {
-  console.log('Starting fetchDrawCount...');
   try {
     // Première tentative: endpoint spécifique pour le nombre de tirages
-    try {
-      console.log('Trying dedicated draw-count endpoint...');
-      const response = await fetch(`${API_BASE_URL}${API_CONFIG.ENDPOINTS.DRAW_COUNT}`);
-      console.log('draw-count response status:', response.status);
-      if (response.ok) {
-        const data = await response.json();
-        console.log('draw-count data:', data);
-        if (data && data.success && data.count !== undefined) {
-          console.log('Successfully got count from draw-count endpoint:', data.count);
-          return data.count;
-        }
-      }
-    } catch (error) {
-      console.log('Error with draw-count endpoint:', error);
-    }
-    
-    // Deuxième tentative: endpoint data-stats
-    try {
-      console.log('Trying data-stats endpoint...');
-      const response = await fetch(`${API_BASE_URL}${API_CONFIG.ENDPOINTS.DATA_STATS}`);
-      console.log('data-stats response status:', response.status);
-      if (response.ok) {
-        const data = await response.json();
-        console.log('data-stats data:', data);
-        if (data && data.success && data.data && data.data.total_draws !== undefined) {
-          console.log('Successfully got count from data-stats endpoint:', data.data.total_draws);
-          return data.data.total_draws;
-        }
-      }
-    } catch (error) {
-      console.log('Error with data-stats endpoint:', error);
-    }
-    
-    // Troisième tentative: endpoint statistics
-    console.log('Trying statistics endpoint...');
-    const response = await fetch(`${API_BASE_URL}${API_CONFIG.ENDPOINTS.STATISTICS}`);
-    console.log('statistics response status:', response.status);
+    const response = await fetch(`${API_BASE_URL}${API_CONFIG.ENDPOINTS.DRAW_COUNT}`);
     if (!response.ok) {
-      throw new Error('Failed to fetch draw count from statistics endpoint');
+      throw new Error('Failed to fetch draw count');
     }
+    
     const data = await response.json();
-    console.log('statistics data:', data);
     
     // Extract the total count of draws
-    if (data && data.success && data.totalDraws !== undefined) {
-      console.log('Successfully got count from totalDraws in statistics:', data.totalDraws);
-      return data.totalDraws;
+    if (data && data.success && data.count !== undefined) {
+      return data.count;
     }
     
-    // Fallback: if the API doesn't provide a direct count, we can infer it from the data
-    if (data && data.success && data.allFrequencies) {
-      console.log('Trying to infer count from frequency data...');
-      // If we have frequency data for all numbers, we can estimate the total count
-      // by looking at the sum of appearances for a specific number
-      const numberKeys = Object.keys(data.allFrequencies);
-      if (numberKeys.length > 0) {
-        // Take the first number and get its total appearances
-        const firstNumberAppearances = data.allFrequencies[numberKeys[0]];
-        console.log('First number appearances:', firstNumberAppearances);
-        // Divide by the average appearance rate to get an estimate of total draws
-        const estimatedCount = Math.round(firstNumberAppearances / (1 / LOTTO_CONFIG.NUMBERS_PER_DRAW));
-        console.log('Estimated count from frequency data:', estimatedCount);
-        return estimatedCount;
-      }
-    }
-    
-    console.log('Could not determine total draw count from any endpoint');
-    // Si toutes les tentatives échouent, renvoyer une valeur par défaut raisonnable
-    return 1000; // Nombre raisonnable pour une application de lotto
+    throw new Error('Invalid data format from API');
   } catch (error) {
     console.error('Error in fetchDrawCount:', error);
-    // Return a reasonable default if we can't get the actual count
-    return 1000; // Valeur par défaut plus raisonnable que 0
+    throw new Error('Le service de comptage des tirages n\'est pas disponible actuellement');
   }
 }
+
+/**
+ * Récupère la recommandation basée sur l'IA depuis le backend
+ */
+export const fetchAIRecommendation = async (): Promise<PredictionData> => {
+  const response = await fetch('/api/recommendations/ai');
+  if (!response.ok) {
+    throw new Error('Erreur lors de la récupération de la recommandation IA');
+  }
+  return response.json();
+};

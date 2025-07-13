@@ -44,3 +44,5 @@ export interface CustomPredictionParams {
   includeNumbers?: number[];
   weightHistorical?: number; // 0-100
 }
+
+export * from './lottoTemporalGraph';

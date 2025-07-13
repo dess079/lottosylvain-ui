@@ -11,7 +11,7 @@ The `essais` directory of lottoquebec project contains the API that exploits the
 - Always start your response with the name of the project follow by a line space
 
 ## A retenir
-- Jamais au grand jamais utiliser de script pour démarrer le projet.à
+- Jamais au grand jamais utiliser de script pour démarrer le projet
 - Toujours utiliser les commandes npm ou yarn pour démarrer le projet.
 - Jamais faire la création de données fictives dans le projet, si tu en vois tu dois les supprimer.
 
@@ -23,6 +23,7 @@ The `essais` directory of lottoquebec project contains the API that exploits the
 - Use meaningful variable and function names
 - Include JSDoc comments for complex functions
 - Follow ESLint and Prettier configurations if present
+- Fait des composant functionnel et pas de classe et pour chaque composant fait un fichier .tsx et un fichier .css
 
 ## Technologies
 - React 19+ with functional components and hooks ([Installation](https://react.dev/learn/installation))
