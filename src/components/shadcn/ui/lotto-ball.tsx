@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { cn } from '../../../lib/utils';
 import { motion, Variants, useAnimate, useMotionValue, useTransform, useSpring } from 'framer-motion';
+import './lotto-ball.css';
 
 interface LottoBallProps {
   number: number;
@@ -54,29 +55,6 @@ const LottoBall: React.FC<LottoBallProps> = ({
   // Référence pour le suivi de la position de la souris
   const ballRef = useRef<HTMLDivElement>(null);
 
-  // Fonction helper pour générer un style de gradient dynamique
-  const getGradientStyle = (type: 'regular' | 'bonus' | 'prediction') => {
-    const colors = {
-      regular: {
-        from: '#c084fc', // purple-400 (plus lumineux)
-        via: '#a855f7', // purple-500
-        to: '#7e22ce'   // purple-700
-      },
-      bonus: {
-        from: '#f87171', // red-400 (plus lumineux)
-        via: '#ef4444', // red-500
-        to: '#b91c1c'   // red-700
-      },
-      prediction: {
-        from: '#4ade80', // green-400 (plus lumineux)
-        via: '#22c55e', // green-500
-        to: '#15803d'   // green-600
-      }
-    };
-    
-    const color = colors[type];
-    return `radial-gradient(circle at 30% 30%, ${color.from}, ${color.via} 45%, ${color.to})`;
-  };
   
   // Animation d'apparition progressive avec délai basé sur le numéro
   useEffect(() => {
@@ -120,10 +98,6 @@ const LottoBall: React.FC<LottoBallProps> = ({
     const mouseX = e.clientX - centerX;
     const mouseY = e.clientY - centerY;
     
-    // Calcul de la distance pour l'effet d'éclairage dynamique
-    const distance = Math.sqrt(mouseX * mouseX + mouseY * mouseY);
-    const maxDistance = Math.sqrt(rect.width * rect.width + rect.height * rect.height) / 2;
-    
     // Limiter les valeurs pour éviter des rotations trop extrêmes
     x.set(Math.max(-60, Math.min(60, mouseX)));
     y.set(Math.max(-60, Math.min(60, mouseY)));
@@ -132,25 +106,9 @@ const LottoBall: React.FC<LottoBallProps> = ({
     scale.set(isHovered ? 1.08 : 1);
   };
   
-  // Tailles fixes des boules avec ajustements pour meilleur rendu 3D
-  const sizeClasses = {
-    sm: 'w-12 h-12 text-sm min-w-[3rem] min-h-[3rem] max-w-[3rem] max-h-[3rem]',
-    md: 'w-16 h-16 text-base min-w-[4rem] min-h-[4rem] max-w-[4rem] max-h-[4rem]',
-    lg: 'w-20 h-20 text-xl font-extrabold min-w-[5rem] min-h-[5rem] max-w-[5rem] max-h-[5rem]'
-  };
-  
   // Détermine le type basé sur les props
   let resolvedType = type;
   if (isBonus) resolvedType = 'bonus';
-  
-  // Les types de boules sont maintenant gérés par la fonction getGradientStyle
-  
-  // Couleurs de brillance pour chaque type (plus intenses)
-  const glowColors = {
-    regular: 'rgba(168, 85, 247, 1.0)',  // purple-500 (violet plus lumineux)
-    bonus: 'rgba(239, 68, 68, 1.0)',    // red-500 (rouge plus lumineux)
-    prediction: 'rgba(34, 197, 94, 1.0)' // green-500 (vert plus lumineux)
-  };
   
   // États spéciaux avec effets améliorés
   let stateClass = '';
@@ -223,30 +181,20 @@ const LottoBall: React.FC<LottoBallProps> = ({
     <motion.div 
       ref={ballRef}
       className={cn(
-        'rounded-full flex items-center justify-center font-bold text-white',
-        'relative cursor-pointer transform transition-all perspective-1000',
-        'aspect-square flex-shrink-0 flex-grow-0 inline-block', // Garantit que la boule est parfaitement ronde et ne s'étire pas
-        sizeClasses[size],
-        isHighlighted && 'ring-4 ring-white/70 z-10',
+        'lotto-ball',
+        `lotto-ball-${size}`,
+        `lotto-ball-${resolvedType}`,
+        isHighlighted && 'lotto-ball-highlight',
         stateClass,
         className
       )}
       style={{
-        background: getGradientStyle(resolvedType),
-        textShadow: '0 2px 4px rgba(0,0,0,0.5)',
-        boxShadow: `
-          inset 0 -15px 25px rgba(0,0,0,0.6),
-          inset 0 8px 15px rgba(255,255,255,0.8),
-          0 15px 35px -5px rgba(0,0,0,0.6),
-          0 0 15px 2px ${glowColors[resolvedType]}
-        `,
-        overflow: 'hidden',
+        // Styles 3D spéciaux uniquement
         perspective: '1200px',
         rotateX: springRotateX,
         rotateY: springRotateY,
         transformStyle: 'preserve-3d',
-        scale: scale.get(),
-        border: '1px solid rgba(255,255,255,0.3)' // Ajouter une fine bordure claire
+        scale: scale.get()
       }}
       variants={variants}
       initial="initial"
@@ -298,114 +246,12 @@ const LottoBall: React.FC<LottoBallProps> = ({
           className="absolute top-[15%] left-[20%] w-[15%] h-[15%] bg-white rounded-full blur-[1px]"
           style={{ transform: 'translateZ(2px)' }}
         />
-        
-        {/* Ombre intérieure en bas */}
-        <div 
-          className={cn(
-            "absolute bottom-0 left-0 right-0 h-1/2 blur-sm opacity-80",
-            isHighlighted ? "animate-pulse" : ""
-          )}
-          style={{ 
-            background: 'linear-gradient(to top, rgba(0,0,0,0.8), transparent)',
-            transform: 'translateZ(-5px)'
-          }}
-        />
       </div>
-      
-      {/* Texture fine */}
-      <div 
-        className="absolute inset-0 rounded-full opacity-5 pointer-events-none"
-        style={{
-          backgroundImage: 'url("data:image/svg+xml,%3Csvg width=\'20\' height=\'20\' viewBox=\'0 0 20 20\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'%23ffffff\' fill-opacity=\'1\' fill-rule=\'evenodd\'%3E%3Ccircle cx=\'1\' cy=\'1\' r=\'1\'/%3E%3C/g%3E%3C/svg%3E")',
-          backgroundSize: '8px 8px'
-        }}
-      />
-      
-      {/* Numéro avec meilleur rendu 3D */}
-      <motion.span 
-        className="relative z-10 tracking-tight font-bold transform flex items-center justify-center w-full h-full" 
-        style={{ 
-          textShadow: '0 2px 4px rgba(0,0,0,0.6)',
-          transform: 'translateZ(10px)',
-          fontFamily: "'Space Grotesk', sans-serif", // Police plus moderne et claire
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          color: '#ffffff' // S'assurer que le texte est blanc
-        }}
-        initial={{ opacity: 0, scale: 0.8 }}
-        animate={{ 
-          opacity: 1, 
-          scale: 1,
-          transition: { delay: animated ? 0.1 + (number % 10) * 0.08 : 0 }
-        }}
-      >
-        {number < 10 ? `0${number}` : number}
-      </motion.span>
-      
-      {/* Effet de pulsation lorsqu'il est mis en évidence */}
-      {isHighlighted && (
-        <motion.div 
-          className="absolute inset-0 rounded-full bg-white/25 z-0"
-          animate={{ 
-            scale: [1, 1.15, 1],
-            opacity: [0.15, 0.35, 0.15] 
-          }}
-          transition={{ 
-            repeat: Infinity, 
-            duration: 2.5,
-            ease: "easeInOut" 
-          }}
-        />
-      )}
-      
-      {/* Halo lumineux autour de la boule (plus visible au survol) */}
-      <motion.div 
-        className="absolute -inset-4 rounded-full pointer-events-none z-[-1]"
-        initial={{ opacity: 0 }}
-        animate={{ 
-          opacity: isHovered ? 0.8 : isHighlighted ? 0.6 : 0.4,
-          scale: isHovered ? 1.15 : 1
-        }}
-        style={{
-          background: `radial-gradient(circle, ${glowColors[resolvedType]} 0%, transparent 70%)`
-        }}
-        transition={{ duration: 0.2 }}
-      />
-      
-      {/* Reflet dynamique qui se déplace en fonction de la position de la souris */}
-      <motion.div
-        className="absolute w-full h-full rounded-full overflow-hidden pointer-events-none"
-        style={{
-          background: 'radial-gradient(circle at 50% 50%, rgba(255,255,255,0.4) 0%, transparent 60%)',
-          opacity: isHovered ? 0.7 : 0.3,
-          x: x,
-          y: y,
-          transformStyle: 'preserve-3d',
-          transform: 'scale(0.85) translateZ(4px)'
-        }}
-      />
-      
-      {/* Anneau de mise en évidence pour les animations interactives */}
-      <motion.div 
-        ref={scope}
-        className="absolute -inset-1 rounded-full pointer-events-none opacity-0"
-        animate={isSelected ? { opacity: 1 } : { opacity: 0 }}
-      />
 
-      {/* Effet de grain pour plus de réalisme */}
-      <div 
-        className="absolute inset-0 rounded-full mix-blend-overlay opacity-10"
-        style={{ 
-          backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 200 200\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noiseFilter\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.65\' numOctaves=\'3\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noiseFilter)\'/%3E%3C/svg%3E")',
-          backgroundSize: 'cover'
-        }}
-      />
+      {/* Numéro de la boule */}
+      <span className="z-10 relative">
+        {number}
+      </span>
     </motion.div>
   );
 };

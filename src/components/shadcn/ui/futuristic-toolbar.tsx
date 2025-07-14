@@ -26,8 +26,8 @@ const FuturisticToolbar: React.FC<FuturisticToolbarProps> = ({
     <div className="sticky top-0 backdrop-blur-lg bg-background/80 border-b border-border z-50 px-4 py-3 flex justify-between items-center">
       {/* Logo et titre */}
       <div className="flex items-center space-x-3">
-        <div className="w-8 h-8 rounded-full bg-gradient-to-r from-indigo-600 to-cyan-500 flex items-center justify-center">
-          <span className="text-white font-bold text-sm">LS</span>
+        <div className="w-8 h-8 rounded-full bg-gradient-to-r from-indigo-600 to-cyan-500 flex items-center justify-center shadow-lg animate-pulse">
+          <span className="text-white font-extrabold text-sm tracking-wide">Lotto Sylvain</span>
         </div>
         <h1 className="text-lg font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-500 to-cyan-400">{title}</h1>
       </div>

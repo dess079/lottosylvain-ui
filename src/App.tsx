@@ -4,6 +4,7 @@ import { FuturisticToolbar, LottoBall } from './components/shadcn';
 import { fetchAIRecommendation, fetchPreviousResults } from './services/api';
 import { FooterSection } from './components/FooterSection';
 import type { PredictionData, PreviousResult } from './types';
+import TestTailwind from './components/TestTailwind';
 
 /**
  * Page principale montrant uniquement la prédiction basée sur l'IA
@@ -61,7 +62,7 @@ const App: React.FC = () => {
       <FuturisticToolbar />
       <main className="container-2025 py-8 flex-grow">
         {/* Section précédente tirage */}
-        <section className="mt-16">
+        <section className="mt-40">
           <h2 className="text-2xl font-semibold mb-3">Dernier tirage officiel</h2>
           {drawLoading && (
             <p className="text-center text-base">Chargement du dernier tirage...</p>
@@ -72,7 +73,7 @@ const App: React.FC = () => {
             </div>
           )}
           {!drawLoading && previousDraw && (
-            <div className="flex flex-col items-center gap-2">
+            <div className="flex flex-col items-center gap-20">
               <div className="flex flex-wrap justify-center gap-4 mb-2">
                 {previousDraw.drawResult.map((num, idx) => (
                   <LottoBall key={idx} number={num} size="md" type="regular" />
@@ -81,7 +82,7 @@ const App: React.FC = () => {
                   <LottoBall number={previousDraw.bonusNumber} size="md" type="bonus" />
                 )}
               </div>
-              <div className="text-sm opacity-70">
+              <div className="text-sm  mt-4 opacity-70">
                 Tirage en date du {previousDraw.previousResultDate}
               </div>
             </div>
@@ -125,6 +126,7 @@ const App: React.FC = () => {
         {isLoading && (
           <p className="text-center text-lg">Chargement des prédictions IA...</p>
         )}
+        <TestTailwind />
       </main>
       <FooterSection />
     </div>

@@ -1,21 +1,10 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
-import { fileURLToPath } from 'url';
-import path from 'path';
-
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
+import tailwindcss from '@tailwindcss/vite';
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react()],
-  resolve: {
-    alias: {
-      '@': path.resolve(__dirname, './src'),
-    },
-  },
-  css: {
-    postcss: './postcss.config.mjs',
-  },
+  plugins: [react(), tailwindcss()],
   server: {
     proxy: {
       '/api': {
@@ -23,6 +12,11 @@ export default defineConfig({
         changeOrigin: true,
         secure: false,
       },
+    },
+  },
+  css: {
+    preprocessorOptions: {
+      scss: {},
     },
   },
 });

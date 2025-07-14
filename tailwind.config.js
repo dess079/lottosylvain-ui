@@ -2,7 +2,7 @@
 module.exports = {
   content: [
     './index.html',
-    './src/**/*.{js,ts,jsx,tsx}',
+    './src/**/*.{js,ts,jsx,tsx,css}',
   ],
   darkMode: 'class',
   theme: {
@@ -533,5 +533,6 @@ module.exports = {
     'shadow-glow-cosmic',
     'shadow-glow-electric',
     'shadow-glow-neon',
+    'text-red-500',
   ],
 }

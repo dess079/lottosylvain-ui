@@ -9,6 +9,7 @@ import {
 import { formatDate } from '../lib/utils';
 import { LOTTO_CONFIG } from '../config';
 import type { PreviousResult } from '../types';
+import './PreviousResults.css';
 
 /**
  * Component that displays previous lottery results and statistics
@@ -90,33 +91,65 @@ const PreviousResults: React.FC = () => {
   }
 
   return (
-    <section className="py-8">
-      <Card className="max-w-4xl mx-auto p-8 card-shimmer shadow-lg">
+    <section className="previous-results-container">
+      <Card className="previous-results-card card-shimmer shadow-lg">
         <div className="flex flex-col items-center">
-          <h2 className="text-4xl font-bold mb-3 text-center gradient-text">Dernier tirage {LOTTO_CONFIG.GAME_NAME}</h2>
-          <p className="text-lg text-gray-600 dark:text-gray-400 mb-8">
+          <h2 className="previous-results-title">Dernier tirage {LOTTO_CONFIG.GAME_NAME}</h2>
+          <p className="previous-results-date">
             Date du tirage: <span className="font-semibold">{formatDate(drawDate)}</span>
           </p>
 
-          <div className="flex flex-wrap justify-center gap-4 mb-10">
-            {drawNumbers.map((number, index) => (
-              <motion.div
-                key={index}
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ 
-                  type: "spring", 
-                  stiffness: 260, 
-                  damping: 20,
-                  delay: index * 0.15 
-                }}
-                className="filter drop-shadow-lg"
-              >
-                <LottoBall number={number} size="lg" />
-              </motion.div>
-            ))}
+          {/* Section des numéros principaux */}
+          <div className="numbers-section">
+            <h3 className="section-title">
+              Numéros gagnants
+            </h3>
+            <div className="numbers-container">
+              {drawNumbers.slice(0, 6).map((number, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ scale: 0, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ 
+                    type: "spring", 
+                    stiffness: 300, 
+                    damping: 25,
+                    delay: index * 0.1 
+                  }}
+                  className="ball-wrapper"
+                >
+                  <LottoBall number={number} size="lg" />
+                </motion.div>
+              ))}
+            </div>
           </div>
-          <div>{previousResult?.bonusNumber}</div>
+
+          {/* Section du numéro bonus */}
+          {previousResult?.bonusNumber && (
+            <div className="bonus-section">
+              <h3 className="section-title">
+                Numéro complémentaire
+              </h3>
+              <div className="bonus-container">
+                <motion.div
+                  initial={{ scale: 0, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ 
+                    type: "spring", 
+                    stiffness: 300, 
+                    damping: 25,
+                    delay: 0.8 
+                  }}
+                  className="ball-wrapper"
+                >
+                  <LottoBall 
+                    number={previousResult.bonusNumber} 
+                    size="md" 
+                  />
+                </motion.div>
+              </div>
+            </div>
+          )}
         </div>
       </Card>
     </section>

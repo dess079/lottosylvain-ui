@@ -565,3 +565,8 @@ section::after {
     transform: translateX(100%);
   }
 }
+
+/* Les styles des LottoBall sont maintenant dans leur propre fichier CSS */
+/* Voir: /src/components/shadcn/ui/lotto-ball.css */
+
+/* Suppression des règles inutiles avec !important qui compliquaient tout */
