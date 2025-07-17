@@ -13,12 +13,11 @@ const App: React.FC = () => {
   return (
     <div className="min-h-screen bg-background text-foreground overflow-x-hidden flex flex-col gap-8 mt-4">
       {/* Barre d'outils futuriste avec ref pour mesurer sa hauteur */}     
-        <FuturisticToolbar />
+      <FuturisticToolbar />
       {/* TabsLotto avec padding-top dynamique basé sur la hauteur réelle de la toolbar */}
       <main className="flex justify-center top-4 mt-8">
-          <TabsLotto />
+        <TabsLotto />
       </main>
-      
       <FooterSection />
     </div>
   );

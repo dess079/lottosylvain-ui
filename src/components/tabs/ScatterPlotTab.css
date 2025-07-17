@@ -1,0 +1,19 @@
+/* Styles for ScatterPlotTab */
+.scatter-plot-tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.scatter-plot-tab h2 {
+  margin-bottom: 1rem;
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.scatter-plot-tab .recharts-wrapper {
+  margin: auto;
+}

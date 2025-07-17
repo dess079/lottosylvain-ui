@@ -1,7 +1,7 @@
-import { OrbitControls, PointMaterial, Points } from '@react-three/drei';
-import { Canvas } from '@react-three/fiber';
 import React, { useState } from 'react';
 import { LottoTemporalGraphData, TemporalGraphResponse } from '../types/lottoTemporalGraph';
+import FrequencyOverTimeGraph from './FrequencyOverTimeGraph';
+import NumberFrequencyGraph from './NumberFrequencyGraph';
 import './LottoTemporalGraphScreen.css';
 
 /**
@@ -14,19 +14,25 @@ const LottoTemporalGraphScreen: React.FC = () => {
   const [data, setData] = useState<LottoTemporalGraphData | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [selectedNumber, setSelectedNumber] = useState<number | null>(null);
 
   /**
    * Récupère les données du backend selon la période sélectionnée
-   */
-  /**
-   * Appelle le endpoint REST pour récupérer les données du graphique temporel
    */
   const fetchGraphData = async () => {
     setLoading(true);
     setError(null);
     setData(null);
     try {
+      // Validate date format
+      if (!/\d{4}-\d{2}-\d{2}/.test(startDate) || !/\d{4}-\d{2}-\d{2}/.test(endDate)) {
+        console.error('Invalid date format:', { startDate, endDate });
+        setError('Invalid date format. Please use YYYY-MM-DD.');
+        setLoading(false);
+        return;
+      }
+
+      console.log('Fetching data for date range:', { startDate, endDate });
+
       const response = await fetch(
         `/api/essais/lotto-matrix/temporal-graph?startDate=${startDate}&endDate=${endDate}`
       );
@@ -36,7 +42,7 @@ const LottoTemporalGraphScreen: React.FC = () => {
 
       if (json && json.graphData) {
         console.debug('GraphData structure:', json.graphData);
-        setData(json.graphData);
+        setData({ ...json.graphData }); // Ensure state is updated with a new object reference
       } else {
         console.error('Format de données inattendu:', json);
         setError('Format de données inattendu.');
@@ -45,28 +51,67 @@ const LottoTemporalGraphScreen: React.FC = () => {
       console.error('Erreur lors de la récupération des données:', e);
       setError(e.message || 'Erreur inconnue');
     } finally {
+      console.log('Loading state:', loading);
+      console.log('Data state:', data);
       setLoading(false);
     }
   };
 
   /**
-   * Prépare les données pour le nuage de points 3D avec des coordonnées normalisées
+   * Prépare les données pour le graphique de fréquence
    */
-  const get3DChartData = (): { x: number; y: number; z: number; size: number }[] => {
+  const getFrequencyChartData = () => {
     if (!data || !Array.isArray(data.timelineData) || data.timelineData.length === 0) {
       console.warn('Aucune donnée disponible pour le graphique:', data);
-      return [];
+      return { labels: [], datasets: [] };
     }
 
-    console.debug('TimelineData for 3D chart:', data.timelineData);
+    const labels = data.timelineData.map((d) => d.date);
+    const frequencies = data.timelineData.map((d) => d.frequency);
 
-    return data.timelineData
-      .map((d) => ({
-        x: d.x,
-        y: d.y,
-        z: d.size_score, // Utilisation de size_score comme z pour la taille
-        size: d.size_score
-      }));
+    return {
+      labels,
+      datasets: [
+        {
+          label: 'Frequency of Numbers Over Time',
+          data: frequencies,
+          borderColor: '#1976d2',
+          backgroundColor: 'rgba(25, 118, 210, 0.5)',
+        },
+      ],
+    };
+  };
+
+  /**
+   * Prépare les données pour le graphique de fréquence des numéros de 1 à 49
+   */
+  const getNumberFrequencyChartData = () => {
+    if (!data || !Array.isArray(data.timelineData) || data.timelineData.length === 0) {
+      console.warn('Aucune donnée disponible pour le graphique:', data);
+      return { labels: [], datasets: [] };
+    }
+
+    // Regrouper les fréquences par numéro (1 à 49)
+    const numberFrequencies = Array(49).fill(0);
+    data.timelineData.forEach((d) => {
+      if (d.number >= 1 && d.number <= 49) {
+        numberFrequencies[d.number - 1] += d.frequency;
+      }
+    });
+
+    const labels = Array.from({ length: 49 }, (_, i) => (i + 1).toString());
+
+    return {
+      labels,
+      datasets: [
+        {
+          label: 'Frequency of Numbers (1 to 49)',
+          data: numberFrequencies,
+          borderColor: '#1976d2',
+          backgroundColor: 'rgba(25, 118, 210, 0.5)',
+        },
+      ],
+    };
   };
 
   return (
@@ -104,22 +149,44 @@ const LottoTemporalGraphScreen: React.FC = () => {
 
       {error && <div className="error">{error}</div>}
 
-      {/* Affichage du nuage de points 3D si données valides */}
+      {/* Affichage du graphique de fréquence si données valides */}
       {data && Array.isArray(data.timelineData) ? (
-        <Canvas style={{ height: '500px', width: '100%' }} camera={{ position: [50, 50, 100], fov: 50 }}>
-          <OrbitControls enableZoom={true} maxDistance={200} minDistance={5} />
-          <ambientLight intensity={0.5} />
-          <pointLight position={[10, 10, 10]} />
-          <Points>
-            <PointMaterial size={0.5} color="#1976d2" />
-            {get3DChartData().map((point, index) => (
-              <mesh key={index} position={[point.x, point.y, point.z]}>
-                <sphereGeometry args={[point.size, 16, 16]} />
-                <meshStandardMaterial color="#1976d2" />
-              </mesh>
-            ))}
-          </Points>
-        </Canvas>
+        <FrequencyOverTimeGraph
+          data={getFrequencyChartData()}
+          options={{ responsive: true, maintainAspectRatio: false }}
+          style={{ width: '90%' }}
+        />
+      ) : data ? (
+        <div className="error">Format de données inattendu. Impossible d'afficher le graphique.</div>
+      ) : null}
+
+      {/* Affichage du graphique de fréquence des numéros */}
+      {data && Array.isArray(data.timelineData) ? (
+        <NumberFrequencyGraph
+          data={getNumberFrequencyChartData()}
+          options={{
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              x: {
+                title: {
+                  display: true,
+                  text: 'Numbers (1 to 49)',
+                },
+                ticks: {
+                  stepSize: 1,
+                },
+              },
+              y: {
+                title: {
+                  display: true,
+                  text: 'Frequency',
+                },
+              },
+            },
+          }}
+          style={{ width: '90%' }}
+        />
       ) : data ? (
         <div className="error">Format de données inattendu. Impossible d'afficher le graphique.</div>
       ) : null}
