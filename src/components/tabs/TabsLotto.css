@@ -1,3 +1,9 @@
+/* Main background doux pour la zone principale */
+.tabs-lotto-main-bg {
+  background: linear-gradient(135deg, #f3f4f6 0%, #e0e7ef 100%);
+  min-height: 100vh;
+  width: 100%;
+}
 /* Styles pour le composant TabsLotto */
 
 .tabs-lotto-animation {
@@ -6,8 +12,9 @@
 
 /* Style pour rendre les onglets arrondis et ajuster le parent sur la hauteur des items */
 /* Style onglet non arrondi, look "bar" moderne */
+
 [data-slot="tabs-trigger"].bar-tab-trigger {
-  border-radius: 0.5rem 0.5rem 0 0; /* coins supérieurs arrondis, bas droit */
+  border-radius: 0.5rem 0.5rem 0 0;
   overflow: hidden;
   padding: 0.75rem 1.5rem;
   margin: 0.25rem;
@@ -18,13 +25,13 @@
   white-space: nowrap;
   height: auto;
   border-bottom: 3px solid transparent;
-  background: var(--tab-bg, #f8fafc);
-  transition: border-color 0.2s, background 0.2s;
+  background: #f3f4f6; /* gris très pâle, moins agressif que blanc pur */
+  transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
 }
 
 [data-slot="tabs-trigger"].bar-tab-trigger[data-state="active"] {
-  border-bottom: 3px solid #6366f1; /* Indigo par défaut, à adapter selon le thème */
-  background: var(--tab-active-bg, #fff);
+  border-bottom: 3px solid #6366f1;
+  background: #e0e7ef; /* bleu-gris doux pour l'onglet actif */
   box-shadow: 0 4px 12px -2px rgba(99,102,241,0.12);
 }
 

@@ -16,21 +16,6 @@ const TabsLotto: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'previous' | 'graph' | 'prediction' | 'line' | 'pie' | 'scatter'>('previous');
   const tabsListRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const checkOverflow = () => {
-      if (tabsListRef.current) {
-        // setIsOverflowing(tabsListRef.current.scrollWidth > tabsListRef.current.clientWidth);
-      }
-    };
-
-    checkOverflow();
-    window.addEventListener('resize', checkOverflow);
-
-    return () => {
-      window.removeEventListener('resize', checkOverflow);
-    };
-  }, []);
-
   /**
    * Gère le changement d'onglet et met à jour l'état actif
    */
@@ -39,10 +24,11 @@ const TabsLotto: React.FC = () => {
   };
 
   return (
-    <Tabs defaultValue="previous" onValueChange={handleTabChange} className="w-full pt-0 mx-8">
-      <TabsList className="flex w-full justify-evenly bg-background/50 backdrop-blur-sm rounded-3xl p-2 md:p-4 border border-border/50 gap-2 shadow-md dark:shadow-gray-900/30">
+    <div className="flex w-full max-w-6xl p-32">
+    <Tabs defaultValue="previous" onValueChange={handleTabChange}>
+      <TabsList className="flex">
       
-        <div className="flex flex-wrap gap-4 md:gap-6 lg:gap-8 overflow-x-auto px-2 md:px-4 py-2" id="tabs-container" ref={tabsListRef}>
+        <div className="flex" id="tabs-container" ref={tabsListRef}>
           <TabsTrigger 
             value="previous" 
             className="bar-tab-trigger min-w-[10rem] text-center whitespace-nowrap font-semibold transition-all duration-300"
@@ -84,7 +70,7 @@ const TabsLotto: React.FC = () => {
       </TabsList>
 
       {/* Tabs content */}
-      <TabsContent value="previous" className="mt-8 tabs-lotto-animation">
+      <TabsContent value="previous" className="mt-16 tabs-lotto-animation">
         <PreviousDrawTab isActive={activeTab === 'previous'} />
       </TabsContent>
       <TabsContent value="graph" className="mt-8 tabs-lotto-animation">
@@ -103,6 +89,7 @@ const TabsLotto: React.FC = () => {
         <ScatterPlotTab isActive={activeTab === 'scatter'} />
       </TabsContent>
     </Tabs>
+   </div>
   );
 };
 

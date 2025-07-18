@@ -1,5 +1,6 @@
 import { API_CONFIG } from '../config';
 import type { CustomPredictionParams, DrawStatistics, PredictionData, PreviousResult } from '../types';
+import type { FrontendRecommendationsResponse, FrontendRecommendation } from '../types/FrontendRecommendationsResponse';
 
 /**
  * Base API URL for all requests
@@ -9,36 +10,40 @@ const API_BASE_URL = API_CONFIG.BASE_URL;
 /**
  * Fetches previous lottery draw results
  */
-export async function fetchPreviousResults(): Promise<PreviousResult> {
+/**
+ * Récupère les résultats précédents du tirage, avec gestion de plage de dates
+ * @param startDate Date de début (format 'YYYY-MM-DD')
+ * @param endDate Date de fin (format 'YYYY-MM-DD')
+ * @returns PreviousResult
+ */
+export async function fetchPreviousResults(startDate?: string, endDate?: string): Promise<PreviousResult> {
   try {
-    console.info(
-      'fetchPreviousResults: URL utilisée',
-      `${API_BASE_URL}${API_CONFIG.ENDPOINTS.PREVIOUS_RESULTS}`
-    );
+    // Construction de l'URL avec paramètres de dates si fournis
+    let url = `${API_BASE_URL}${API_CONFIG.ENDPOINTS.PREVIOUS_RESULTS}`;
+    const params: string[] = [];
+    if (startDate) params.push(`start=${encodeURIComponent(startDate)}`);
+    if (endDate) params.push(`end=${encodeURIComponent(endDate)}`);
+    if (params.length > 0) url += `?${params.join('&')}`;
 
-    const response = await fetch(
-      `${API_BASE_URL}${API_CONFIG.ENDPOINTS.PREVIOUS_RESULTS}`
-    );
+    console.info('fetchPreviousResults: URL utilisée', url);
+
+    const response = await fetch(url);
     if (!response.ok) {
-      console.error(
-        `fetchPreviousResults: Failed with status ${response.status} - ${response.statusText}`
-      );
-      throw new Error(
-        `Failed to fetch previous results. Status: ${response.status} - ${response.statusText}`
-      );
+      console.error(`fetchPreviousResults: Failed with status ${response.status} - ${response.statusText}`);
+      throw new Error(`Failed to fetch previous results. Status: ${response.status} - ${response.statusText}`);
     }
 
     console.info('fetchPreviousResults: Response received, parsing JSON', response);
     const rawData = await response.json();
 
-    // Transform the API response to match the expected type
+    // Transformation de la réponse API vers le type attendu
     const data: PreviousResult = {
-      previousResultDate: rawData.previousResultDate, // Map to expected field
-      drawResult: rawData.resultNumbers, // Map to expected field
+      previousResultDate: rawData.previousResultDate,
+      drawResult: rawData.resultNumbers,
       bonusNumber: rawData.bonusNumber,
     };
 
-    // Validate the transformed data
+    // Validation du format des données
     if (
       !data ||
       typeof data.previousResultDate !== 'string' ||
@@ -222,10 +227,18 @@ export async function fetchDrawCount(): Promise<number> {
 /**
  * Récupère la recommandation basée sur l'IA depuis le backend
  */
-export const fetchAIRecommendation = async (): Promise<PredictionData> => {
-  const response = await fetch('/api/recommendations/ai');
+/**
+ * Récupère la recommandation IA principale depuis le backend (projection FrontendRecommendationsResponse)
+ * Retourne la première recommandation trouvée (ex: stratégie principale)
+ */
+export const fetchAIRecommendation = async (): Promise<FrontendRecommendationsResponse> => {
+  const response = await fetch('/api/essais/lotto-matrix/recommendations');
+  console.log('fetchAIRecommendation: Response received', response);
   if (!response.ok) {
     throw new Error('Erreur lors de la récupération de la recommandation IA');
   }
-  return response.json();
+  const data: FrontendRecommendationsResponse = await response.json();
+  console.log('fetchAIRecommendation: Data received', data);
+  
+  return data;
 };

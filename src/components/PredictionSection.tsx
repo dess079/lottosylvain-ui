@@ -122,6 +122,7 @@ const PredictionSection: React.FC = () => {
     setIsLoading(true);
     setError(null);
     try {
+      console.log('Loading predictions...');
       const data = await fetchPredictions();
       setPredictions(data);
     } catch (err) {

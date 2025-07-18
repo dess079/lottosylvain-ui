@@ -7,16 +7,24 @@ interface GraphTabProps {
   isActive: boolean;
 }
 
-// Mock data for demonstration purposes
-const fetchData = async () => {
-  // Replace this with an actual API call to fetch the data
-  return [
-    { number: 1, drawCount: 10 },
-    { number: 2, drawCount: 15 },
-    { number: 3, drawCount: 8 },
-    { number: 4, drawCount: 20 },
-    { number: 5, drawCount: 12 },
-  ];
+/**
+ * Récupère les vraies données de tirages depuis l'API backend
+ * @returns Tableau d'objets { number, drawCount }
+ */
+const fetchData = async (): Promise<{ number: number; drawCount: number }[]> => {
+  try {
+    const response = await fetch('/api/lotto649/frequency');
+    if (!response.ok) {
+      throw new Error('Erreur lors de la récupération des données');
+    }
+    // On suppose que l'API retourne un tableau [{ number: 1, drawCount: 42 }, ...]
+    return await response.json();
+  } catch (error) {
+    // Log l'erreur et retourne un tableau vide
+    // eslint-disable-next-line no-console
+    console.error('Erreur fetchData GraphTab:', error);
+    return [];
+  }
 };
 
 /**
