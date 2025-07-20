@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { LottoBall } from '../shadcn';
+import { LottoBall, Card, CardHeader, CardTitle, CardDescription, Badge } from '../shadcn';
 import { fetchAIRecommendation } from '../../services/api';
 import type { FrontendRecommendation, FrontendRecommendationsResponse } from '../../types/FrontendRecommendationsResponse';
 import './PredictionTab.css';
@@ -76,66 +76,64 @@ const PredictionTab: React.FC<PredictionTabProps> = ({ isActive }) => {
           {/* Métadonnées */}
           <div className="mb-4">
             <div className="flex flex-wrap gap-6 items-center">
-              <span className="text-sm text-gray-500">Horodatage de la prédiction : <span className="font-mono text-gray-700">{aiPrediction.timestamp}</span></span>
-              <span className="text-sm text-gray-500">Prochain tirage : <span className="font-mono text-gray-700">{aiPrediction.nextDrawDate}</span></span>
+              <span className="text-sm">Horodatage de la prédiction : <span className="font-mono">{aiPrediction.timestamp}</span></span>
+              <span className="text-sm">Prochain tirage : <span className="font-mono ">{aiPrediction.nextDrawDate}</span></span>
             </div>
           </div>
 
           {/* Recommandations IA */}
-          <div>
-            <h3 className="text-xl font-semibold mb-2">Recommandations IA</h3>
-            <div className="flex flex-col gap-6">
-              {Object.entries(aiPrediction.recommendations).map(([strategy, rec], idx) => (
-                <div key={strategy} className="border border-gray-200 rounded-lg p-4 bg-white/60 shadow-sm">
-                  <div className="flex flex-wrap items-center gap-4 mb-2">
-                    <span className="font-bold text-blue-700">Stratégie :</span>
-                    <span className="font-mono text-blue-900">{strategy}</span>
+          <div className="flex flex-col gap-6">
+            {Object.entries(aiPrediction.recommendations).map(([strategy, rec]) => (
+              <Card key={strategy} className="border-2 border-solid">
+                <CardHeader className="flex flex-row items-center gap-4">
+                  <CardTitle className="text-lg drop-shadow dark:drop-shadow-lg">Prédiction IA - {strategy}</CardTitle>
+                </CardHeader>
+                
+                <CardDescription className="flex flex-col gap-4 px-6">
+                  <div className="flex gap-2 flex-wrap mt-2">
+                    {rec.numbers.map((num, i) => (
+                      <LottoBall key={i} number={num} size="md" type="prediction" animated />
+                    ))}
                   </div>
-                  <div className="flex flex-wrap items-center gap-4 mb-2">
-                    <span className="font-semibold">Numéros :</span>
-                    <div className="flex gap-2 flex-wrap">
-                      {rec.numbers.map((num, i) => (
-                        <LottoBall key={i} number={num} size="md" type="prediction" animated />
-                      ))}
+            
+                  <div className="text-sm">Score de confiance : <span className="font-mono text-green-700 dark:text-green-400">{rec.confidenceScore}</span></div>
+                 
+                  <div className="flex flex-col">
+                    <div className="text-lg">Explication IA :</div>
+                    <div className="text-sm">{rec.reasoning}</div>
+                  </div>
+                </CardDescription>
+                {/* Analyse détaillée si présente */}
+                {rec.analysisFactors && (
+                  <details className="mt-2 px-6">
+                    <summary className="cursor-pointer font-semibold text-blue-600 dark:text-blue-300">Détails de l'analyse</summary>
+                    <div className="pl-4 mt-2 text-xs text-gray-700 dark:text-blue-100">
+                      {rec.analysisFactors.frequencyAnalysis && (
+                        <div className="mb-2">
+                          <span className="font-semibold">Analyse de fréquence :</span>
+                          <pre className="bg-gray-100 dark:bg-gray-900/60 rounded p-2 mt-1 overflow-x-auto">{JSON.stringify(rec.analysisFactors.frequencyAnalysis, null, 2)}</pre>
+                        </div>
+                      )}
+                      {rec.analysisFactors.patternAnalysis && (
+                        <div className="mb-2">
+                          <span className="font-semibold">Analyse de patterns :</span>
+                          <pre className="bg-gray-100 dark:bg-gray-900/60 rounded p-2 mt-1 overflow-x-auto">{JSON.stringify(rec.analysisFactors.patternAnalysis, null, 2)}</pre>
+                        </div>
+                      )}
+                      {rec.analysisFactors.historicalTrends && (
+                        <div className="mb-2">
+                          <span className="font-semibold">Tendances historiques :</span>
+                          <pre className="bg-gray-100 dark:bg-gray-900/60 rounded p-2 mt-1 overflow-x-auto">{JSON.stringify(rec.analysisFactors.historicalTrends, null, 2)}</pre>
+                        </div>
+                      )}
                     </div>
-                  </div>
-                  <div className="flex flex-wrap gap-6 mb-2">
-                    <span className="text-sm text-gray-700">Score de confiance : <span className="font-mono text-green-700">{rec.confidenceScore}</span></span>
-                  </div>
-                  <div className="mb-2">
-                    <span className="text-sm font-semibold">Explication IA :</span>
-                    <span className="ml-2 text-sm text-gray-800">{rec.reasoning}</span>
-                  </div>
-                  {/* Analyse détaillée si présente */}
-                  {rec.analysisFactors && (
-                    <details className="mt-2">
-                      <summary className="cursor-pointer font-semibold text-blue-600">Détails de l'analyse</summary>
-                      <div className="pl-4 mt-2 text-xs text-gray-700">
-                        {rec.analysisFactors.frequencyAnalysis && (
-                          <div className="mb-2">
-                            <span className="font-semibold">Analyse de fréquence :</span>
-                            <pre className="bg-gray-100 rounded p-2 mt-1 overflow-x-auto">{JSON.stringify(rec.analysisFactors.frequencyAnalysis, null, 2)}</pre>
-                          </div>
-                        )}
-                        {rec.analysisFactors.patternAnalysis && (
-                          <div className="mb-2">
-                            <span className="font-semibold">Analyse de patterns :</span>
-                            <pre className="bg-gray-100 rounded p-2 mt-1 overflow-x-auto">{JSON.stringify(rec.analysisFactors.patternAnalysis, null, 2)}</pre>
-                          </div>
-                        )}
-                        {rec.analysisFactors.historicalTrends && (
-                          <div className="mb-2">
-                            <span className="font-semibold">Tendances historiques :</span>
-                            <pre className="bg-gray-100 rounded p-2 mt-1 overflow-x-auto">{JSON.stringify(rec.analysisFactors.historicalTrends, null, 2)}</pre>
-                          </div>
-                        )}
-                      </div>
-                    </details>
-                  )}
-                </div>
-              ))}
-            </div>
+                  </details>
+                )}
+              </Card>
+            ))}
+          
           </div>
+      
 
           {/* Méta-analyse IA */}
           <div>
