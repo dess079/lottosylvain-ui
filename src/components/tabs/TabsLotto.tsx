@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../shadcn';
 import PreviousDrawTab from './PreviousDrawTab';
 import GraphTab from './GraphTab';
@@ -6,6 +6,7 @@ import PredictionTab from './PredictionTab';
 import LineChartTab from './LineChartTab';
 import PieChartTab from './PieChartTab';
 import ScatterPlotTab from './ScatterPlotTab';
+import PredictionSection from '../prediction/PredictionSection';
 import './TabsLotto.css';
 
 /**
@@ -13,14 +14,14 @@ import './TabsLotto.css';
  * Gère l'état des onglets et la transmission des props aux composants enfants
  */
 const TabsLotto: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'previous' | 'graph' | 'prediction' | 'line' | 'pie' | 'scatter'>('previous');
+  const [activeTab, setActiveTab] = useState<'previous' | 'graph' | 'prediction' | 'section' | 'line' | 'pie' | 'scatter'>('previous');
   const tabsListRef = useRef<HTMLDivElement>(null);
 
   /**
    * Gère le changement d'onglet et met à jour l'état actif
    */
   const handleTabChange = (value: string) => {
-    setActiveTab(value as 'previous' | 'graph' | 'prediction' | 'line' | 'pie' | 'scatter');
+    setActiveTab(value as 'previous' | 'graph' | 'prediction' | 'section' | 'line' | 'pie' | 'scatter');
   };
 
   return (
@@ -65,6 +66,13 @@ const TabsLotto: React.FC = () => {
           >
             Graphique de dispersion
           </TabsTrigger>
+
+          <TabsTrigger 
+            value="section" 
+            className="bar-tab-trigger min-w-[10rem] text-center whitespace-nowrap font-semibold transition-all duration-300"
+          >
+            Prédiction complète
+          </TabsTrigger>
         </div>
 
       </TabsList>
@@ -78,6 +86,9 @@ const TabsLotto: React.FC = () => {
       </TabsContent>
       <TabsContent value="prediction" className="mt-8 tabs-lotto-animation">
         <PredictionTab isActive={activeTab === 'prediction'} />
+      </TabsContent>
+      <TabsContent value="section" className="mt-8 tabs-lotto-animation">
+        <PredictionSection />
       </TabsContent>
       <TabsContent value="line" className="mt-8 tabs-lotto-animation">
         <LineChartTab isActive={activeTab === 'line'} />

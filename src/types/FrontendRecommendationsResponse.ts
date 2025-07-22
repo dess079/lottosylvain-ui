@@ -2,7 +2,8 @@
 export interface FrontendRecommendation {
   numbers: number[];
   confidenceScore: number;
-  reasoning: string;
+  reasoning?: string;
+  justification?: string;
   analysisFactors?: {
     frequencyAnalysis?: Record<string, number>;
     patternAnalysis?: Record<string, any>;

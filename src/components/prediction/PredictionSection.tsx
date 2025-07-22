@@ -1,22 +1,20 @@
-// Ce composant va être déplacé dans src/components/prediction/PredictionSection.tsx
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { fetchPredictions, fetchCustomPredictions, fetchAIRecommendation } from '../services/api';
-import { Card, Tabs, TabsList, TabsTrigger, TabsContent, Button } from './shadcn';
-import { formatDate, getNextDrawDate } from '../lib/utils';
-import { APP_CONFIG, LOTTO_CONFIG } from '../config';
-import type { PredictionData } from '../types';
+import { fetchPredictions, fetchCustomPredictions, fetchAIRecommendation } from '../../services/api';
+import { Card, Tabs, TabsList, TabsTrigger, TabsContent, Button } from '../shadcn';
+import { formatDate, getNextDrawDate } from '../../lib/utils';
+import { APP_CONFIG, LOTTO_CONFIG } from '../../config';
+import type { PredictionData } from '../../types';
 import { Loader2 } from 'lucide-react';
-import ErrorMessage from './prediction/ErrorMessage';
-import PredictionBalls from './prediction/PredictionBalls';
-import ConfidenceBar from './prediction/ConfidenceBar';
-import NumberGrid from './prediction/NumberGrid';
-
+import ErrorMessage from './ErrorMessage';
+import PredictionBalls from './PredictionBalls';
+import ConfidenceBar from './ConfidenceBar';
+import NumberGrid from './NumberGrid';
 
 /**
  * Main PredictionSection component
+ * Affiche les prédictions IA et personnalisées, la grille de sélection, et la gestion d'état.
  */
-
 const PredictionSection: React.FC = () => {
   const [predictions, setPredictions] = useState<PredictionData[]>([]);
   const [customPredictions, setCustomPredictions] = useState<PredictionData[]>([]);
@@ -26,7 +24,7 @@ const PredictionSection: React.FC = () => {
   const [selectedNumbers, setSelectedNumbers] = useState<number[]>([]);
   const [excludedNumbers, setExcludedNumbers] = useState<number[]>([]);
   const [historicalWeight, setHistoricalWeight] = useState(50);
-  const [aiRecommendation, setAIRecommendation] = useState<null | import('../types/FrontendRecommendationsResponse').FrontendRecommendationsResponse>(null);
+  const [aiRecommendation, setAIRecommendation] = useState<null | import('../../types/FrontendRecommendationsResponse').FrontendRecommendationsResponse>(null);
   const [isAILoading, setIsAILoading] = useState(false);
   const nextDrawDate = getNextDrawDate();
 
@@ -36,6 +34,9 @@ const PredictionSection: React.FC = () => {
     loadAIRecommendation();
   }, []);
 
+  /**
+   * Charge la recommandation IA principale
+   */
   const loadAIRecommendation = async () => {
     setIsAILoading(true);
     try {
@@ -48,6 +49,9 @@ const PredictionSection: React.FC = () => {
     }
   };
 
+  /**
+   * Charge les prédictions standard
+   */
   const loadPredictions = async () => {
     setIsLoading(true);
     setError(null);
@@ -63,6 +67,9 @@ const PredictionSection: React.FC = () => {
     }
   };
 
+  /**
+   * Charge les prédictions personnalisées
+   */
   const loadCustomPredictions = async () => {
     setIsCustomLoading(true);
     setError(null);
@@ -81,6 +88,9 @@ const PredictionSection: React.FC = () => {
     }
   };
 
+  /**
+   * Sélectionne ou désélectionne un numéro à inclure
+   */
   const toggleNumberSelection = (number: number) => {
     if (selectedNumbers.includes(number)) {
       setSelectedNumbers(selectedNumbers.filter(n => n !== number));
@@ -94,6 +104,9 @@ const PredictionSection: React.FC = () => {
     }
   };
 
+  /**
+   * Sélectionne ou désélectionne un numéro à exclure
+   */
   const toggleNumberExclusion = (number: number) => {
     if (excludedNumbers.includes(number)) {
       setExcludedNumbers(excludedNumbers.filter(n => n !== number));
@@ -104,8 +117,6 @@ const PredictionSection: React.FC = () => {
       setExcludedNumbers([...excludedNumbers, number]);
     }
   };
-
-  // ...existing code...
 
   return (
     <section className="py-12 bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:bg-gray-950 min-h-screen">

@@ -9,6 +9,49 @@ interface PreviousDrawTabProps {
 }
 
 /**
+ * Calcule la date du dernier tirage (mercredi ou samedi le plus récent)
+ * et la date du prochain tirage (mercredi ou samedi suivant)
+ * @param today Date de référence (au format 'YYYY-MM-DD')
+ * @returns Un tuple [dateDernierTirage, dateProchainTirage]
+ */
+function getDrawDates(today: string): [string, string] {
+  const date = new Date(today);
+  const day = date.getDay(); // 0 = dimanche, 1 = lundi, ..., 6 = samedi
+  // Jours de tirage : mercredi (3), samedi (6)
+  let lastDraw = new Date(date);
+  let nextDraw = new Date(date);
+
+  // Trouver le dernier tirage
+  if (day >= 6) {
+    // Samedi ou après (dimanche)
+    lastDraw.setDate(date.getDate() - (day - 6));
+  } else if (day >= 3) {
+    // Entre mercredi et vendredi
+    lastDraw.setDate(date.getDate() - (day - 3));
+  } else {
+    // Avant mercredi
+    lastDraw.setDate(date.getDate() - (day + 1)); // dernier samedi
+  }
+
+  // Trouver le prochain tirage
+  if (day < 3) {
+    // Avant mercredi
+    nextDraw.setDate(date.getDate() + (3 - day));
+  } else if (day < 6) {
+    // Avant samedi
+    nextDraw.setDate(date.getDate() + (6 - day));
+  } else {
+    // Samedi ou après
+    nextDraw.setDate(date.getDate() + (3 - ((day + 7) % 7)));
+  }
+
+  // Format YYYY-MM-DD
+  const pad = (n: number) => n.toString().padStart(2, '0');
+  const format = (d: Date) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+  return [format(lastDraw), format(nextDraw)];
+}
+
+/**
  * Composant pour afficher le dernier tirage officiel
  * Charge les données seulement quand l'onglet est actif
  */
@@ -17,10 +60,10 @@ const PreviousDrawTab: React.FC<PreviousDrawTabProps> = ({ isActive }) => {
   const [drawError, setDrawError] = useState<string | null>(null);
   const [drawLoading, setDrawLoading] = useState<boolean>(false);
   const [hasLoaded, setHasLoaded] = useState<boolean>(false);
-  // Initialise la date de fin à aujourd'hui
+  // Initialise la date de début et de fin selon les jours de tirage
   const today = new Date().toISOString().slice(0, 10);
-  const [startDate, setStartDate] = useState<string>('');
-  const [endDate, setEndDate] = useState<string>(today);
+  const [startDate, setStartDate] = useState<string>(() => getDrawDates(today)[0]);
+  const [endDate, setEndDate] = useState<string>(() => getDrawDates(today)[1]);
 
   // Charge les données seulement quand l'onglet devient actif
   useEffect(() => {
@@ -29,10 +72,30 @@ const PreviousDrawTab: React.FC<PreviousDrawTabProps> = ({ isActive }) => {
     }
   }, [isActive, hasLoaded]);
 
-  // Met à jour la date de début à la date du tirage après chargement
+  /**
+   * Met à jour la date de début et de fin après chargement du dernier tirage
+   * startDate = date du dernier tirage
+   * endDate = prochain mercredi ou samedi suivant cette date
+   */
   useEffect(() => {
     if (previousDraw && previousDraw.previousResultDate) {
       setStartDate(previousDraw.previousResultDate);
+      // Calcule le prochain jour de tirage (mercredi ou samedi)
+      const getNextDrawDate = (dateStr: string): string => {
+        const date = new Date(dateStr);
+        const day = date.getDay();
+        let nextDraw = new Date(date);
+        if (day < 3) {
+          nextDraw.setDate(date.getDate() + (3 - day));
+        } else if (day < 6) {
+          nextDraw.setDate(date.getDate() + (6 - day));
+        } else {
+          nextDraw.setDate(date.getDate() + (3 - ((day + 7) % 7)));
+        }
+        const pad = (n: number) => n.toString().padStart(2, '0');
+        return `${nextDraw.getFullYear()}-${pad(nextDraw.getMonth() + 1)}-${pad(nextDraw.getDate())}`;
+      };
+      setEndDate(getNextDrawDate(previousDraw.previousResultDate));
     }
   }, [previousDraw]);
 
