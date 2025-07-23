@@ -25,7 +25,7 @@ const TabsLotto: React.FC = () => {
   };
 
   return (
-    <div className="flex w-full max-w-6xl p-32">
+    <div className="flex w-full max-w-6xl">
     <Tabs defaultValue="previous" onValueChange={handleTabChange}>
       <TabsList className="flex">
       

@@ -29,33 +29,19 @@ export async function fetchPreviousResults(startDate?: string, endDate?: string)
 
     const response = await fetch(url);
     if (!response.ok) {
+      if (response.status === 404) {
+        // Message personnalisé si aucun tirage trouvé
+        throw new Error("Aucun tirage trouvé pour la période sélectionnée.");
+      }
       console.error(`fetchPreviousResults: Failed with status ${response.status} - ${response.statusText}`);
       throw new Error(`Failed to fetch previous results. Status: ${response.status} - ${response.statusText}`);
     }
 
     console.info('fetchPreviousResults: Response received, parsing JSON', response);
-    const rawData = await response.json();
+    const rawData: PreviousResult = await response.json();
 
-    // Transformation de la réponse API vers le type attendu
-    const data: PreviousResult = {
-      previousResultDate: rawData.previousResultDate,
-      drawResult: rawData.resultNumbers,
-      bonusNumber: rawData.bonusNumber,
-    };
-
-    // Validation du format des données
-    if (
-      !data ||
-      typeof data.previousResultDate !== 'string' ||
-      !Array.isArray(data.drawResult) ||
-      typeof data.bonusNumber !== 'number'
-    ) {
-      console.error('fetchPreviousResults: Invalid data format after transformation', data);
-      throw new Error('Invalid data format from API');
-    }
-
-    console.info('fetchPreviousResults: Valid data received after transformation', data);
-    return data;
+    console.info('fetchPreviousResults: Valid data received after transformation', rawData);
+    return rawData;
   } catch (error) {
     if (error instanceof TypeError) {
       console.error('fetchPreviousResults: Network error or server unreachable:', error);

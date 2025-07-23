@@ -12,10 +12,18 @@ export interface LottoDraw {
   bonusNumber?: number;
 }
 
+export interface PreviousResultDetails {
+  previousResultDate: string; // Date du tirage
+  resultNumbers: number[]; // Numéros gagnants
+  bonusNumber: number; // Numéro bonus
+  message?: string; // Message d'erreur éventuel
+}
+
+/**
+ * Structure alignée sur le backend PreviousResult
+ */
 export interface PreviousResult {
-  previousResultDate: string; // Date du tirage, parsed using date-fns
-  drawResult: number[]; // Numéros gagnants
-  bonusNumber: number;
+  previousResult: PreviousResultDetails[]; // Détails du tirage précédent
 }
 
 /**
