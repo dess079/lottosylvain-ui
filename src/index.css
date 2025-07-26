@@ -1,266 +1,532 @@
-/* Ajouter des polices Google Fonts tendance 2025 */
 @import "tailwindcss";
 
-@import "tailwindcss/preflight";
-@import "tailwindcss/utilities";
+/* Palette de couleurs futuristes tendance 2026 */
+:root {
+  --cosmic-violet: hsl(270, 80%, 60%);
+  --cosmic-violet-dark: hsl(270, 80%, 50%);
+  --cosmic-violet-light: hsl(270, 80%, 70%);
+  --electric-aqua: hsl(180, 100%, 50%);
+  --electric-aqua-dark: hsl(180, 100%, 40%);
+  --electric-aqua-light: hsl(180, 100%, 70%);
+  --neon-coral: hsl(5, 90%, 65%);
+  --neon-coral-dark: hsl(5, 90%, 55%);
+  --neon-coral-light: hsl(5, 90%, 75%);
+  --background: 260 15% 5%;
+  --foreground: 210 20% 98%;
+  --card: 260 15% 10%;
+  --card-foreground: 210 20% 98%;
+  --popover: 260 15% 10%;
+  --popover-foreground: 210 20% 98%;
+  --primary: var(--cosmic-violet);
+  --primary-foreground: 0 0% 100%;
+  --secondary: var(--electric-aqua);
+  --secondary-foreground: 260 15% 10%;
+  --muted: 260 15% 15%;
+  --muted-foreground: 210 20% 80%;
+  --accent: var(--neon-coral);
+  --accent-foreground: 260 15% 10%;
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 0 0% 98%;
+  --border: 260 15% 20%;
+  --input: 260 15% 20%;
+  --ring: var(--cosmic-violet);
+  --radius: 1rem;
+}
 
-@layer base {
-  :root {
-    --blur-amount: 8px;
-    --border-radius: 1rem;
-    --transition-speed: 0.3s;
+.light {
+  --background: 260 15% 95%;
+  --foreground: 260 15% 10%;
+  --card: 260 15% 98%;
+  --card-foreground: 260 15% 10%;
+  --popover: 260 15% 98%;
+  --popover-foreground: 260 15% 10%;
+  --primary: var(--cosmic-violet);
+  --primary-foreground: 0 0% 100%;
+  --secondary: var(--electric-aqua);
+  --secondary-foreground: 260 15% 10%;
+  --muted: 260 15% 90%;
+  --muted-foreground: 260 15% 40%;
+  --accent: var(--neon-coral);
+  --accent-foreground: 260 15% 10%;
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 0 0% 98%;
+  --border: 260 15% 85%;
+  --input: 260 15% 85%;
+  --ring: var(--cosmic-violet);
+}
 
-    --background: 0 0% 100%;
-    --foreground: 222.2 47.4% 11.2%;
+* {
+  border-color: var(--border);
+}
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+body {
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+  font-feature-settings: "rlig" 1, "calt" 1;
+  background-image: 
+    radial-gradient(circle at 10% 20%, rgba(168, 85, 247, 0.08) 0%, transparent 50%),
+    radial-gradient(circle at 90% 80%, rgba(6, 182, 212, 0.08) 0%, transparent 50%),
+    radial-gradient(circle at 50% 50%, rgba(244, 63, 94, 0.05) 0%, transparent 80%);
+  background-attachment: fixed;
+  background-size: 200% 200%;
+  animation: gradientMovement 30s ease infinite;
+}
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 47.4% 11.2%;
+.light body {
+  background-image: 
+    radial-gradient(circle at 10% 20%, rgba(168, 85, 247, 0.03) 0%, transparent 50%),
+    radial-gradient(circle at 90% 80%, rgba(6, 182, 212, 0.03) 0%, transparent 50%),
+    radial-gradient(circle at 50% 50%, rgba(244, 63, 94, 0.02) 0%, transparent 80%);
+}
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 47.4% 11.2%;
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display, system-ui);
+  letter-spacing: -0.025em;
+  background: linear-gradient(90deg, var(--cosmic-violet), var(--electric-aqua));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-weight: 700;
+}
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
+/* Barre d'outils futuriste */
+.toolbar-futuristic {
+  background: rgba(var(--background), 0.7);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(var(--cosmic-violet), 0.3);
+  border-radius: var(--radius);
+  box-shadow: 
+    0 4px 20px rgba(var(--cosmic-violet), 0.2),
+    0 0 0 1px rgba(var(--cosmic-violet), 0.1),
+    inset 0 0 0 1px rgba(var(--cosmic-violet), 0.2);
+  padding: 0.75rem;
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  position: sticky;
+  top: 1rem;
+  z-index: 50;
+}
 
-    --primary: 247.3 45.4% 66.5%;
-    --primary-foreground: 0 0% 100%;
+.toolbar-futuristic::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: calc(var(--radius) + 1px);
+  padding: 1px;
+  background: linear-gradient(45deg, transparent, var(--cosmic-violet), var(--electric-aqua), transparent);
+  -webkit-mask: linear-gradient(#000, #000) content-box, linear-gradient(#000, #000);
+  mask: linear-gradient(#000, #000) content-box, linear-gradient(#000, #000);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
 
-    --secondary: 38.7 92.1% 50.2%;
-    --secondary-foreground: 0 0% 100%;
-
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-
-    --destructive: 0 100% 50%;
-    --destructive-foreground: 210 40% 98%;
-
-    --ring: 215 20.2% 65.1%;
-
-    --radius: 0.5rem;
+@keyframes gradientMovement {
+  0% {
+    background-position: 0% 0%;
   }
-
-  .dark {
-    --background: 222.2 47.4% 11.2%;
-    --foreground: 210 40% 98%;
-
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-
-    --popover: 222.2 47.4% 11.2%;
-    --popover-foreground: 210 40% 98%;
-
-    --card: 222.2 47.4% 11.2%;
-    --card-foreground: 210 40% 98%;
-
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-
-    --primary: 247.3 45.4% 66.5%;
-    --primary-foreground: 0 0% 100%;
-
-    --secondary: 38.7 92.1% 50.2%;
-    --secondary-foreground: 0 0% 100%;
-
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-
-    --destructive: 0 63% 31%;
-    --destructive-foreground: 210 40% 98%;
-
-    --ring: 217.2 32.6% 17.5%;
+  50% {
+    background-position: 100% 100%;
   }
-
-  html {
-    scroll-behavior: smooth;
-  }
-  
-  body {
-    margin: 0;
-    font-family: 'Space Grotesk', sans-serif;
-    background: linear-gradient(to bottom right, white, #f3f4f6);
-    color: #111827;
-    transition: background-color 0.3s, color 0.3s;
-  }
-  
-  .dark body {
-    background: linear-gradient(to bottom right, #111827, #030712);
-    color: #f9fafb;
-  }
-  
-  h1, h2, h3, h4, h5, h6 {
-    font-family: 'Syne', sans-serif;
-    font-weight: bold;
-  }
-  
-  h1 {
-    font-size: 2.25rem;
-    line-height: 2.5rem;
-    margin-bottom: 1.5rem;
-    margin-top: 1rem;
-    color: #4f46e5;
-  }
-  
-  .dark h1 {
-    color: #818cf8;
-  }
-  
-  h2 {
-    font-size: 1.5rem;
-    line-height: 2rem;
-    margin-bottom: 1rem;
-    margin-top: 0.75rem;
-    color: #4f46e5;
-  }
-  
-  .dark h2 {
-    color: #818cf8;
-  }
-
-  h3 {
-    font-size: 1.25rem;
-    line-height: 1.75rem;
-    margin-bottom: 0.75rem;
-    margin-top: 0.5rem;
-    color: #4f46e5;
-  }
-  
-  .dark h3 {
-    color: #818cf8;
-  }
-
-  /* Style moderne pour les scrollbars */
-  ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-  }
-
-  ::-webkit-scrollbar-track {
-    background-color: #f3f4f6;
-  }
-  
-  .dark ::-webkit-scrollbar-track {
-    background-color: #1f2937;
-  }
-
-  ::-webkit-scrollbar-thumb {
-    background-color: #a5b4fc;
-    border-radius: 9999px;
-    transition: background-color 0.3s;
-  }
-  
-  ::-webkit-scrollbar-thumb:hover {
-    background-color: #818cf8;
-  }
-  
-  .dark ::-webkit-scrollbar-thumb {
-    background-color: #4338ca;
-  }
-  
-  .dark ::-webkit-scrollbar-thumb:hover {
-    background-color: #4f46e5;
-  }
-
-  /* Sélection de texte */
-  ::selection {
-    background-color: #e0e7ff;
-    color: #312e81;
-  }
-  
-  .dark ::selection {
-    background-color: #312e81;
-    color: #e0e7ff;
+  100% {
+    background-position: 0% 0%;
   }
 }
 
-@layer components {
-  /* Les styles des LottoBall sont maintenant dans leur propre fichier CSS */
-  /* Voir: /src/components/shadcn/ui/lotto-ball.css */
-  
+body {
+  background-size: 300% 300%;
+  animation: gradientMovement 30s ease infinite;
+  background-attachment: fixed;
+}
 
+/* Classes personnalisées */
+.container-2025 {
+  padding-left: 1rem;
+  padding-right: 1rem;
+  max-width: 80rem;
+  margin-left: auto;
+  margin-right: auto;
+}
 
+.glass {
+  background-color: rgba(0, 0, 0, 0.05);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(168, 85, 247, 0.1);
+  box-shadow: 
+    0 10px 25px -5px rgba(0, 0, 0, 0.1), 
+    0 10px 10px -5px rgba(0, 0, 0, 0.04),
+    0 0 0 1px rgba(168, 85, 247, 0.1);
+}
 
-  /* Styles pour les éléments de thème sombre/clair */
-  .theme-toggle {
-    cursor: pointer;
-    width: 44px;
-    height: 44px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    background-color: rgba(255, 255, 255, 0.1);
-    transition: background-color 0.3s;
+.light .glass {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: rgba(168, 85, 247, 0.05);
+}
+
+.bg-card {
+  background-color: rgba(0, 0, 0, 0.15);
+  backdrop-filter: blur(12px);
+}
+
+.light .bg-card {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.container-2025, section, main {
+  background-color: transparent;
+}
+
+.glass-effect {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.01));
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.1),
+    0 0 0 1px rgba(255, 255, 255, 0.05);
+  border-radius: var(--radius);
+}
+
+section {
+  margin-bottom: 5rem;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  border-radius: var(--radius);
+  position: relative;
+  overflow: hidden;
+}
+
+section::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -50%;
+  width: 200%;
+  height: 1px;
+  background: linear-gradient(90deg, 
+    transparent, 
+    rgba(var(--cosmic-violet), 0.2), 
+    var(--electric-aqua), 
+    rgba(var(--cosmic-violet), 0.2),
+    transparent);
+}
+
+section::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: -50%;
+  width: 200%;
+  height: 1px;
+  background: linear-gradient(90deg, 
+    transparent, 
+    rgba(var(--cosmic-violet), 0.2), 
+    var(--neon-coral), 
+    rgba(var(--cosmic-violet), 0.2),
+    transparent);
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 
+      0 0 18px 2px rgba(var(--cosmic-violet), 0.7),
+      0 0 5px 1px rgba(var(--electric-aqua), 0.5),
+      inset 0 0 10px rgba(255, 255, 255, 0.5);
   }
-  
-  .theme-toggle:hover {
-    background-color: rgba(255, 255, 255, 0.2);
-  }
-  
-  .dark .theme-toggle {
-    background-color: rgba(0, 0, 0, 0.2);
-  }
-  
-  .dark .theme-toggle:hover {
-    background-color: rgba(0, 0, 0, 0.3);
-  }
-  
-  /* Effet de glassmorphisme tendance 2025 */
-  .glass {
-    background: rgba(255, 255, 255, 0.15);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border-radius: 1rem;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-  }
-  
-  .dark .glass {
-    background: rgba(0, 0, 0, 0.2);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-  }
-  
-  /* Animations tendance 2025 */
-  @keyframes float {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-10px); }
-  }
-  
-  @keyframes glow {
-    0% { box-shadow: 0 0 5px rgba(99, 102, 241, 0.5); }
-    100% { box-shadow: 0 0 20px rgba(99, 102, 241, 0.8); }
-  }
-  
-  .float {
-    animation: float 6s ease-in-out infinite;
-  }
-  
-  .glow {
-    animation: glow 2s ease-in-out infinite alternate;
-  }
-  
-  /* Conteneur principal avec un max-width pour les grands écrans */
-  .container-2025 {
-    width: 100%;
-    max-width: 1280px;
-    margin-left: auto;
-    margin-right: auto;
-    padding-left: 1rem;
-    padding-right: 1rem;
-  }
-  
-  @media (min-width: 640px) {
-    .container-2025 {
-      padding-left: 2rem;
-      padding-right: 2rem;
-    }
-  }
-  
-  @media (min-width: 1024px) {
-    .container-2025 {
-      padding-left: 3rem;
-      padding-right: 3rem;
-    }
+  50% {
+    box-shadow: 
+      0 0 25px 8px rgba(var(--cosmic-violet), 0.9),
+      0 0 10px 2px rgba(var(--electric-aqua), 0.7),
+      inset 0 0 15px rgba(255, 255, 255, 0.7);
   }
 }
+
+.animate-pulse-glow {
+  animation: pulse-glow 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.lotto-ball-3d {
+  background: linear-gradient(135deg, var(--cosmic-violet-light), var(--cosmic-violet-dark));
+  color: white;
+  font-weight: bold;
+  border-radius: 50%;
+  position: relative;
+  transform-style: preserve-3d;
+  perspective: 500px;
+  overflow: visible;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 
+    0 5px 15px rgba(0, 0, 0, 0.3),
+    inset 0 5px 10px rgba(255, 255, 255, 0.5),
+    inset 0 -5px 10px rgba(0, 0, 0, 0.3);
+}
+
+.lotto-ball-3d::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 50%;
+  background: linear-gradient(315deg, transparent 30%, rgba(255, 255, 255, 0.4) 40%, rgba(255, 255, 255, 0.7) 50%, transparent 70%);
+  z-index: 1;
+  pointer-events: none;
+}
+
+.lotto-ball-3d::after {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  top: 5%;
+  left: 5%;
+  background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.3), transparent 70%);
+  z-index: 1;
+  pointer-events: none;
+  filter: blur(2px);
+}
+
+.lotto-ball-3d:hover {
+  transform: translateY(-5px) rotateX(10deg) rotateY(-10deg);
+  box-shadow: 
+    0 10px 20px rgba(0, 0, 0, 0.4),
+    inset 0 5px 10px rgba(255, 255, 255, 0.5),
+    inset 0 -5px 10px rgba(0, 0, 0, 0.3);
+}
+
+.lotto-ball-3d-regular {
+  background: linear-gradient(135deg, var(--cosmic-violet-light), var(--cosmic-violet-dark));
+}
+
+.lotto-ball-3d-bonus {
+  background: linear-gradient(135deg, var(--neon-coral-light), var(--neon-coral-dark));
+}
+
+.lotto-ball-3d-selected {
+  background: linear-gradient(135deg, var(--electric-aqua-light), var(--electric-aqua-dark));
+}
+
+.lotto-ball-3d-excluded {
+  background: linear-gradient(135deg, #555, #333);
+  opacity: 0.5;
+}
+
+.card-hover-effect {
+  transition: all 0.3s ease;
+  transform: translateZ(0);
+  position: relative;
+  overflow: hidden;
+}
+
+.card-hover-effect:hover {
+  box-shadow: 
+    0 20px 30px -15px rgba(0, 0, 0, 0.3),
+    0 0 0 1px rgba(var(--cosmic-violet), 0.2),
+    0 0 20px rgba(var(--cosmic-violet), 0.2);
+  transform: translateY(-5px) translateZ(0);
+}
+
+.futuristic-card {
+  background: rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(12px);
+  border-radius: calc(var(--radius) + 0.5rem);
+  padding: 1.5rem;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(168, 85, 247, 0.1);
+  box-shadow: 
+    0 10px 30px -5px rgba(0, 0, 0, 0.1),
+    0 0 0 1px rgba(168, 85, 247, 0.05);
+  transition: all 0.3s ease;
+}
+
+.futuristic-card::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: calc(var(--radius) + 0.5rem + 1px);
+  padding: 1px;
+  background: linear-gradient(45deg, 
+    transparent, 
+    rgba(var(--cosmic-violet), 0.3), 
+    rgba(var(--electric-aqua), 0.3), 
+    transparent);
+  -webkit-mask: linear-gradient(#000, #000) content-box, linear-gradient(#000, #000);
+  mask: linear-gradient(#000, #000) content-box, linear-gradient(#000, #000);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0.5;
+  transition: opacity 0.3s ease;
+}
+
+.futuristic-card:hover::before {
+  opacity: 1;
+}
+
+.gradient-text {
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-image: linear-gradient(to right, var(--cosmic-violet), var(--electric-aqua));
+}
+
+.accent-gradient-text {
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-image: linear-gradient(to right, var(--electric-aqua), var(--neon-coral));
+}
+
+.card-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+
+.card-shimmer::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    to right,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.05) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  transform: rotate(30deg);
+  animation: shimmer 6s infinite linear;
+  pointer-events: none;
+}
+
+@keyframes fadeInScale {
+  0% {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.fade-in-scale {
+  animation: fadeInScale 0.5s ease-out forwards;
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%) rotate(30deg);
+  }
+  100% {
+    transform: translateX(100%) rotate(30deg);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-8px) scale(1.01);
+  }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.card-3d-effect {
+  transform-style: preserve-3d;
+  perspective: 1000px;
+  transition: all 0.3s ease;
+}
+
+.card-3d-effect:hover {
+  transform: translateY(-10px) rotateX(2deg) rotateY(2deg);
+  box-shadow:
+    0 20px 30px -10px rgba(0, 0, 0, 0.3),
+    0 0 0 1px rgba(168, 85, 247, 0.1),
+    0 0 20px rgba(168, 85, 247, 0.2);
+}
+
+.futuristic-number-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(3.5rem, 1fr));
+  gap: 1.25rem;
+  padding: 1.5rem;
+  border-radius: var(--radius);
+  background: rgba(0, 0, 0, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(168, 85, 247, 0.1);
+  justify-items: center;
+  align-items: center;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  overflow-x: auto;
+  animation: fadeInScale 0.5s ease-out forwards;
+}
+
+.heatmap-cell {
+  border-radius: 0.5rem;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.heatmap-cell::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, transparent, rgba(255, 255, 255, 0.1));
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.heatmap-cell:hover::before {
+  opacity: 1;
+}
+
+.confidence-bar {
+  height: 100%;
+  border-radius: 9999px;
+  background: linear-gradient(90deg, var(--cosmic-violet), var(--electric-aqua));
+  transition: width 1s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.confidence-bar::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.15) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  animation: shimmer-bar 2s infinite linear;
+  z-index: 1;
+}
+
+@keyframes shimmer-bar {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* Les styles des LottoBall sont maintenant dans leur propre fichier CSS */
+/* Voir: /src/components/shadcn/ui/lotto-ball.css */

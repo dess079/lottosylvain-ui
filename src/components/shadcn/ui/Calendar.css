@@ -1,0 +1,70 @@
+/* Calendar.css - Custom dark mode and Tailwind-inspired overrides for react-calendar */
+
+.react-calendar {
+  width: 100%;
+  border-radius: 0.5rem;
+  background: #fff;
+  color: #1e293b;
+}
+.dark .react-calendar {
+  background: #0f172a;
+  color: #e2e8f0;
+}
+
+.react-calendar__tile {
+  border-radius: 0.5rem;
+  transition: background 0.15s, color 0.15s;
+}
+.dark .react-calendar__tile {
+  background: #0f172a;
+  color: #e2e8f0;
+}
+
+.react-calendar__tile--active {
+  background: #2563eb;
+  color: #fff;
+}
+.dark .react-calendar__tile--active {
+  background: #2563eb;
+  color: #fff;
+}
+
+.react-calendar__tile--now {
+  background: #f59e42;
+  color: #fff;
+}
+.dark .react-calendar__tile--now {
+  background: #f59e42;
+  color: #fff;
+}
+
+.react-calendar__navigation button {
+  border-radius: 0.5rem;
+  padding: 0.25rem 0.5rem;
+  font-weight: bold;
+  font-size: 1rem;
+  background: transparent;
+  color: #1e293b;
+}
+.dark .react-calendar__navigation button {
+  background: #0f172a;
+  color: #e2e8f0;
+}
+
+.react-calendar__navigation button:hover {
+  background: #f59e42;
+  color: #fff;
+}
+.dark .react-calendar__navigation button:hover {
+  background: #f59e42;
+  color: #fff;
+}
+
+.react-calendar__month-view__weekdays {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #64748b;
+}
+.dark .react-calendar__month-view__weekdays {
+  color: #94a3b8;
+}

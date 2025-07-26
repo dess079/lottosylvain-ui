@@ -8,7 +8,7 @@ import type { PredictionData } from '../../types';
  * @param prediction Données de prédiction
  */
 const PredictionBalls: React.FC<{ prediction: PredictionData }> = React.memo(({ prediction }) => (
-  <div className="flex flex-wrap gap-3 justify-center my-6">
+  <div className="flex flex-wrap gap-6 justify-center my-6">
     {prediction.numbers.map((number, index) => (
       <motion.div
         key={index}

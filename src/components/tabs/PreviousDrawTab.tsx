@@ -3,6 +3,7 @@ import { addDays, subDays, getDay, format as formatDate } from 'date-fns';
 import { LottoBall } from '../shadcn';
 import { fetchPreviousResults } from '../../services/api';
 import type { PreviousResult } from '../../types';
+import CalendarDateInput from '../CalendarDateInput';
 import './PreviousDrawTab.css';
 
 interface PreviousDrawTabProps {
@@ -180,28 +181,20 @@ return (
         onSubmit={handleDateSubmit}
         aria-label="Sélection de la période des tirages"
       >
-        <div className="flex flex-col items-center w-full sm:w-auto">
-          <label htmlFor="start-date" className="mb-1 text-center">Date de début</label>
-          <input
-            id="start-date"
-            type="date"
-            value={state.startDate}
-            onChange={e => dispatch({ type: 'SET_START_DATE', payload: e.target.value })}
-            className="border border-slate-300 dark:border-slate-700 rounded px-3 py-2 text-base focus:outline-none focus:ring-2 focus:ring-indigo-400 bg-white dark:bg-slate-800 text-center"
-            aria-label="Date de début"
-          />
-        </div>
-        <div className="flex flex-col items-center w-full sm:w-auto">
-          <label htmlFor="end-date" className="mb-1 text-center">Date de fin</label>
-          <input
-            id="end-date"
-            type="date"
-            value={state.endDate}
-            onChange={e => dispatch({ type: 'SET_END_DATE', payload: e.target.value })}
-            className="border border-slate-300 dark:border-slate-700 rounded px-3 py-2 text-base focus:outline-none focus:ring-2 focus:ring-indigo-400 bg-white dark:bg-slate-800 text-center"
-            aria-label="Date de fin"
-          />
-        </div>
+        <CalendarDateInput
+          id="start-date"
+          label="Date de début"
+          value={state.startDate}
+          onChange={e => dispatch({ type: 'SET_START_DATE', payload: e.target.value })}
+          ariaLabel="Date de début"
+        />
+        <CalendarDateInput
+          id="end-date"
+          label="Date de fin"
+          value={state.endDate}
+          onChange={e => dispatch({ type: 'SET_END_DATE', payload: e.target.value })}
+          ariaLabel="Date de fin"
+        />
         <button
           type="submit"
           className="mt-4 sm:mt-0 px-5 py-2 rounded bg-indigo-500 text-white font-semibold hover:bg-indigo-600 transition-colors shadow"
@@ -229,8 +222,7 @@ return (
             <span className="text-red-500">{state.drawError}</span>
           </div>
         )}
-
-        {/* Résultat ou message si aucun résultat */}
+        
         {/* Résultat ou message si aucun résultat */}
         {!state.drawLoading && state.previousDraw && Array.isArray(state.previousDraw) ? (
           state.previousDraw.length > 0 ? (

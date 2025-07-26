@@ -1,6 +1,6 @@
 import { API_CONFIG } from '../config';
 import type { CustomPredictionParams, DrawStatistics, PredictionData, PreviousResult } from '../types';
-import type { FrontendRecommendationsResponse, FrontendRecommendation } from '../types/FrontendRecommendationsResponse';
+import type { FrontendRecommendationsResponse } from '../types/FrontendRecommendationsResponse';
 
 /**
  * Base API URL for all requests
@@ -228,3 +228,14 @@ export const fetchAIRecommendation = async (): Promise<FrontendRecommendationsRe
   
   return data;
 };
+
+/**
+ * Appelle le backend pour obtenir la prédiction IA Lotto649
+ * @returns Les données retournées par l'IA
+ */
+export async function fetchAIPrediction(): Promise<any> {
+  const url = `${API_BASE_URL}/api/essais/ai/lotto649/predict`;
+  const response = await fetch(url);
+  if (!response.ok) throw new Error('Erreur lors de la récupération de la prédiction IA');
+  return await response.json();
+}

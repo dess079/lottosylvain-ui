@@ -25,6 +25,7 @@ The `essais` directory of lottoquebec project contains the API that exploits the
 - Follow ESLint and Prettier configurations if present
 - Fait des composant functionnel et pas de classe et pour chaque composant fait un fichier .tsx et un fichier .css
 
+
 ## Technologies
 - React 19+ with functional components and hooks ([Installation](https://react.dev/learn/installation))
 - TypeScript 5.8 for static typing ([Installation](https://www.typescriptlang.org/download/))

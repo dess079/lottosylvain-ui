@@ -10,3 +10,4 @@ export { default as TabsLotto } from './TabsLotto';
 export { default as PreviousDrawTab } from './PreviousDrawTab';
 export { default as GraphTab } from './GraphTab';
 export { default as PredictionTab } from './PredictionTab';
+export { default as AITab } from './AITab';

@@ -1,0 +1,43 @@
+.ai-tab-container {
+  padding: 1rem;
+  background: #f8fafc;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+.ai-tab-title {
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+.ai-tab-section {
+  margin-bottom: 1.2rem;
+}
+.ai-tab-numbers {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+.ai-tab-ball {
+  background: #2563eb;
+  color: #fff;
+  border-radius: 50%;
+  width: 2.2rem;
+  height: 2.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+.ai-tab-details {
+  background: #e0e7ef;
+  padding: 0.7rem;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  white-space: pre-wrap;
+}
+.ai-tab-empty {
+  color: #64748b;
+  font-style: italic;
+  padding: 1rem;
+}

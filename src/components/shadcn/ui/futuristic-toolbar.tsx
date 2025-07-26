@@ -23,7 +23,7 @@ const FuturisticToolbar: React.FC<FuturisticToolbarProps> = ({
   onNotificationsClick
 }) => {
   return (
-    <div className="flex p-16 z-50 w-full">
+    <div className="flex p-2 z-50 w-full">
       <Toolbar className="flex items-center justify-between">
         <ToolbarTitle>
           Lotto 649 - Analyse & Prédictions
