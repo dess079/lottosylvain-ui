@@ -4,7 +4,7 @@
  */
 
 // Composant principal d'onglets
-export { default as TabsLotto } from './TabsLotto';
+export { TabsLotto } from './ui';
 
 // Composants individuels des onglets
 export { default as PreviousDrawTab } from './PreviousDrawTab';

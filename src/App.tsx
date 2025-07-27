@@ -1,7 +1,7 @@
 import React from 'react';
 import { FooterSection } from './components/FooterSection';
 import { FuturisticToolbar } from './components/shadcn';
-import { TabsLotto } from './components/tabs';
+import { TabsLotto } from './components/tabs/ui';
 
 /**
  * Page principale avec système d'onglets intégré

@@ -117,13 +117,12 @@ const PredictionSection: React.FC = () => {
   };
 
   return (
-      <div className='flex flex-row gap-2 p-1 justify-between'>
-        <Card>
-        
-            <h2 className="text-4xl font-bold text-center gradient-text">Prédiction pour le prochain tirage</h2>
-            <h3 className="text-lg text-center font-semibold text-primary-600">
-              {formatDate(nextDrawDate)}
-            </h3>
+      <div className='flex flex-row gap-8 p-1 justify-between'>
+        <Card className='min-w-50%'>
+          <h2 className="text-4xl font-bold text-center gradient-text">Prédiction pour le prochain tirage</h2>
+          <h3 className="text-lg text-center font-semibold text-primary-600">
+            {formatDate(nextDrawDate)}
+          </h3>
 
             {/* Affichage de la prédiction IA principale */}
             <div className="w-full ">
@@ -152,8 +151,8 @@ const PredictionSection: React.FC = () => {
           
             </div>
           </Card>
-          
-          <Card className="mt-6">
+
+           <Card className='min-w-50%'>
             <PredictionTabs
               predictions={predictions}
               customPredictions={customPredictions}

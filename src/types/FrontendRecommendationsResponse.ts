@@ -4,6 +4,8 @@ export interface FrontendRecommendation {
   confidenceScore: number;
   reasoning?: string;
   justification?: string;
+  /** Date du tirage (format ISO ou YYYY-MM-DD) */
+  drawDate?: string;
   analysisFactors?: {
     frequencyAnalysis?: Record<string, number>;
     patternAnalysis?: Record<string, any>;

@@ -3,6 +3,48 @@ import type { CustomPredictionParams, DrawStatistics, PredictionData, PreviousRe
 import type { FrontendRecommendationsResponse } from '../types/FrontendRecommendationsResponse';
 
 /**
+ * Interface représentant la réponse AIResponse du backend
+ */
+export interface AIResponse {
+  /** Identifiant de la requête */
+  requestId?: string;
+  /** Contenu de la réponse */
+  content?: string;
+  /** Indique si la requête a réussi */
+  success: boolean;
+  /** Type de jeu */
+  gameType?: string;
+  /** Type d'analyse */
+  analysisType?: string;
+  /** Modèle utilisé */
+  model?: string;
+  /** Temps de traitement en ms */
+  processingTimeMs?: number;
+  /** Timestamp de la réponse (ISO string) */
+  timestamp?: string;
+  /** Code d'erreur */
+  error?: string;
+  /** Message d'erreur spécifique */
+  errorMessage?: string;
+  /** Réponse brute de l'AI */
+  response?: string;
+  /** Nombre de tokens dans le prompt */
+  promptTokens?: number;
+  /** Nombre de tokens dans la complétion */
+  completionTokens?: number;
+  /** Temps d'exécution */
+  executionTime?: string;
+  /** Métadonnées associées */
+  metadata?: Record<string, unknown>;
+  /** Données structurées */
+  data?: Record<string, unknown>;
+  /** Nombres prédits */
+  predictedNumbers?: number[];
+  /** Profondeur d'analyse RAG */
+  depth?: number;
+}
+
+/**
  * Base API URL for all requests
  */
 const API_BASE_URL = API_CONFIG.BASE_URL;
@@ -233,9 +275,16 @@ export const fetchAIRecommendation = async (): Promise<FrontendRecommendationsRe
  * Appelle le backend pour obtenir la prédiction IA Lotto649
  * @returns Les données retournées par l'IA
  */
-export async function fetchAIPrediction(): Promise<any> {
-  const url = `${API_BASE_URL}/api/essais/ai/lotto649/predict`;
+/**
+ * Appelle le backend pour obtenir la prédiction IA Lotto649
+ * @returns Les données retournées par l'IA (AIResponse)
+ */
+export async function fetchAIPrediction(): Promise<AIResponse> {
+  const url = `/api/essais/ai/lotto649/predict`;
   const response = await fetch(url);
   if (!response.ok) throw new Error('Erreur lors de la récupération de la prédiction IA');
+  /**
+   * On suppose que la réponse respecte l'interface AIResponse
+   */
   return await response.json();
 }

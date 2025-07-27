@@ -56,18 +56,30 @@ const PredictionTab: React.FC<PredictionTabProps> = ({ isActive }) => {
       )}
 
       {isLoading && (
-        <p className="text-center text-lg">Chargement des prédictions IA...</p>
+        <div className="flex flex-col items-center justify-center my-8 gap-4">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-b-4 border-blue-500"></div>
+          <p className="text-center text-lg">Chargement des prédictions IA...</p>
+        </div>
       )}
 
       {/* Affichage complet de la réponse IA */}
       {!isLoading && aiPrediction && (
         <div className="flex flex-col gap-8">
-          {/* Métadonnées */}
-          <div className="mb-4">
+          {/* Métadonnées + bouton relancer */}
+          <div className="mb-4 flex flex-wrap gap-6 items-center justify-between">
             <div className="flex flex-wrap gap-6 items-center">
               <span className="text-sm">Horodatage de la prédiction : <span className="font-mono">{aiPrediction.timestamp}</span></span>
               <span className="text-sm">Prochain tirage : <span className="font-mono ">{aiPrediction.nextDrawDate}</span></span>
             </div>
+            <button
+              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+              onClick={loadAIPrediction}
+              disabled={isLoading}
+              type="button"
+              aria-label="Rafraîchir la prédiction IA"
+            >
+              🔄 Refaire la prédiction
+            </button>
           </div>
           {/* Bloc IA unique */}
           <div className="flex flex-col gap-6">
@@ -82,6 +94,10 @@ const PredictionTab: React.FC<PredictionTabProps> = ({ isActive }) => {
                       <LottoBall key={i} number={num} size="md" type="prediction" animated />
                     ))}
                   </div>
+                  {/* Ajout de la date du tirage */}
+                  {aiPrediction.recommendations['AI'].drawDate && (
+                    <div className="text-sm">Date du tirage : <span className="font-mono text-blue-700 dark:text-blue-300">{aiPrediction.recommendations['AI'].drawDate}</span></div>
+                  )}
                   <div className="text-sm">Score de confiance : <span className="font-mono text-green-700 dark:text-green-400">{aiPrediction.recommendations['AI'].confidenceScore}</span></div>
                   <div className="flex flex-col">
                     <div className="text-lg">Explication IA :</div>
