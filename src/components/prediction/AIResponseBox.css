@@ -1,0 +1,46 @@
+
+.ai-response-box {
+  width: 100%;
+  max-width: 1200px;
+  min-width: 400px;
+  height: 420px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 1.5rem;
+  overflow-y: auto;
+  font-size: 1.15rem;
+  color: #222;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  margin: 0 auto;
+  word-break: break-word;
+  white-space: pre-line;
+  line-height: 1.7;
+  letter-spacing: 0.02em;
+}
+
+.ai-response-box h1, .ai-response-box h2, .ai-response-box h3 {
+  margin-top: 1.2em;
+  margin-bottom: 0.5em;
+  font-weight: 600;
+}
+
+.ai-response-box pre, .ai-response-box code {
+  background: #f1f5f9;
+  border-radius: 4px;
+  padding: 0.3em 0.6em;
+  font-size: 0.95em;
+  color: #0f172a;
+}
+
+.ai-response-box ul, .ai-response-box ol {
+  margin-left: 1.5em;
+}
+
+.ai-response-box blockquote {
+  border-left: 4px solid #38bdf8;
+  background: #e0f2fe;
+  padding: 0.5em 1em;
+  margin: 1em 0;
+  color: #0c4a6e;
+}

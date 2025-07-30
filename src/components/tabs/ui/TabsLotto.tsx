@@ -8,14 +8,15 @@ import PieChartTab from '../PieChartTab';
 import ScatterPlotTab from '../ScatterPlotTab';
 import PredictionSection from '../../prediction/PredictionSection';
 import AITab from '../AITab';
+import DirectAITab from '../DirectAITab';
 import './TabsLotto.css';
 
 const TabsLotto: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'previous' | 'graph' | 'prediction' | 'section' | 'line' | 'pie' | 'scatter' | 'ai'>('prediction');
+  const [activeTab, setActiveTab] = useState<'previous' | 'graph' | 'prediction' | 'section' | 'line' | 'pie' | 'scatter' | 'ai' | 'directai'>('prediction');
   const tabsListRef = useRef<HTMLDivElement>(null);
 
   const handleTabChange = (value: string) => {
-    setActiveTab(value as 'previous' | 'graph' | 'prediction' | 'section' | 'line' | 'pie' | 'scatter' | 'ai');
+    setActiveTab(value as 'previous' | 'graph' | 'prediction' | 'section' | 'line' | 'pie' | 'scatter' | 'ai' | 'directai');
   };
 
   return (
@@ -30,6 +31,7 @@ const TabsLotto: React.FC = () => {
           <TabsTrigger value="pie" className="bar-tab-trigger min-w-[10rem] text-center whitespace-nowrap font-semibold transition-all duration-300">Graphique en secteurs</TabsTrigger>
           <TabsTrigger value="scatter" className="bar-tab-trigger min-w-[10rem] text-center whitespace-nowrap font-semibold transition-all duration-300">Graphique de dispersion</TabsTrigger>
           <TabsTrigger value="ai" className="bar-tab-trigger min-w-[10rem] text-center whitespace-nowrap font-semibold transition-all duration-300">IA Lotto649</TabsTrigger>
+          <TabsTrigger value="directai" className="bar-tab-trigger min-w-[10rem] text-center whitespace-nowrap font-semibold transition-all duration-300">Direct AI</TabsTrigger>
         </div>
       </TabsList>
       <TabsContent value="prediction" className="tabs-lotto-animation"><PredictionSection /></TabsContent>
@@ -40,6 +42,7 @@ const TabsLotto: React.FC = () => {
       <TabsContent value="pie" className="tabs-lotto-animation"><PieChartTab isActive={activeTab === 'pie'} /></TabsContent>
       <TabsContent value="scatter" className="tabs-lotto-animation"><ScatterPlotTab isActive={activeTab === 'scatter'} /></TabsContent>
       <TabsContent value="ai" className="tabs-lotto-animation"><AITab /></TabsContent>
+      <TabsContent value="directai" className="tabs-lotto-animation"><DirectAITab /></TabsContent>
     </Tabs>
   );
 };

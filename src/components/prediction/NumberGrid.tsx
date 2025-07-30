@@ -1,4 +1,5 @@
 import React from 'react';
+import { LottoBall } from '../shadcn';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../shadcn';
 import type { PredictionData } from '../../types';
 
@@ -22,44 +23,37 @@ const NumberGrid: React.FC<{
   const numbers = Array.from({ length: maxNumber - minNumber + 1 }, (_, i) => i + minNumber).sort((a, b) => a - b);
 
   return (
-    <div className="grid grid-cols-7 sm:grid-cols-10 gap-4 my-8">
-      {numbers.map(number => {
-        const isSelected = selectedNumbers.includes(number);
-        const isExcluded = excludedNumbers.includes(number);
-        return (
-          <div key={number} className="relative">
-            <button
-              className={`w-14 h-14 rounded-full flex items-center justify-center font-medium transition-all duration-200 text-lg shadow-lg ${
-                isSelected
-                  ? 'bg-primary-200 text-primary-800 border-3 border-primary-500 shadow-md scale-110'
-                  : isExcluded
-                  ? 'bg-gray-200 text-gray-500 border-3 border-gray-500 line-through opacity-70'
-                  : 'bg-white hover:bg-gray-100 border-2 border-gray-300 hover:shadow-xl hover:scale-105'
-              }`}
-              onClick={() => onSelect(number)}
-              onContextMenu={e => {
-                e.preventDefault();
-                onExclude(number);
-              }}
-            >
-              {number}
-            </button>
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <div className="absolute -top-1 -right-1 w-6 h-6 flex items-center justify-center bg-gray-800 text-white text-xs rounded-full cursor-help shadow-md">
-                    ?
-                  </div>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Clic droit pour exclure le numéro</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </div>
-        );
-      })}
-    </div>
+    <>
+      <div className="w-full text-center text-sm mb-4">
+        Clic droit sur une boule pour exclure le numéro
+      </div>
+      <div className="grid grid-cols-7 sm:grid-cols-10 gap-x-16 gap-y-4 my-8">
+        {numbers.map((number, idx) => {
+          const isSelected = selectedNumbers.includes(number);
+          const isExcluded = excludedNumbers.includes(number);
+          return (
+            <div key={number} className="relative">
+              <button
+                className="w-14 h-14 rounded-full flex items-center justify-center font-medium transition-all duration-200 text-lg shadow-lg p-0 overflow-visible"
+                style={{ background: 'none', border: 'none' }}
+                onClick={() => onSelect(number)}
+                onContextMenu={e => {
+                  e.preventDefault();
+                  onExclude(number);
+                }}
+              >
+                {/* Affichage du numéro via LottoBall, avec style selon sélection/exclusion */}
+                <LottoBall
+                  number={number}
+                  isSelected={isSelected}
+                  isExcluded={isExcluded}
+                />
+              </button>
+            </div>
+          );
+        })}
+      </div>
+    </>
   );
 };
 

@@ -2,7 +2,7 @@ import React from 'react';
 import { Tabs, TabsList, TabsTrigger, TabsContent, Button } from '../shadcn';
 import { Loader2 } from 'lucide-react';
 import ErrorMessage from './ErrorMessage';
-import PredictionBalls from './PredictionBalls';
+import { LottoBall } from '../shadcn';
 import ConfidenceBar from './ConfidenceBar';
 import NumberGrid from './NumberGrid';
 import { LOTTO_CONFIG } from '../../config';
@@ -111,7 +111,12 @@ const PredictionTabs: React.FC<PredictionTabsProps> = ({
                 <h3 className="text-2xl font-bold mb-6 text-primary-600 dark:text-primary-400">
                   Combinaison #{index + 1}
                 </h3>
-                <PredictionBalls prediction={prediction} />
+                {/* Affichage direct des boules via LottoBall */}
+                <div className="flex flex-wrap gap-6 justify-center my-6">
+                  {prediction.numbers.map((number, ballIdx) => (
+                    <LottoBall key={ballIdx} number={number} />
+                  ))}
+                </div>
                 <ConfidenceBar score={prediction.confidenceScore} />
                 <div className="mt-6 text-sm text-gray-700 dark:text-gray-300 bg-gray-50/80 dark:bg-gray-700/30 p-6 rounded-lg border border-gray-100/50 dark:border-gray-700/50">
                   <h4 className="font-bold text-base mb-3 text-gray-800 dark:text-gray-200">Analyse:</h4>
@@ -135,10 +140,10 @@ const PredictionTabs: React.FC<PredictionTabsProps> = ({
         Prédictions personnalisées
       </h3>
       <div className="w-full">
-        <div className="mb-12 p-12 sm:p-16 bg-gray-50/90 dark:bg-gray-800/60 rounded-2xl shadow-inner border-2 border-gray-200 dark:border-gray-700 analysis-box">
-          <h3 className="text-xl font-bold mb-10 text-gray-800 dark:text-gray-200">Personnalisez vos prédictions</h3>
+        <div className="mb-12 p-12 sm:p-16rounded-2xl shadow-inner border-2analysis-box">
+          <h3 className="text-xl font-bold mb-10">Personnalisez vos prédictions</h3>
           <div className="mb-8">
-            <label className="block text-base font-medium text-gray-700 dark:text-gray-300 mb-5">
+            <label className="block text-base font-medium">
               Sélectionnez des numéros à inclure (clic gauche) ou exclure (clic droit):
             </label>
             <NumberGrid
@@ -151,7 +156,7 @@ const PredictionTabs: React.FC<PredictionTabsProps> = ({
             />
           </div>
           <div className="mb-10">
-            <label className="block text-base font-medium text-gray-700 dark:text-gray-300 mb-4">
+            <label className="block text-base font-medium mb-4">
               Importance des données historiques:{' '}
               <span className="font-bold text-primary-600 dark:text-primary-400">{historicalWeight}%</span>
             </label>
@@ -161,9 +166,9 @@ const PredictionTabs: React.FC<PredictionTabsProps> = ({
               max="100"
               value={historicalWeight}
               onChange={(e) => setHistoricalWeight(Number(e.target.value))}
-              className="w-full h-3 bg-gray-300 dark:bg-gray-600 rounded-lg appearance-none cursor-pointer accent-primary-500 shadow-inner confidence-bar"
+              className="w-full h-3  rounded-lg appearance-none cursor-pointer accent-primary-500 shadow-inner confidence-bar"
             />
-            <div className="flex justify-between text-sm text-gray-500 dark:text-gray-400 mt-3">
+            <div className="flex justify-between text-sm0 mt-3">
               <span>Aléatoire</span>
               <span>Équilibré</span>
               <span>Historique</span>
@@ -175,7 +180,7 @@ const PredictionTabs: React.FC<PredictionTabsProps> = ({
               disabled={isCustomLoading}
               variant="secondary"
               size="lg"
-              className="relative px-12 py-8 text-lg font-bold shadow-xl hover:shadow-2xl transition-shadow bg-gradient-to-r from-primary-600 to-primary-700 text-white"
+              className="relative px-12 py-8 text-lg font-bold shadow-xl hover:shadow-2xl transition-shadow bg-gradient-to-r from-primary-600 to-primary-700"
             >
               {isCustomLoading ? (
                 <>
@@ -210,15 +215,20 @@ const PredictionTabs: React.FC<PredictionTabsProps> = ({
             {customPredictions.map((prediction, index) => (
               <div
                 key={index}
-                className="p-10 border-2 border-gray-200 dark:border-gray-400 rounded-2xl shadow-2xl transition-all duration-300 hover:shadow-3xl hover:translate-y-[-5px] bg-white dark:bg-gray-800 relative overflow-hidden before:absolute before:inset-0 before:rounded-2xl before:bg-gradient-to-br before:from-white/10 before:to-transparent before:content-[''] dark:before:from-gray-800/10 dark:before:to-transparent"
+                className="p-10 border-2 rounded-2xl shadow-2xl transition-all duration-300 hover:shadow-3xl hover:translate-y-[-5px] relative overflow-hidden before:absolute before:inset-0 before:rounded-2xl before:bg-gradient-to-br before:from-white/10 before:to-transparent before:content-[''] dark:before:from-gray-800/10 dark:before:to-transparent"
               >
                 <h3 className="text-2xl font-bold mb-6 text-primary-600 dark:text-primary-400">
                   Combinaison personnalisée #{index + 1}
                 </h3>
-                <PredictionBalls prediction={prediction} />
+                {/* Affichage direct des boules via LottoBall */}
+                <div className="flex flex-wrap gap-6 justify-center my-6">
+                  {prediction.numbers.map((number, ballIdx) => (
+                    <LottoBall key={ballIdx} number={number} />
+                  ))}
+                </div>
                 <ConfidenceBar score={prediction.confidenceScore} />
-                <div className="mt-6 text-sm text-gray-700 dark:text-gray-300 bg-gray-50/80 dark:bg-gray-700/30 p-6 rounded-lg border border-gray-100/50 dark:border-gray-700/50">
-                  <h4 className="font-bold text-base mb-3 text-gray-800 dark:text-gray-200">Analyse:</h4>
+                <div className="mt-6 text-smp-6 rounded-lg border">
+                  <h4 className="font-bold text-base mb-3">Analyse:</h4>
                   <p className="leading-relaxed">{prediction.reasoning}</p>
                 </div>
               </div>
@@ -226,7 +236,7 @@ const PredictionTabs: React.FC<PredictionTabsProps> = ({
           </div>
         )}
         {!isCustomLoading && !customPredictions.length && !error && (
-          <p className="text-center text-gray-500">
+          <p className="text-center">
             Cliquez sur le bouton ci-dessus pour générer des prédictions personnalisées.
           </p>
         )}

@@ -37,6 +37,7 @@
     "react-day-picker": "^9.8.0",
     "react-dom": "^19.1.0",
     "react-hook-form": "^7.60.0",
+    "react-markdown": "^10.1.0",
     "react-router-dom": "^7.6.3",
     "recharts": "^2.15.0",
     "shadcn-ui": "^0.9.5",

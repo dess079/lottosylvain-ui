@@ -10,20 +10,7 @@ import type { PredictionData } from '../../types';
 const PredictionBalls: React.FC<{ prediction: PredictionData }> = React.memo(({ prediction }) => (
   <div className="flex flex-wrap gap-6 justify-center my-6">
     {prediction.numbers.map((number, index) => (
-      <motion.div
-        key={index}
-        initial={{ scale: 0.5, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        transition={{
-          delay: index * 0.15,
-          type: 'spring',
-          stiffness: 260,
-          damping: 20,
-        }}
-        className="filter drop-shadow-lg"
-      >
-        <LottoBall number={number} animated={true} />
-      </motion.div>
+        <LottoBall number={number} />
     ))}
   </div>
 ));
