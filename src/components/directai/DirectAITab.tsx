@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
+import AIResponseBox from './AIResponseBox';
+import './DirectAITab.css';
 import { Card, CardHeader, CardContent } from '../shadcn/ui/card';
 import { Label } from '../shadcn/ui/label';
 import { Button } from '../shadcn/ui/button';
 import { Input } from '../shadcn/ui/input';
-import { AIResponseBox } from '../directai';
-import '../directai/AIResponseBox.css';
 import { OllamaChatResponse } from '../../types/OllamaChatResponse';
 
+/**
+ * Onglet Direct AI pour envoyer un prompt et afficher la réponse IA en streaming
+ */
 const DirectAITab: React.FC = () => {
   const [prompt, setPrompt] = useState('');
   const [responseChunks, setResponseChunks] = useState<string[]>([]);
@@ -15,7 +18,6 @@ const DirectAITab: React.FC = () => {
 
   /**
    * Envoie le prompt au backend et reçoit la réponse en chunks via EventSource.
-   * Chaque chunk est un objet JSON OllamaChatResponse.
    */
   const handleSendPrompt = async () => {
     setResponseChunks([]);
@@ -27,13 +29,10 @@ const DirectAITab: React.FC = () => {
     eventSource.onmessage = (event) => {
       try {
         const obj: OllamaChatResponse = JSON.parse(event.data);
-        // On affiche le champ message.content si présent
         if (obj.message?.content) {
           setResponseChunks((prev) => [...prev, obj.message!.content]);
         }
-      } catch (e) {
-        // Si le chunk n'est pas du JSON, on ignore
-      }
+      } catch (e) {}
     };
 
     eventSource.onerror = () => {
@@ -42,18 +41,13 @@ const DirectAITab: React.FC = () => {
       setSentMessage('');
     };
 
-    eventSource.onopen = () => {
-      // On garde loading à true jusqu'à la fin du stream
-    };
+    eventSource.onopen = () => {};
 
     eventSource.addEventListener('end', () => {
       setLoading(false);
       setSentMessage('');
       eventSource.close();
     });
-
-    // Fallback : désactive loading si le flux s’arrête par erreur
-    // La fin normale est gérée par l'event 'end' ou onerror
   };
 
   return (

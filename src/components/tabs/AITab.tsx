@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import ReactMarkdown from 'react-markdown';
 import { fetchAIPrediction } from '../../services/api';
 import '../../index.css';
 import LottoBall from '../shadcn/ui/lotto-ball';
@@ -149,10 +150,14 @@ const AITab: React.FC = () => {
               </h3>
               <div className="flex flex-col gap-2" style={{height: 'calc(100% - 2rem)'}}>
                 {aiResponse.content && (
-                  <div className="content-block mb-2 break-words whitespace-pre-wrap text-xs">{aiResponse.content}</div>
+                  <div className="content-block mb-2 break-words whitespace-pre-wrap text-xs">
+                    <ReactMarkdown>{aiResponse.content}</ReactMarkdown>
+                  </div>
                 )}
                 {aiResponse.response && (
-                  <div className="content-block raw break-words whitespace-pre-wrap text-xs">{aiResponse.response}</div>
+                  <div className="content-block raw break-words whitespace-pre-wrap text-xs">
+                    <ReactMarkdown>{aiResponse.response}</ReactMarkdown>
+                  </div>
                 )}
               </div>
             </div>
@@ -161,7 +166,9 @@ const AITab: React.FC = () => {
           {aiResponse.data && Object.keys(aiResponse.data).length > 0 && (
             <div className="card flex-1 border border-pink-400 rounded-xl bg-card p-6 min-w-[280px] overflow-auto text-xs" style={{maxHeight: '340px'}}>
               <h3 className="section-title mb-4">Données structurées</h3>
-              <pre className="details overflow-auto max-w-full whitespace-pre-wrap break-all text-xs" style={{maxHeight: '290px'}}>{JSON.stringify(aiResponse.data, null, 2)}</pre>
+              <div className="details overflow-auto max-w-full whitespace-pre-wrap break-all text-xs" style={{maxHeight: '290px'}}>
+                <ReactMarkdown>{'```json\n' + JSON.stringify(aiResponse.data, null, 2) + '\n```'}</ReactMarkdown>
+              </div>
             </div>
           )}
         </div>
@@ -169,7 +176,9 @@ const AITab: React.FC = () => {
       {aiResponse.metadata && Object.keys(aiResponse.metadata).length > 0 && (
         <div className="card mb-8 border border-yellow-400 rounded-xl bg-card p-6">
           <h3 className="section-title mb-4">Métadonnées complémentaires</h3>
-          <pre className="details">{JSON.stringify(aiResponse.metadata, null, 2)}</pre>
+          <div className="details">
+            <ReactMarkdown>{'```json\n' + JSON.stringify(aiResponse.metadata, null, 2) + '\n```'}</ReactMarkdown>
+          </div>
         </div>
       )}
 
