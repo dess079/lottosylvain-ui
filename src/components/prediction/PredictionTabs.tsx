@@ -8,6 +8,8 @@ import NumberGrid from './NumberGrid';
 import { LOTTO_CONFIG } from '../../config';
 import type { PredictionData } from '../../types';
 
+import AnalysisMarkdownBox from '../AnalysisMarkdownBox';
+
 interface PredictionTabsProps {
   predictions: PredictionData[];
   customPredictions: PredictionData[];
@@ -61,7 +63,7 @@ const PredictionTabs: React.FC<PredictionTabsProps> = ({
     </TabsList>
 
     <TabsContent value="standard">
-      <h3 className="text-xl font-semibold mb-8 text-primary-600 dark:text-primary-400 text-center">
+      <h3 className="text-xl font-semibold mb-8 text-center">
         Prédictions standard
       </h3>
       <div className="w-full">
@@ -118,17 +120,14 @@ const PredictionTabs: React.FC<PredictionTabsProps> = ({
                   ))}
                 </div>
                 <ConfidenceBar score={prediction.confidenceScore} />
-                <div className="mt-6 text-sm text-gray-700 dark:text-gray-300 bg-gray-50/80 dark:bg-gray-700/30 p-6 rounded-lg border border-gray-100/50 dark:border-gray-700/50">
-                  <h4 className="font-bold text-base mb-3 text-gray-800 dark:text-gray-200">Analyse:</h4>
-                  <p className="leading-relaxed">{prediction.reasoning}</p>
-                </div>
+                <AnalysisMarkdownBox title="Analyse:" markdown={prediction.reasoning} />
               </div>
             ))}
           </div>
         )}
 
         {!isLoading && !predictions.length && !error && (
-          <p className="text-center text-gray-500">
+          <p>
             Cliquez sur le bouton ci-dessus pour générer des prédictions.
           </p>
         )}

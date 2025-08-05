@@ -1,0 +1,12 @@
+.analysis-markdown-box {
+  /* Ajoutez ici des styles personnalisés si besoin */
+  background: var(--tw-bg-opacity, 1) rgba(255,255,255,0.02);
+}
+
+.analysis-markdown-box h4 {
+  /* Style du titre */
+}
+
+.analysis-markdown-box .markdown {
+  /* Style du markdown si besoin */
+}

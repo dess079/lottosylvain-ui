@@ -1,7 +1,6 @@
 import React from 'react';
-import { motion } from 'framer-motion';
-import { LottoBall } from '../shadcn';
 import type { PredictionData } from '../../types';
+import { LottoBall } from '../shadcn';
 
 /**
  * Affiche les boules de prédiction, animées et triées.

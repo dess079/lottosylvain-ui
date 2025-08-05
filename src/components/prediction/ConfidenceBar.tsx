@@ -22,10 +22,10 @@ const ConfidenceBar: React.FC<{ score: number }> = ({ score }) => {
   return (
     <div className="w-full mb-5 mt-3">
       <div className="flex justify-between items-center mb-2">
-        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Indice de confiance</span>
+        <span className="text-sm font-medium">Indice de confiance</span>
         <div className="flex items-center">
           <span
-            className={`px-3 py-1 rounded-full text-xs font-bold text-white bg-gradient-to-r ${getColor()} shadow-sm`}
+            className={`px-3 py-1 rounded-full text-xs font-bold  bg-gradient-to-r ${getColor()} shadow-sm`}
           >
             {formattedScore}%
           </span>

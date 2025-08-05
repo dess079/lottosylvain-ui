@@ -1,13 +1,14 @@
-import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { fetchPredictions, fetchCustomPredictions, fetchAIRecommendation } from '../../services/api';
-import { Card } from '../shadcn';
-import PredictionTabs from './PredictionTabs';
-import { formatDate, getNextDrawDate } from '../../lib/utils';
+import React, { useEffect, useState } from 'react';
 import { APP_CONFIG } from '../../config';
+import { formatDate, getNextDrawDate } from '../../lib/utils';
+import { fetchAIRecommendation, fetchCustomPredictions, fetchPredictions } from '../../services/api';
 import type { PredictionData } from '../../types';
-import PredictionBalls from './PredictionBalls';
+import AnalysisMarkdownBox from '../AnalysisMarkdownBox';
+import { Card } from '../shadcn';
 import ConfidenceBar from './ConfidenceBar';
+import PredictionBalls from './PredictionBalls';
+import PredictionTabs from './PredictionTabs';
 
 /**
  * Main PredictionSection component
@@ -117,57 +118,54 @@ const PredictionSection: React.FC = () => {
   };
 
   return (
-      <div className='flex flex-row gap-8 p-1 justify-between'>
-        <Card className='min-w-50%'>
-          <h2 className="text-4xl font-bold text-center gradient-text">Prédiction pour le prochain tirage</h2>
-          <h3 className="text-lg text-center font-semibold text-primary-600">
-            {formatDate(nextDrawDate)}
-          </h3>
-
+      <div className='flex flex-row gap-4 p-1 justify-between h-screen w-full min-h-[400px] max-h-screen'>
+        <Card className='flex flex-col min-h-0 max-h-full h-screen w-1/2 overflow-hidden'>
+            <h2 className="text-4xl font-bold text-center gradient-text">Prédiction pour le prochain tirage</h2>
+            <h3 className="text-lg text-center font-semibold text-primary-600">
+              {formatDate(nextDrawDate)}
+            </h3>
             {/* Affichage de la prédiction IA principale */}
-            <div className="w-full ">
+            <div className="flex-1 flex flex-col min-h-0 max-h-full overflow-auto">
               <h3 className="text-xl font-semibold mb-6 text-primary-600 text-center">Prédiction IA principale</h3>
-            
-                <div >
-                  {Object.entries(aiRecommendation?.recommendations ?? {}).map(([strategy, rec], idx) => (
-                    <motion.div
-                      key={strategy}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: idx * 0.15 }}
-                      className="flex flex-col">
-                      <h3 className="text-2xl font-bold mb-6 text-primary-600">
-                        Stratégie : {strategy}
-                      </h3>
-                      <PredictionBalls prediction={{ numbers: rec.numbers, confidenceScore: rec.confidenceScore, reasoning: (rec.reasoning ?? rec.justification) ?? '' }} />
-                      <ConfidenceBar score={rec.confidenceScore} />
-                      <div className="text-sm">
-                        <h4 className="font-bold text-base mb-3 text-gray-800 dark:text-white">Analyse IA:</h4>
-                        <p className="leading-relaxed">{(rec.reasoning ?? rec.justification) ?? ''}</p>
-                      </div>
-                    </motion.div>
-                  ))}
-                </div>
-          
+              <div>
+                {Object.entries(aiRecommendation?.recommendations ?? {}).map(([strategy, rec], idx) => (
+                  <motion.div
+                    key={strategy}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: idx * 0.15 }}
+                    className="flex flex-col">
+                    <h3 className="text-2xl font-bold mb-6 text-primary-600">
+                      Stratégie : {strategy}
+                    </h3>
+                    <PredictionBalls prediction={{ numbers: rec.numbers, confidenceScore: rec.confidenceScore, reasoning: (rec.reasoning ?? rec.justification) ?? '' }} />
+                    <ConfidenceBar score={rec.confidenceScore} />
+                    <AnalysisMarkdownBox title="Analyse:" markdown={rec.reasoning as string} />
+                   
+                  </motion.div>
+                ))}
+              </div>
             </div>
           </Card>
 
-           <Card className='min-w-50%'>
-            <PredictionTabs
-              predictions={predictions}
-              customPredictions={customPredictions}
-              isLoading={isLoading}
-              isCustomLoading={isCustomLoading}
-              error={error}
-              selectedNumbers={selectedNumbers}
-              excludedNumbers={excludedNumbers}
-              historicalWeight={historicalWeight}
-              loadPredictions={loadPredictions}
-              loadCustomPredictions={loadCustomPredictions}
-              toggleNumberSelection={toggleNumberSelection}
-              toggleNumberExclusion={toggleNumberExclusion}
-              setHistoricalWeight={setHistoricalWeight}
-            />
+        <Card className='flex flex-col min-h-0 max-h-full h-screen w-1/2 overflow-hidden'>
+            <div className="flex-1 flex flex-col min-h-0 max-h-full overflow-auto">
+              <PredictionTabs
+                predictions={predictions}
+                customPredictions={customPredictions}
+                isLoading={isLoading}
+                isCustomLoading={isCustomLoading}
+                error={error}
+                selectedNumbers={selectedNumbers}
+                excludedNumbers={excludedNumbers}
+                historicalWeight={historicalWeight}
+                loadPredictions={loadPredictions}
+                loadCustomPredictions={loadCustomPredictions}
+                toggleNumberSelection={toggleNumberSelection}
+                toggleNumberExclusion={toggleNumberExclusion}
+                setHistoricalWeight={setHistoricalWeight}
+              />
+            </div>
           </Card>
         
       </div>
