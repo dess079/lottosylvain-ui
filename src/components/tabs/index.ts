@@ -9,5 +9,5 @@ export { TabsLotto } from './ui';
 // Composants individuels des onglets
 export { default as PreviousDrawTab } from './PreviousDrawTab';
 export { default as GraphTab } from './GraphTab';
-export { default as PredictionTab } from './PredictionTab';
+export { default as PredictionTab } from '../prediction/PredictionTab';
 export { default as AITab } from './AITab';

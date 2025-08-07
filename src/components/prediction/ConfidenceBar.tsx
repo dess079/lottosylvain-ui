@@ -5,7 +5,7 @@ import React, { useCallback } from 'react';
  * @param score Score de confiance (0-1)
  */
 const ConfidenceBar: React.FC<{ score: number }> = ({ score }) => {
-  const scorePercentage = score;
+  const scorePercentage = score * 100;
 
   const getColor = useCallback(() => {
     if (scorePercentage > 80) return 'from-emerald-400 via-green-500 to-emerald-600';
@@ -17,11 +17,11 @@ const ConfidenceBar: React.FC<{ score: number }> = ({ score }) => {
 
   // convertir le score en texte avec une précision de 0 chiffres après la virgule
 
-  const formattedScore = (scorePercentage).toFixed(2).replace(/\.?0+$/, '');
+  const formattedScore = (scorePercentage)
 
   return (
     <div className="w-full mb-5 mt-3">
-      <div className="flex justify-between items-center mb-2">
+      <div className="flex  items-center mb-2 gap-4">
         <span className="text-sm font-medium">Indice de confiance</span>
         <div className="flex items-center">
           <span
@@ -31,7 +31,7 @@ const ConfidenceBar: React.FC<{ score: number }> = ({ score }) => {
           </span>
         </div>
       </div>
-      <div className="w-full h-3 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden shadow-inner confidence-bar">
+      <div className="w-full h- rounded-full overflow-hidden shadow-inner confidence-bar">
         <div
           className={`h-full bg-gradient-to-r ${getColor()} rounded-full transition-all duration-500 ease-out`}
           style={{ width: `${scorePercentage}%` }}

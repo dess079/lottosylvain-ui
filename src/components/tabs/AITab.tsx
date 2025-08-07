@@ -1,8 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
+import { Loader2, RotateCcw } from 'lucide-react';
 import { fetchAIPrediction } from '../../services/api';
 import '../../index.css';
 import LottoBall from '../shadcn/ui/lotto-ball';
+import LoadingSpinner from '../LoadingSpinner';
+import { Button } from '../shadcn';
 
 /**
  * Onglet affichant les informations retournées par l'IA Lotto649
@@ -13,7 +16,10 @@ const AITab: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
+  /**
+   * Charge la prédiction IA manuellement
+   */
+  const loadAIPrediction = () => {
     setLoading(true);
     fetchAIPrediction()
       .then((data) => {
@@ -25,30 +31,42 @@ const AITab: React.FC = () => {
         setError('Erreur lors de la récupération des données IA');
       })
       .finally(() => setLoading(false));
-  }, []);
-
-  if (loading) {
-    return (
-      <div className="flex flex-col items-center justify-center my-8 gap-4">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-b-4 border-blue-500 dark:border-blue-300"></div>
-        <div className="spinner"></div>
-        <div>Chargement de la prédiction IA...</div>
-      </div>
-    );
-  }
-  if (error) {
-    return <div className="container error-message">{error}</div>;
-  }
-  if (!aiResponse) {
-    return <div className="container info-message">Aucune donnée IA disponible.</div>;
-  }
+  };
 
   // Affichage structuré de la réponse IA
   return (
     <div className="container">
       <h2 className="text-2xl font-semibold mb-6 text-center">Prédiction IA Lotto649</h2>
+      
+      {/* Bouton pour lancer la prédiction */}
+      <div className="mb-8 text-center">
+        <Button
+          onClick={loadAIPrediction}
+          disabled={loading}
+          variant="default"
+          size="lg"
+        >
+          {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+          {loading ? 'Génération en cours...' : 'Générer Prédiction IA'}
+        </Button>
+      </div>
+
+      {loading && <LoadingSpinner text="Chargement de la prédiction IA..." />}
+      
+      {error && (
+        <div className="mb-8 p-4 bg-red-500/10 border border-red-500/30 rounded-lg">
+          <div className="text-red-700">{error}</div>
+        </div>
+      )}
+      
+      {!aiResponse && !loading && !error && (
+        <div className="container info-message">Cliquez sur le bouton ci-dessus pour générer une prédiction IA.</div>
+      )}
+
       {/* Row principale : Métadonnées, Prédiction, Paramètres du prompt */}
-      <div className="flex flex-col gap-6 lg:flex-row lg:gap-8 mb-8">
+      {aiResponse && !loading && (
+        <>
+          <div className="flex flex-col gap-6 lg:flex-row lg:gap-8 mb-8">
         {/* Section Métadonnées + bouton relancer */}
         <div className="card flex-1 border border-primary rounded-xl bg-card p-6 min-w-[280px]">
           <h3 className="section-title mb-4">Métadonnées</h3>
@@ -72,27 +90,16 @@ const AITab: React.FC = () => {
             <div><span className="label">Profondeur d'analyse :</span> <span className="value">{aiResponse.depth}</span></div>
           )}
         </div>
-          <button
-            className="button mt-2"
-            onClick={() => {
-              setLoading(true);
-              fetchAIPrediction()
-                .then((data) => {
-                  setAiResponse(data);
-                  setError(null);
-                })
-                .catch(() => {
-                  setAiResponse(null);
-                  setError('Erreur lors de la récupération des données IA');
-                })
-                .finally(() => setLoading(false));
-            }}
+          <Button
+            onClick={loadAIPrediction}
             disabled={loading}
-            type="button"
+            variant="outline"
+            size="sm"
+            className="mt-2"
             aria-label="Rafraîchir la prédiction IA"
           >
-            🔄 Refaire l'analyse
-          </button>
+            {loading ? 'Chargement...' : '🔄 Refaire l\'analyse'}
+          </Button>
         </div>
 
         {/* Section Prédiction */}
@@ -173,7 +180,8 @@ const AITab: React.FC = () => {
           )}
         </div>
       )}
-      {aiResponse.metadata && Object.keys(aiResponse.metadata).length > 0 && (
+      
+      {aiResponse && aiResponse.metadata && Object.keys(aiResponse.metadata).length > 0 && (
         <div className="card mb-8 border border-yellow-400 rounded-xl bg-card p-6">
           <h3 className="section-title mb-4">Métadonnées complémentaires</h3>
           <div className="details">
@@ -182,17 +190,19 @@ const AITab: React.FC = () => {
         </div>
       )}
 
-      {/* Section Erreur */}
-      {(aiResponse.error || aiResponse.errorMessage) && (
-        <div className="card error mt-4 border-2 border-red-500 rounded-xl bg-red-50 dark:bg-red-900 p-6">
-          <h3 className="section-title mb-2 text-red-700 dark:text-red-300">Erreur</h3>
-          {aiResponse.error && (
-            <div className="ai-tab-error-block">Code : {aiResponse.error}</div>
-          )}
-          {aiResponse.errorMessage && (
-            <div className="ai-tab-error-block">Message : {aiResponse.errorMessage}</div>
-          )}
-        </div>
+        {/* Section Erreur */}
+        {(aiResponse.error || aiResponse.errorMessage) && (
+          <div className="card error mt-4 border-2 border-red-500 rounded-xl bg-red-50 dark:bg-red-900 p-6">
+            <h3 className="section-title mb-2 text-red-700 dark:text-red-300">Erreur</h3>
+            {aiResponse.error && (
+              <div className="ai-tab-error-block">Code : {aiResponse.error}</div>
+            )}
+            {aiResponse.errorMessage && (
+              <div className="ai-tab-error-block">Message : {aiResponse.errorMessage}</div>
+            )}
+          </div>
+        )}
+        </>
       )}
     </div>
   );

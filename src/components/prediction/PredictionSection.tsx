@@ -1,14 +1,17 @@
 import { motion } from 'framer-motion';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { APP_CONFIG } from '../../config';
-import { formatDate, getNextDrawDate } from '../../lib/utils';
 import { fetchAIRecommendation, fetchCustomPredictions, fetchPredictions } from '../../services/api';
 import type { PredictionData } from '../../types';
 import AnalysisMarkdownBox from '../AnalysisMarkdownBox';
-import { Card } from '../shadcn';
+import { Card, Button } from '../shadcn';
 import ConfidenceBar from './ConfidenceBar';
 import PredictionBalls from './PredictionBalls';
 import PredictionTabs from './PredictionTabs';
+import { Loader2 } from 'lucide-react';
+import { getNextDrawDate } from '@/lib/utils';
+import { FrontendRecommendationsResponse } from '@/types/FrontendRecommendationsResponse';
+import { formatDate } from 'date-fns';
 
 /**
  * Main PredictionSection component
@@ -23,15 +26,9 @@ const PredictionSection: React.FC = () => {
   const [selectedNumbers, setSelectedNumbers] = useState<number[]>([]);
   const [excludedNumbers, setExcludedNumbers] = useState<number[]>([]);
   const [historicalWeight, setHistoricalWeight] = useState(50);
-  const [aiRecommendation, setAIRecommendation] = useState<null | import('../../types/FrontendRecommendationsResponse').FrontendRecommendationsResponse>(null);
+  const [aiRecommendation, setAIRecommendation] = useState<null | FrontendRecommendationsResponse>(null);
   const [isAILoading, setIsAILoading] = useState(false);
   const nextDrawDate = getNextDrawDate();
-
-  // Fetch predictions and AI recommendation on mount
-  useEffect(() => {
-    loadPredictions();
-    loadAIRecommendation();
-  }, []);
 
   /**
    * Charge la recommandation IA principale
@@ -122,11 +119,25 @@ const PredictionSection: React.FC = () => {
         <Card className='flex flex-col min-h-0 max-h-full h-screen w-1/2 overflow-hidden'>
             <h2 className="text-4xl font-bold text-center gradient-text">Prédiction pour le prochain tirage</h2>
             <h3 className="text-lg text-center font-semibold text-primary-600">
-              {formatDate(nextDrawDate)}
+              {formatDate(nextDrawDate, 'yyyy-MM-dd')}
             </h3>
             {/* Affichage de la prédiction IA principale */}
             <div className="flex-1 flex flex-col min-h-0 max-h-full overflow-auto">
               <h3 className="text-xl font-semibold mb-6 text-primary-600 text-center">Prédiction IA principale</h3>
+              
+              {/* Bouton pour lancer la prédiction IA */}
+              <div className="mb-6 text-center">
+                <Button
+                  onClick={loadAIRecommendation}
+                  disabled={isAILoading}
+                  variant="default"
+                  size="lg"
+                >
+                  {isAILoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                  {isAILoading ? 'Génération en cours...' : 'Générer Prédiction IA'}
+                </Button>
+              </div>
+
               <div>
                 {Object.entries(aiRecommendation?.recommendations ?? {}).map(([strategy, rec], idx) => (
                   <motion.div
@@ -166,11 +177,8 @@ const PredictionSection: React.FC = () => {
                 setHistoricalWeight={setHistoricalWeight}
               />
             </div>
-          </Card>
-        
+          </Card>   
       </div>
-     
-  
   );
 };
 

@@ -9,6 +9,7 @@ import { LOTTO_CONFIG } from '../../config';
 import type { PredictionData } from '../../types';
 
 import AnalysisMarkdownBox from '../AnalysisMarkdownBox';
+import LoadingSpinner from '../LoadingSpinner';
 
 interface PredictionTabsProps {
   predictions: PredictionData[];
@@ -75,27 +76,11 @@ const PredictionTabs: React.FC<PredictionTabsProps> = ({
             className="relative px-12 py-8 text-lg font-bold shadow-xl hover:shadow-2xl transition-shadow"
           >
             {isLoading ? (
-              <>
-                <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                <span>Chargement...</span>
-              </>
+              <LoadingSpinner text="Chargement de la prédiction IA..." />
             ) : (
               <>
                 <span>Générer des prédictions</span>
-                <svg
-                  className="ml-2 h-5 w-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M13 10V3L4 14h7v7l9-11h-7z"
-                  ></path>
-                </svg>
+              
               </>
             )}
           </Button>
@@ -108,7 +93,7 @@ const PredictionTabs: React.FC<PredictionTabsProps> = ({
             {predictions.map((prediction, index) => (
               <div
                 key={index}
-                className="flex flex-col animate-fade-in-scale"
+                className="flex flex-col animate-in fade-in slide-in-from-bottom-4 duration-500"
               >
                 <h3 className="text-2xl font-bold mb-6 text-primary-600 dark:text-primary-400">
                   Combinaison #{index + 1}
@@ -167,7 +152,7 @@ const PredictionTabs: React.FC<PredictionTabsProps> = ({
               onChange={(e) => setHistoricalWeight(Number(e.target.value))}
               className="w-full h-3  rounded-lg appearance-none cursor-pointer accent-primary-500 shadow-inner confidence-bar"
             />
-            <div className="flex justify-between text-sm0 mt-3">
+            <div className="flex justify-between text-sm mt-3">
               <span>Aléatoire</span>
               <span>Équilibré</span>
               <span>Historique</span>
@@ -226,7 +211,7 @@ const PredictionTabs: React.FC<PredictionTabsProps> = ({
                   ))}
                 </div>
                 <ConfidenceBar score={prediction.confidenceScore} />
-                <div className="mt-6 text-smp-6 rounded-lg border">
+                <div className="mt-6 text-sm p-6 rounded-lg border">
                   <h4 className="font-bold text-base mb-3">Analyse:</h4>
                   <p className="leading-relaxed">{prediction.reasoning}</p>
                 </div>

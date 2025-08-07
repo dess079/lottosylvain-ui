@@ -1,32 +1,18 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { fetchAIRecommendation } from '../../services/api';
 import type { FrontendRecommendationsResponse } from '../../types/FrontendRecommendationsResponse';
-import { Card, CardDescription, CardHeader, CardTitle, LottoBall } from '../shadcn';
+import { Card, CardDescription, CardHeader, CardTitle, LottoBall, Button } from '../shadcn';
 import './PredictionTab.css';
-
-interface PredictionTabProps {
-  isActive: boolean;
-}
 
 /**
  * Composant pour afficher la prédiction IA
- * Charge les données seulement quand l'onglet est actif
+ * Charge les données manuellement via un bouton
  */
-const PredictionTab: React.FC<PredictionTabProps> = ({ isActive }) => {
+const PredictionTab: React.FC = () => {
   const [aiPrediction, setAIPrediction] = useState<FrontendRecommendationsResponse | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
-  const [hasLoaded, setHasLoaded] = useState<boolean>(false);
-
-  // Charger les données seulement quand l'onglet devient actif
-  useEffect(() => {
-    console.log('PredictionTab useEffect triggered, isActive:', isActive, 'hasLoaded:', hasLoaded);
-    if (isActive && !hasLoaded) {
-      console.log('Fetching AI prediction..');
-      loadAIPrediction();
-    }
-  }, [isActive]);
 
   /**
    * Récupère la recommandation IA
@@ -41,7 +27,6 @@ const PredictionTab: React.FC<PredictionTabProps> = ({ isActive }) => {
 
       console.log('AI prediction loaded:', prediction);
       setAIPrediction(prediction);
-      setHasLoaded(true);
     } catch (err) {
       console.error('Error loading AI prediction:', err);
       setError(err instanceof Error ? err.message : 'Erreur lors de la récupération de la recommandation IA');
@@ -55,6 +40,18 @@ const PredictionTab: React.FC<PredictionTabProps> = ({ isActive }) => {
       <div className="prediction-tab-animation">
         <h2 className="text-2xl font-semibold mb-6">Prédiction IA Lotto 649</h2>
         <p className="text-lg opacity-70 mb-8">Toutes les informations retournées par l'IA pour le prochain tirage</p>
+
+        {/* Bouton pour lancer la prédiction */}
+        <div className="mb-8 text-center">
+          <Button
+            onClick={loadAIPrediction}
+            loading={isLoading}
+            variant="default"
+            size="lg"
+          >
+            {isLoading ? 'Génération en cours...' : 'Générer Prédiction IA'}
+          </Button>
+        </div>
 
         {/* Message d'erreur si l'API ne répond pas */}
         {error && (
@@ -79,15 +76,15 @@ const PredictionTab: React.FC<PredictionTabProps> = ({ isActive }) => {
                 <span className="text-sm">Horodatage de la prédiction : <span className="font-mono">{aiPrediction.timestamp}</span></span>
                 <span className="text-sm">Prochain tirage : <span className="font-mono ">{aiPrediction.nextDrawDate}</span></span>
               </div>
-              <button
-                className="px-4 py-2 rounded hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+              <Button
                 onClick={loadAIPrediction}
-                disabled={isLoading}
-                type="button"
+                loading={isLoading}
+                variant="outline"
+                size="sm"
                 aria-label="Rafraîchir la prédiction IA"
               >
-                🔄 Refaire la prédiction
-              </button>
+                {isLoading ? 'Chargement...' : 'Refaire la prédiction'}
+              </Button>
             </div>
 
             {/* Bloc IA unique */}
@@ -112,11 +109,11 @@ const PredictionTab: React.FC<PredictionTabProps> = ({ isActive }) => {
                     )}
                     {/* Score de confiance */}
                     {aiPrediction.recommendations.pattern.confidenceScore && (
-                      <div className="text-sm">Score de confiance : <span className="font-mono text-green-700 dark:text-green-400">{aiPrediction.recommendations.confidenceScore}</span></div>
+                      <div className="text-sm">Score de confiance : <span className="font-mono text-green-700 dark:text-green-400">{aiPrediction.recommendations.pattern.confidenceScore}</span></div>
                     )}
                     {/* Justification */}
                     {aiPrediction.recommendations.pattern.reasoning && (
-                      <div className="text-sm">Reasoning : <span className="font-mono text-neutral-700 dark:text-neutral-300">{aiPrediction.recommendations.justification}</span></div>
+                      <div className="text-sm">Reasoning : <span className="font-mono text-neutral-700 dark:text-neutral-300">{aiPrediction.recommendations.pattern.reasoning}</span></div>
                     )}
                     {/* Explication IA */}
                     <div className="flex flex-col">
