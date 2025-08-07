@@ -1,9 +1,19 @@
 // Interface adaptée à la réponse Java FrontendRecommendationsResponse
-export interface FrontendRecommendation {
+
+export interface Pattern {
   numbers: number[];
   confidenceScore: number;
   reasoning?: string;
-  justification?: string;
+  strategy?: string;
+}
+export interface Pattern {
+  pattern: Pattern;
+  drawDate?: string; // Date du tirage au format ISO ou YYYY-MM-DD
+}
+
+export interface FrontendRecommendation {
+  pattern: Pattern;
+  
   /** Date du tirage (format ISO ou YYYY-MM-DD) */
   drawDate?: string;
   analysisFactors?: {
@@ -20,6 +30,6 @@ export interface MetaAnalysis {
 export interface FrontendRecommendationsResponse {
   timestamp: string;
   nextDrawDate: string;
-  recommendations: Record<string, FrontendRecommendation>;
+  recommendations: FrontendRecommendation;
   metaAnalysis: MetaAnalysis;
 }

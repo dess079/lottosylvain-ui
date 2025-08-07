@@ -260,12 +260,15 @@ export async function fetchDrawCount(): Promise<number> {
  * Retourne la première recommandation trouvée (ex: stratégie principale)
  */
 export const fetchAIRecommendation = async (): Promise<FrontendRecommendationsResponse> => {
-  const response = await fetch('/api/essais/lotto-matrix/recommendations');
-  console.log('fetchAIRecommendation: Response received', response);
+  const url = `${API_BASE_URL}${API_CONFIG.ENDPOINTS.PREDICTIONS}`;
+  console.log('fetchAIRecommendation: Fetching from URL', url);
+  const response = await fetch(url);
+
   if (!response.ok) {
     throw new Error('Erreur lors de la récupération de la recommandation IA');
   }
   const data: FrontendRecommendationsResponse = await response.json();
+  
   console.log('fetchAIRecommendation: Data received', data);
   
   return data;
@@ -280,7 +283,7 @@ export const fetchAIRecommendation = async (): Promise<FrontendRecommendationsRe
  * @returns Les données retournées par l'IA (AIResponse)
  */
 export async function fetchAIPrediction(): Promise<AIResponse> {
-  const url = `/api/essais/ai/lotto649/predict`;
+  const url = `${API_BASE_URL}/ai/lotto649/predict`;
   const response = await fetch(url);
   if (!response.ok) throw new Error('Erreur lors de la récupération de la prédiction IA');
   /**

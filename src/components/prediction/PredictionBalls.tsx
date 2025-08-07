@@ -9,7 +9,7 @@ import { LottoBall } from '../shadcn';
 const PredictionBalls: React.FC<{ prediction: PredictionData }> = React.memo(({ prediction }) => (
   <div className="flex flex-wrap gap-6 justify-center my-6">
     {prediction.numbers.map((number, index) => (
-        <LottoBall number={number} />
+        <LottoBall key={index} number={number} />
     ))}
   </div>
 ));

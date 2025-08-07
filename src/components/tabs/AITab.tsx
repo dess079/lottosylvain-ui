@@ -198,4 +198,4 @@ const AITab: React.FC = () => {
   );
 };
 
-export default React.memo(AITab);
+export default AITab;

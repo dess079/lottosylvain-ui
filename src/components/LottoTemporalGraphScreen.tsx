@@ -36,6 +36,7 @@ const LottoTemporalGraphScreen: React.FC = () => {
       const response = await fetch(
         `/api/essais/lotto-matrix/temporal-graph?startDate=${startDate}&endDate=${endDate}`
       );
+      
       if (!response.ok) throw new Error('Erreur lors de la récupération des données');
       const json: TemporalGraphResponse = await response.json();
       console.log('Données récupérées:', json);
@@ -115,81 +116,89 @@ const LottoTemporalGraphScreen: React.FC = () => {
   };
 
   return (
-    <div className="lotto-temporal-graph-screen">
-      <h2 className="title">Graphique temporel Lotto 6/49</h2>
-      <form
-        className="date-form"
-        onSubmit={(e) => {
-          e.preventDefault();
-          fetchGraphData();
-        }}
-      >
-        <label>
-          Date de début :
-          <input
-            type="date"
-            value={startDate}
-            onChange={(e) => setStartDate(e.target.value)}
-            required
-          />
-        </label>
-        <label>
-          Date de fin :
-          <input
-            type="date"
-            value={endDate}
-            onChange={(e) => setEndDate(e.target.value)}
-            required
-          />
-        </label>
-        <button type="submit" disabled={loading}>
-          {loading ? 'Chargement...' : 'Afficher'}
-        </button>
-      </form>
-
-      {error && <div className="error">{error}</div>}
-
-      {/* Affichage du graphique de fréquence si données valides */}
-      {data && Array.isArray(data.timelineData) ? (
-        <FrequencyOverTimeGraph
-          data={getFrequencyChartData()}
-          options={{ responsive: true, maintainAspectRatio: false }}
-          style={{ width: '90%' }}
-        />
-      ) : data ? (
-        <div className="error">Format de données inattendu. Impossible d'afficher le graphique.</div>
-      ) : null}
-
-      {/* Affichage du graphique de fréquence des numéros */}
-      {data && Array.isArray(data.timelineData) ? (
-        <NumberFrequencyGraph
-          data={getNumberFrequencyChartData()}
-          options={{
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-              x: {
-                title: {
-                  display: true,
-                  text: 'Numbers (1 to 49)',
-                },
-                ticks: {
-                  stepSize: 1,
-                },
-              },
-              y: {
-                title: {
-                  display: true,
-                  text: 'Frequency',
-                },
-              },
-            },
+    <div className="flex flex-col lotto-temporal-graph-screen">
+      <div className="flex flex-col items-center mb-8">
+        <h2 className="title">Graphique temporel Lotto 6/49</h2>
+        <form
+          className="date-form"
+          onSubmit={(e) => {
+            e.preventDefault();
+            fetchGraphData();
           }}
-          style={{ width: '90%' }}
-        />
-      ) : data ? (
-        <div className="error">Format de données inattendu. Impossible d'afficher le graphique.</div>
-      ) : null}
+        >
+          <label>
+            Date de début :
+            <input
+              type="date"
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
+              required
+            />
+          </label>
+          <label>
+            Date de fin :
+            <input
+              type="date"
+              value={endDate}
+              onChange={(e) => setEndDate(e.target.value)}
+              required
+            />
+          </label>
+          <button type="submit" disabled={loading}>
+            {loading ? 'Chargement...' : 'Afficher'}
+          </button>
+        </form>
+
+        {error && <div className="error">{error}</div>}
+      </div>
+
+      {/* Conteneur pour les deux graphiques côte à côte avec gap de 2rem */}
+      <div className="flex flex-row w-full gap-8">
+        {/* Graphique de fréquence dans le temps - 50% de largeur */}
+        <div className="flex-1 w-1/2">
+          {data && Array.isArray(data.timelineData) ? (
+            <FrequencyOverTimeGraph
+              data={getFrequencyChartData()}
+              options={{ responsive: true, maintainAspectRatio: false }}
+            />
+          ) : data ? (
+            <div className="error">Format de données inattendu. Impossible d'afficher le graphique.</div>
+          ) : null}
+        </div>
+
+        {/* Graphique de fréquence des numéros - 50% de largeur */}
+        <div className="flex-1 w-1/2">
+          {data && Array.isArray(data.timelineData) ? (
+            <NumberFrequencyGraph
+              data={getNumberFrequencyChartData()}
+              options={{
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                  x: {
+                    title: {
+                      display: true,
+                      text: 'Numbers (1 to 49)',
+                    },
+                    ticks: {
+                      stepSize: 1,
+                    },
+                  },
+                  y: {
+                    title: {
+                      display: true,
+                      text: 'Frequency',
+                    },
+                  },
+                },
+              }}
+             
+            />
+          ) : data ? (
+            <div className="error">Format de données inattendu. Impossible d'afficher le graphique.</div>
+          ) : null}
+        </div>
+      </div>
     </div>
   );
 };

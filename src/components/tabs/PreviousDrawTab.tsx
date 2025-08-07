@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { addDays, subDays, getDay, format as formatDate } from 'date-fns';
 import { LottoBall } from '../shadcn';
 import { fetchPreviousResults } from '../../services/api';
@@ -152,7 +152,7 @@ const PreviousDrawTab: React.FC<PreviousDrawTabProps> = ({ isActive }) => {
  
       if (!previousResult) {
         dispatch({ type: 'SET_ERROR', payload: 'Aucun tirage trouvé pour la période sélectionnée.' });
-      dispatch({ type: 'SET_PREVIOUS_DRAW', payload: previousResult });
+        dispatch({ type: 'SET_PREVIOUS_DRAW', payload: previousResult });
       } else {
         dispatch({ type: 'SET_PREVIOUS_DRAW', payload: previousResult });
       }
@@ -173,41 +173,42 @@ const PreviousDrawTab: React.FC<PreviousDrawTabProps> = ({ isActive }) => {
   };
 
 return (
-  <div className="flex flex-col gap-10 items-center justify-center ">
+  <div className="h-full w-full flex flex-col items-center justify-start py-8 px-4">
       {/* Formulaire de sélection de dates */}
-      <div className="w-full flex flex-col items-center">
-      <form
-        className="w-full max-w-md mb-4 flex flex-col sm:flex-row gap-4 items-center justify-center"
-        onSubmit={handleDateSubmit}
-        aria-label="Sélection de la période des tirages"
-      >
-        <CalendarDateInput
-          id="start-date"
-          label="Date de début"
-          value={state.startDate}
-          onChange={e => dispatch({ type: 'SET_START_DATE', payload: e.target.value })}
-          ariaLabel="Date de début"
-        />
-        <CalendarDateInput
-          id="end-date"
-          label="Date de fin"
-          value={state.endDate}
-          onChange={e => dispatch({ type: 'SET_END_DATE', payload: e.target.value })}
-          ariaLabel="Date de fin"
-        />
-        <button
-          type="submit"
-          className="mt-4 sm:mt-0 px-5 py-2 rounded bg-indigo-500 text-white font-semibold hover:bg-indigo-600 transition-colors shadow"
-          aria-label="Rechercher les tirages"
+      <div className="w-full flex justify-center mb-8">
+        <form
+          className="w-full max-w-md flex flex-col sm:flex-row gap-4 items-center justify-center"
+          onSubmit={handleDateSubmit}
+          aria-label="Sélection de la période des tirages"
         >
-          Rechercher
-        </button>
-      </form>
-     
+          <div className="flex flex-col sm:flex-row gap-4 items-center justify-center w-full">
+            <CalendarDateInput
+              id="start-date"
+              label="Date de début"
+              value={state.startDate}
+              onChange={e => dispatch({ type: 'SET_START_DATE', payload: e.target.value })}
+              ariaLabel="Date de début"
+            />
+            <CalendarDateInput
+              id="end-date"
+              label="Date de fin"
+              value={state.endDate}
+              onChange={e => dispatch({ type: 'SET_END_DATE', payload: e.target.value })}
+              ariaLabel="Date de fin"
+            />
+          </div>
+          <button
+            type="submit"
+            className="self-end px-5 py-2 rounded bg-indigo-500 text-white font-semibold hover:bg-indigo-600 transition-colors shadow"
+            aria-label="Rechercher les tirages"
+          >
+            Rechercher
+          </button>
+        </form>
       </div>
 
       {/* Contenu centré sous le formulaire */}
-      <div className="flex flex-col items-center justify-center flex-1 w-full">
+      <div className="flex-1 w-full max-w-4xl flex flex-col items-center justify-center">
         {/* Loader animé pendant le chargement */}
         {state.drawLoading && (
           <div className="flex flex-col items-center justify-center my-8 w-full">
@@ -218,7 +219,7 @@ return (
 
         {/* Message d'erreur */}
         {state.drawError && (
-          <div className="mb-4 p-3 bg-red-500/10 border border-red-500/30 rounded-lg flex items-center justify-center w-full">
+          <div className="mb-4 p-3 bg-red-500/10 border border-red-500/30 rounded-lg flex items-center justify-center w-full max-w-xl">
             <span className="text-red-500">{state.drawError}</span>
           </div>
         )}
@@ -226,7 +227,7 @@ return (
         {/* Résultat ou message si aucun résultat */}
         {!state.drawLoading && state.previousDraw && Array.isArray(state.previousDraw) ? (
           state.previousDraw.length > 0 ? (
-            <div className="flex flex-col items-center justify-center gap-8 previous-draw-animation animate-fade-in w-full">
+            <div className="flex flex-col items-center justify-center gap-8 previous-draw-animation animate-fade-in w-full max-w-4xl">
               {state.previousDraw.map((draw, idx) => (
                 <div key={draw.previousResultDate + '-' + idx} className="w-full flex flex-col items-center gap-2 border-b border-slate-200 dark:border-slate-700 pb-6 mb-6 last:border-b-0 last:pb-0 last:mb-0">
                   <div className="flex flex-wrap justify-center gap-4 mb-2 w-full">
@@ -252,21 +253,21 @@ return (
               ))}
             </div>
           ) : (
-            <div className="w-full max-w-xl text-center text-base text-slate-500 dark:text-slate-400 my-8 animate-fade-in flex items-center justify-center">
+            <div className="w-full max-w-xl text-center text-base text-slate-500 dark:text-slate-400 flex flex-col items-center justify-center">
               {/* Debug structure reçue */}
               <pre className="text-xs text-slate-400 bg-slate-50 dark:bg-slate-900 p-2 rounded mb-2">{JSON.stringify(state.previousDraw, null, 2)}</pre>
               Aucun résultat trouvé pour la période sélectionnée.
             </div>
           )
         ) : (!state.drawLoading && !state.drawError && (
-          <div className="w-full max-w-xl text-center text-base text-slate-500 dark:text-slate-400 my-8 animate-fade-in flex items-center justify-center">
+          <div className="w-full max-w-xl text-center text-base text-slate-500 dark:text-slate-400 flex flex-col items-center justify-center">
             {/* Affichage explicite si previousDraw absent ou mal typé */}
             <pre className="text-xs text-slate-400 bg-slate-50 dark:bg-slate-900 p-2 rounded mb-2">{JSON.stringify(state.previousDraw, null, 2)}</pre>
             Aucun résultat trouvé pour la période sélectionnée.
           </div>
         ))}
       </div>
-      </div>
+    </div>
   );
 };
 

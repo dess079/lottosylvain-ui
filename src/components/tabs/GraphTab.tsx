@@ -55,17 +55,9 @@ const GraphTab: React.FC<GraphTabProps> = ({ isActive }) => {
 
   return (
     <section className="graph-tab-animation">
-      <h2 className="text-2xl font-semibold mb-6">Graphique temporel Lotto 6/49</h2>
+    
       <LottoTemporalGraphScreen />
-      <ResponsiveContainer width="100%" height={400}>
-        <BarChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="number" label={{ value: 'Numéro', position: 'insideBottom', offset: -5 }} />
-          <YAxis label={{ value: 'Nombre de tirages', angle: -90, position: 'insideLeft' }} />
-          <Tooltip />
-          <Bar dataKey="drawCount" fill="#8884d8" name="Nombre de tirages" />
-        </BarChart>
-      </ResponsiveContainer>
+     
     </section>
   );
 };

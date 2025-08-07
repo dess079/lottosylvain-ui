@@ -35,9 +35,9 @@ const TabsLotto: React.FC = () => {
         </div>
       </TabsList>
       <TabsContent value="prediction" className="tabs-lotto-animation"><PredictionSection /></TabsContent>
-      <TabsContent value="previous" className="container tabs-lotto-animation"><PreviousDrawTab isActive={activeTab === 'previous'} /></TabsContent>
+      <TabsContent value="previous" className="tabs-lotto-animation min-h-screen flex flex-col"><PreviousDrawTab isActive={activeTab === 'previous'} /></TabsContent>
       <TabsContent value="graph" className="tabs-lotto-animation"><GraphTab isActive={activeTab === 'graph'} /></TabsContent>
-      <TabsContent value="section" className="tabs-lotto-animation"><PredictionTab isActive={activeTab === 'prediction'} /></TabsContent>
+      <TabsContent value="section" className="tabs-lotto-animation"><PredictionTab isActive={activeTab === 'section'} /></TabsContent>
       <TabsContent value="line" className="tabs-lotto-animation"><LineChartTab isActive={activeTab === 'line'} /></TabsContent>
       <TabsContent value="pie" className="tabs-lotto-animation"><PieChartTab isActive={activeTab === 'pie'} /></TabsContent>
       <TabsContent value="scatter" className="tabs-lotto-animation"><ScatterPlotTab isActive={activeTab === 'scatter'} /></TabsContent>
