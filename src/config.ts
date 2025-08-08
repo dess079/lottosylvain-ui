@@ -6,14 +6,18 @@
  * API configuration
  */
 export const API_CONFIG = {
-  BASE_URL: 'http://localhost:8090/api/essais',
+  BASE_URL: 'http://localhost:8090/api/v3/lotto',
   ENDPOINTS: {
     PREVIOUS_RESULTS: '/lotto-matrix/previous-results',
     PREDICTIONS: '/lotto-matrix/recommendations',
     STATISTICS: '/lotto-matrix/stats',
     CUSTOM_PREDICTIONS: '/lotto-matrix/recommend',
     DRAW_COUNT: '/lotto-matrix/draw-count', // Endpoint spécifique pour le nombre de tirages
-    DATA_STATS: '/lotto-matrix/data-stats' // Endpoint pour les statistiques de données
+    DATA_STATS: '/lotto-matrix/data-stats', // Endpoint pour les statistiques de données
+    // Endpoints Spring AI v3 (définitifs)
+    SPRING_AI_RECOMMENDATIONS: '/recommendations',
+    SPRING_AI_STREAMING: '/predictions/stream',
+    SPRING_AI_HEALTH: '/health'
   }
 };
 

@@ -50,6 +50,42 @@ export interface AIResponse {
 const API_BASE_URL = API_CONFIG.BASE_URL;
 
 /**
+ * Configuration pour choisir quelle version de l'API utiliser
+ */
+export const API_VERSION_CONFIG = {
+  USE_SPRING_AI_V3: true, // Basculer vers Spring AI v3 par défaut
+  FALLBACK_TO_V2: true,   // Fallback vers v2 en cas d'erreur
+  ENABLE_STREAMING: true, // Activer le streaming Spring AI
+  ENABLE_HEALTH_CHECK: true // Activer les vérifications de santé
+};
+
+/**
+ * Fonction utilitaire pour gérer le fallback entre les versions d'API
+ */
+async function fetchWithFallback<T>(
+  primaryFetch: () => Promise<T>,
+  fallbackFetch?: () => Promise<T>,
+  errorContext: string = 'API call'
+): Promise<T> {
+  try {
+    return await primaryFetch();
+  } catch (error) {
+    console.warn(`${errorContext}: Primary API failed, trying fallback`, error);
+    
+    if (fallbackFetch && API_VERSION_CONFIG.FALLBACK_TO_V2) {
+      try {
+        return await fallbackFetch();
+      } catch (fallbackError) {
+        console.error(`${errorContext}: Both primary and fallback APIs failed`, fallbackError);
+        throw fallbackError;
+      }
+    }
+    
+    throw error;
+  }
+}
+
+/**
  * Fetches previous lottery draw results
  */
 /**
@@ -97,32 +133,66 @@ export async function fetchPreviousResults(startDate?: string, endDate?: string)
 }
 
 /**
- * Fetches the latest predictions for the next draw
+ * Fetches the latest predictions for the next draw using Spring AI v3 with fallback
  */
 export async function fetchPredictions(): Promise<PredictionData[]> {
-  try {
-    const response = await fetch(`${API_BASE_URL}${API_CONFIG.ENDPOINTS.PREDICTIONS}`);
+  // Fonction pour Spring AI v3
+  const fetchSpringAI = async (): Promise<PredictionData[]> => {
+    const response = await fetch(`${API_BASE_URL}${API_CONFIG.ENDPOINTS.SPRING_AI_RECOMMENDATIONS}`);
     if (!response.ok) {
-      throw new Error('Failed to fetch predictions');
+      throw new Error(`Failed to fetch Spring AI predictions: ${response.status} - ${response.statusText}`);
     }
-    const data = await response.json();
+    const data: FrontendRecommendationsResponse = await response.json();
     
-    // Transform the backend response to match our frontend types
-    // The backend returns a map of strategies to recommendations
+    console.info('fetchPredictions (Spring AI v3): Response received', data);
+    
     if (data && data.recommendations) {
       return Object.values(data.recommendations)
         .map((rec: any) => {
-          // Vérifier que les numéros existent
+          if (!rec.numbers) {
+            throw new Error('Données de prédiction Spring AI incomplètes: numéros manquants');
+          }
+          
+          let numbers = [...rec.numbers];
+          numbers = [...new Set(numbers)];
+          numbers.sort((a: number, b: number) => a - b);
+          
+          if (rec.confidence === undefined) {
+            throw new Error('Données de prédiction Spring AI incomplètes: score de confiance manquant');
+          }
+          
+          return {
+            numbers: numbers,
+            confidenceScore: rec.confidence,
+            reasoning: rec.justification || 'Prédiction générée par Spring AI avec Structured Outputs',
+            analysisFactors: {
+              frequencyAnalysis: {}
+            }
+          };
+        })
+        .slice(0, 3);
+    }
+    
+    throw new Error('Invalid data format from Spring AI API');
+  };
+
+  // Fonction fallback pour l'ancienne API v2
+  const fetchLegacy = async (): Promise<PredictionData[]> => {
+    const response = await fetch(`${API_BASE_URL}${API_CONFIG.ENDPOINTS.PREDICTIONS}`);
+    if (!response.ok) {
+      throw new Error('Failed to fetch legacy predictions');
+    }
+    const data = await response.json();
+    
+    if (data && data.recommendations) {
+      return Object.values(data.recommendations)
+        .map((rec: any) => {
           if (!rec.numbers) {
             throw new Error('Données de prédiction incomplètes: numéros manquants');
           }
           
           let numbers = [...rec.numbers];
-          
-          // Filtrer les doublons pour éviter des numéros répétés
           numbers = [...new Set(numbers)];
-          
-          // S'assurer que les numéros sont triés
           numbers.sort((a: number, b: number) => a - b);
           
           if (!rec.confidenceScore) {
@@ -138,13 +208,21 @@ export async function fetchPredictions(): Promise<PredictionData[]> {
             }
           };
         })
-        .slice(0, 3); // Limiter à 3 prédictions pour notre UI
+        .slice(0, 3);
     }
     
-    throw new Error('Invalid data format from API');
-  } catch (error) {
-    console.error('Error fetching predictions:', error);
-    throw new Error('Le service de prédictions n\'est pas disponible actuellement');
+    throw new Error('Invalid data format from legacy API');
+  };
+
+  // Utiliser Spring AI v3 ou fallback vers v2
+  if (API_VERSION_CONFIG.USE_SPRING_AI_V3) {
+    return fetchWithFallback(
+      fetchSpringAI,
+      API_VERSION_CONFIG.FALLBACK_TO_V2 ? fetchLegacy : undefined,
+      'fetchPredictions'
+    );
+  } else {
+    return fetchLegacy();
   }
 }
 
@@ -177,10 +255,11 @@ export async function fetchLottoStatistics(): Promise<DrawStatistics> {
 }
 
 /**
- * Fetches customized predictions based on user parameters
+ * Fetches customized predictions based on user parameters using Spring AI v3
  */
 export async function fetchCustomPredictions(params: CustomPredictionParams): Promise<PredictionData[]> {
   try {
+    // Essayer d'abord avec l'ancien endpoint pour la compatibilité
     const queryParams = new URLSearchParams();
     
     // Convert our params to what the backend expects
@@ -197,33 +276,47 @@ export async function fetchCustomPredictions(params: CustomPredictionParams): Pr
     }
     
     // Add a strategy parameter defaulting to BALANCED
-    queryParams.append('strategy', 'BALANCED');
+    queryParams.append('strategy', 'SPRING_AI_CUSTOM');
     
     const url = `${API_BASE_URL}${API_CONFIG.ENDPOINTS.CUSTOM_PREDICTIONS}?${queryParams.toString()}`;
+    console.log('fetchCustomPredictions: Trying Spring AI custom predictions with URL', url);
+    
     const response = await fetch(url);
     
     if (!response.ok) {
-      throw new Error('Failed to fetch custom predictions');
+      throw new Error(`Failed to fetch Spring AI custom predictions: ${response.status}`);
     }
     
     const data = await response.json();
     
-    // Transform the backend response to match our frontend types
+    // Transform the Spring AI response to match our frontend types
     if (data && data.success && data.recommendation) {
       return [{
-        numbers: data.recommendation.recommendedNumbers,
-        confidenceScore: data.recommendation.confidenceScore,
-        reasoning: data.recommendation.reasoning || 'Aucune explication fournie pour cette prédiction personnalisée.',
+        numbers: data.recommendation.recommendedNumbers || data.recommendation.numbers,
+        confidenceScore: data.recommendation.confidenceScore || data.recommendation.confidence || 0.5,
+        reasoning: data.recommendation.reasoning || data.recommendation.justification || 'Prédiction personnalisée générée par Spring AI avec filtres utilisateur.',
         analysisFactors: {
           frequencyAnalysis: data.recommendation.frequencyData || {}
         }
       }];
     }
     
-    throw new Error('Invalid data format from API');
+    // Si la structure est celle de FrontendRecommendation directement
+    if (data && data.numbers) {
+      return [{
+        numbers: data.numbers,
+        confidenceScore: data.confidence || 0.5,
+        reasoning: data.justification || 'Prédiction personnalisée générée par Spring AI.',
+        analysisFactors: {
+          frequencyAnalysis: {}
+        }
+      }];
+    }
+    
+    throw new Error('Invalid data format from Spring AI custom predictions API');
   } catch (error) {
-    console.error('Error fetching custom predictions:', error);
-    throw new Error('Le service de prédictions personnalisées n\'est pas disponible actuellement');
+    console.error('Error fetching Spring AI custom predictions:', error);
+    throw new Error('Le service de prédictions personnalisées Spring AI n\'est pas disponible actuellement');
   }
 }
 
@@ -256,30 +349,104 @@ export async function fetchDrawCount(): Promise<number> {
  * Récupère la recommandation basée sur l'IA depuis le backend
  */
 /**
- * Récupère la recommandation IA principale depuis le backend (projection FrontendRecommendationsResponse)
- * Retourne la première recommandation trouvée (ex: stratégie principale)
+ * Récupère la recommandation IA principale depuis le backend Spring AI v3
+ * Retourne la réponse complète FrontendRecommendationsResponse
  */
 export const fetchAIRecommendation = async (): Promise<FrontendRecommendationsResponse> => {
-  const url = `${API_BASE_URL}${API_CONFIG.ENDPOINTS.PREDICTIONS}`;
-  console.log('fetchAIRecommendation: Fetching from URL', url);
+  const url = `${API_BASE_URL}${API_CONFIG.ENDPOINTS.SPRING_AI_RECOMMENDATIONS}`;
+  console.log('fetchAIRecommendation (Spring AI v3): Fetching from URL', url);
+  
   const response = await fetch(url);
 
   if (!response.ok) {
-    throw new Error('Erreur lors de la récupération de la recommandation IA');
+    throw new Error(`Erreur lors de la récupération de la recommandation Spring AI: ${response.status} - ${response.statusText}`);
   }
+  
   const data: FrontendRecommendationsResponse = await response.json();
   
-  console.log('fetchAIRecommendation: Data received', data);
+  console.log('fetchAIRecommendation (Spring AI v3): Data received', data);
   
   return data;
 };
 
 /**
- * Appelle le backend pour obtenir la prédiction IA Lotto649
- * @returns Les données retournées par l'IA
+ * Appelle le backend pour obtenir la prédiction IA Lotto649 via Spring AI v3
+ * @param targetDate Date cible optionnelle (format YYYY-MM-DD)
+ * @returns Les données retournées par Spring AI
  */
+export async function fetchSpringAIPrediction(targetDate?: string): Promise<FrontendRecommendationsResponse> {
+  let url = `${API_BASE_URL}${API_CONFIG.ENDPOINTS.SPRING_AI_RECOMMENDATIONS}`;
+  
+  if (targetDate) {
+    url += `?targetDate=${encodeURIComponent(targetDate)}`;
+  }
+  
+  console.log('fetchSpringAIPrediction: Calling URL', url);
+  
+  const response = await fetch(url);
+  if (!response.ok) {
+    throw new Error(`Erreur lors de la récupération de la prédiction Spring AI: ${response.status} - ${response.statusText}`);
+  }
+  
+  const data: FrontendRecommendationsResponse = await response.json();
+  console.log('fetchSpringAIPrediction: Data received', data);
+  
+  return data;
+}
+
 /**
- * Appelle le backend pour obtenir la prédiction IA Lotto649
+ * Vérifie le statut de santé du service Spring AI
+ * @returns Statut de santé (string)
+ */
+export async function fetchSpringAIHealth(): Promise<string> {
+  const url = `${API_BASE_URL}${API_CONFIG.ENDPOINTS.SPRING_AI_HEALTH}`;
+  
+  const response = await fetch(url);
+  if (!response.ok) {
+    throw new Error(`Spring AI Service Unavailable: ${response.status}`);
+  }
+  
+  return await response.text();
+}
+
+/**
+ * Crée un EventSource pour recevoir les prédictions en streaming
+ * @param targetDate Date cible optionnelle
+ * @param onMessage Callback appelé pour chaque chunk reçu
+ * @param onError Callback appelé en cas d'erreur
+ * @returns EventSource pour gérer la connexion
+ */
+export function createSpringAIStreamingPrediction(
+  targetDate?: string,
+  onMessage?: (chunk: string) => void,
+  onError?: (error: Event) => void
+): EventSource {
+  let url = `${API_BASE_URL}${API_CONFIG.ENDPOINTS.SPRING_AI_STREAMING}`;
+  
+  if (targetDate) {
+    url += `?targetDate=${encodeURIComponent(targetDate)}`;
+  }
+  
+  console.log('createSpringAIStreamingPrediction: Creating EventSource for', url);
+  
+  const eventSource = new EventSource(url);
+  
+  if (onMessage) {
+    eventSource.onmessage = (event) => {
+      onMessage(event.data);
+    };
+  }
+  
+  if (onError) {
+    eventSource.onerror = onError;
+  }
+  
+  return eventSource;
+}
+
+/**
+ * Appelle le backend pour obtenir la prédiction IA Lotto649 (legacy)
+ * @deprecated Utiliser fetchSpringAIPrediction à la place
  * @returns Les données retournées par l'IA (AIResponse)
  */
 export async function fetchAIPrediction(): Promise<AIResponse> {
@@ -290,4 +457,64 @@ export async function fetchAIPrediction(): Promise<AIResponse> {
    * On suppose que la réponse respecte l'interface AIResponse
    */
   return await response.json();
+}
+
+/**
+ * Teste la connectivité et la disponibilité de Spring AI v3
+ * @returns Objet avec le statut et les informations de santé
+ */
+export async function testSpringAIConnectivity(): Promise<{
+  isAvailable: boolean;
+  healthStatus: string;
+  version: string;
+  error?: string;
+}> {
+  try {
+    if (!API_VERSION_CONFIG.ENABLE_HEALTH_CHECK) {
+      return {
+        isAvailable: false,
+        healthStatus: 'Health check disabled',
+        version: 'unknown',
+        error: 'Health check disabled in configuration'
+      };
+    }
+
+    const healthStatus = await fetchSpringAIHealth();
+    
+    return {
+      isAvailable: true,
+      healthStatus: healthStatus,
+      version: 'Spring AI v3.0',
+      error: undefined
+    };
+  } catch (error) {
+    console.warn('Spring AI connectivity test failed:', error);
+    
+    return {
+      isAvailable: false,
+      healthStatus: 'Service Unavailable',
+      version: 'unknown',
+      error: error instanceof Error ? error.message : 'Unknown error'
+    };
+  }
+}
+
+/**
+ * Fonction utilitaire pour basculer automatiquement vers Spring AI v3 si disponible
+ */
+export async function initializeAPIVersion(): Promise<void> {
+  try {
+    const connectivity = await testSpringAIConnectivity();
+    
+    if (connectivity.isAvailable) {
+      console.info('Spring AI v3 is available, using Spring AI endpoints');
+      API_VERSION_CONFIG.USE_SPRING_AI_V3 = true;
+    } else {
+      console.warn('Spring AI v3 not available, falling back to legacy API', connectivity.error);
+      API_VERSION_CONFIG.USE_SPRING_AI_V3 = false;
+    }
+  } catch (error) {
+    console.error('Failed to initialize API version:', error);
+    API_VERSION_CONFIG.USE_SPRING_AI_V3 = false;
+  }
 }
