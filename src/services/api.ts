@@ -1,48 +1,7 @@
 import { API_CONFIG } from '../config';
-import type { CustomPredictionParams, DrawStatistics, PredictionData, PreviousResult } from '../types';
-import type { FrontendRecommendationsResponse } from '../types/FrontendRecommendationsResponse';
+import type { CustomPredictionParams, DrawStatistics, PredictionData, PreviousResult, AIResponse } from '../types';
+import type { LottoAIResponse } from '@/types/LottoAIResponse';
 
-/**
- * Interface représentant la réponse AIResponse du backend
- */
-export interface AIResponse {
-  /** Identifiant de la requête */
-  requestId?: string;
-  /** Contenu de la réponse */
-  content?: string;
-  /** Indique si la requête a réussi */
-  success: boolean;
-  /** Type de jeu */
-  gameType?: string;
-  /** Type d'analyse */
-  analysisType?: string;
-  /** Modèle utilisé */
-  model?: string;
-  /** Temps de traitement en ms */
-  processingTimeMs?: number;
-  /** Timestamp de la réponse (ISO string) */
-  timestamp?: string;
-  /** Code d'erreur */
-  error?: string;
-  /** Message d'erreur spécifique */
-  errorMessage?: string;
-  /** Réponse brute de l'AI */
-  response?: string;
-  /** Nombre de tokens dans le prompt */
-  promptTokens?: number;
-  /** Nombre de tokens dans la complétion */
-  completionTokens?: number;
-  /** Temps d'exécution */
-  executionTime?: string;
-  /** Métadonnées associées */
-  metadata?: Record<string, unknown>;
-  /** Données structurées */
-  data?: Record<string, unknown>;
-  /** Nombres prédits */
-  predictedNumbers?: number[];
-  /** Profondeur d'analyse RAG */
-  depth?: number;
-}
 
 /**
  * Base API URL for all requests
@@ -135,44 +94,18 @@ export async function fetchPreviousResults(startDate?: string, endDate?: string)
 /**
  * Fetches the latest predictions for the next draw using Spring AI v3 with fallback
  */
-export async function fetchPredictions(): Promise<PredictionData[]> {
+export async function fetchPredictions(): Promise<LottoAIResponse> {
   // Fonction pour Spring AI v3
-  const fetchSpringAI = async (): Promise<PredictionData[]> => {
+  const fetchSpringAI = async (): Promise<LottoAIResponse> => {
     const response = await fetch(`${API_BASE_URL}${API_CONFIG.ENDPOINTS.SPRING_AI_RECOMMENDATIONS}`);
     if (!response.ok) {
       throw new Error(`Failed to fetch Spring AI predictions: ${response.status} - ${response.statusText}`);
     }
-    const data: FrontendRecommendationsResponse = await response.json();
-    
+    const data: LottoAIResponse = await response.json();
     console.info('fetchPredictions (Spring AI v3): Response received', data);
-    
-    if (data && data.recommendations) {
-      return Object.values(data.recommendations)
-        .map((rec: any) => {
-          if (!rec.numbers) {
-            throw new Error('Données de prédiction Spring AI incomplètes: numéros manquants');
-          }
-          
-          let numbers = [...rec.numbers];
-          numbers = [...new Set(numbers)];
-          numbers.sort((a: number, b: number) => a - b);
-          
-          if (rec.confidence === undefined) {
-            throw new Error('Données de prédiction Spring AI incomplètes: score de confiance manquant');
-          }
-          
-          return {
-            numbers: numbers,
-            confidenceScore: rec.confidence,
-            reasoning: rec.justification || 'Prédiction générée par Spring AI avec Structured Outputs',
-            analysisFactors: {
-              frequencyAnalysis: {}
-            }
-          };
-        })
-        .slice(0, 3);
+    if (data && data.prediction) {
+      return data;
     }
-    
     throw new Error('Invalid data format from Spring AI API');
   };
 
@@ -214,16 +147,8 @@ export async function fetchPredictions(): Promise<PredictionData[]> {
     throw new Error('Invalid data format from legacy API');
   };
 
-  // Utiliser Spring AI v3 ou fallback vers v2
-  if (API_VERSION_CONFIG.USE_SPRING_AI_V3) {
-    return fetchWithFallback(
-      fetchSpringAI,
-      API_VERSION_CONFIG.FALLBACK_TO_V2 ? fetchLegacy : undefined,
-      'fetchPredictions'
-    );
-  } else {
-    return fetchLegacy();
-  }
+  // Utiliser Spring AI v3 uniquement (plus de fallback legacy)
+  return fetchSpringAI();
 }
 
 /**
@@ -352,21 +277,18 @@ export async function fetchDrawCount(): Promise<number> {
  * Récupère la recommandation IA principale depuis le backend Spring AI v3
  * Retourne la réponse complète FrontendRecommendationsResponse
  */
-export const fetchAIRecommendation = async (): Promise<FrontendRecommendationsResponse> => {
+export const fetchAIRecommendation = async (): Promise<LottoAIResponse> => {
   const url = `${API_BASE_URL}${API_CONFIG.ENDPOINTS.SPRING_AI_RECOMMENDATIONS}`;
   console.log('fetchAIRecommendation (Spring AI v3): Fetching from URL', url);
-  
-  const response = await fetch(url);
 
+  const response = await fetch(url);
   if (!response.ok) {
     throw new Error(`Erreur lors de la récupération de la recommandation Spring AI: ${response.status} - ${response.statusText}`);
   }
-  
-  const data: FrontendRecommendationsResponse = await response.json();
-  
-  console.log('fetchAIRecommendation (Spring AI v3): Data received', data);
-  
-  return data;
+
+  const raw: LottoAIResponse = await response.json();
+  console.log('fetchAIRecommendation (Spring AI v3): Data received', raw);
+  return raw;
 };
 
 /**
@@ -374,25 +296,21 @@ export const fetchAIRecommendation = async (): Promise<FrontendRecommendationsRe
  * @param targetDate Date cible optionnelle (format YYYY-MM-DD)
  * @returns Les données retournées par Spring AI
  */
-export async function fetchSpringAIPrediction(targetDate?: string): Promise<FrontendRecommendationsResponse> {
+export async function fetchSpringAIPrediction(targetDate?: string): Promise<LottoAIResponse> {
   let url = `${API_BASE_URL}${API_CONFIG.ENDPOINTS.SPRING_AI_RECOMMENDATIONS}`;
-  
   if (targetDate) {
     url += `?targetDate=${encodeURIComponent(targetDate)}`;
   }
-  
   console.log('fetchSpringAIPrediction: Calling URL', url);
-  
   const response = await fetch(url);
   if (!response.ok) {
     throw new Error(`Erreur lors de la récupération de la prédiction Spring AI: ${response.status} - ${response.statusText}`);
   }
-  
-  const data: FrontendRecommendationsResponse = await response.json();
+  const data: LottoAIResponse = await response.json();
   console.log('fetchSpringAIPrediction: Data received', data);
-  
   return data;
 }
+
 
 /**
  * Vérifie le statut de santé du service Spring AI

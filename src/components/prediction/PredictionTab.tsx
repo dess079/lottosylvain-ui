@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { fetchAIRecommendation } from '../../services/api';
-import type { FrontendRecommendationsResponse } from '../../types/FrontendRecommendationsResponse';
+import type { SpringAiPredictionResponse } from '../../types/SpringAiPredictionResponse';
 import { Card, CardDescription, CardHeader, CardTitle, LottoBall, Button } from '../shadcn';
 import './PredictionTab.css';
 
@@ -10,7 +10,7 @@ import './PredictionTab.css';
  * Charge les données manuellement via un bouton
  */
 const PredictionTab: React.FC = () => {
-  const [aiPrediction, setAIPrediction] = useState<FrontendRecommendationsResponse | null>(null);
+  const [aiPrediction, setAIPrediction] = useState<SpringAiPredictionResponse | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -23,7 +23,7 @@ const PredictionTab: React.FC = () => {
       setIsLoading(true);
       setError(null);
 
-      const prediction: FrontendRecommendationsResponse = await fetchAIRecommendation();
+  const prediction: SpringAiPredictionResponse = await fetchAIRecommendation();
 
       console.log('AI prediction loaded:', prediction);
       setAIPrediction(prediction);
@@ -97,60 +97,65 @@ const PredictionTab: React.FC = () => {
                   <CardDescription className="flex flex-col gap-4 px-6">
                     {/* Nombres prédits */}
                     <div className="flex gap-2 flex-wrap mt-2">
-                      {aiPrediction.recommendations.pattern.numbers.map((num: number, i: number) => (
+                      {aiPrediction.numbers.map((num: number, i: number) => (
                         <div key={i} className="flex-shrink-0">
                           <LottoBall number={num} size="md" type="prediction"  />
                         </div>
                       ))}
                     </div>
-                    {/* Date du tirage */}
-                    {aiPrediction.recommendations.drawDate && (
-                      <div className="text-sm">Date du tirage : <span className="font-mono text-primary-700 dark:text-primary-300">{aiPrediction.recommendations.drawDate}</span></div>
-                    )}
                     {/* Score de confiance */}
-                    {aiPrediction.recommendations.pattern.confidenceScore && (
-                      <div className="text-sm">Score de confiance : <span className="font-mono text-green-700 dark:text-green-400">{aiPrediction.recommendations.pattern.confidenceScore}</span></div>
-                    )}
-                    {/* Justification */}
-                    {aiPrediction.recommendations.pattern.reasoning && (
-                      <div className="text-sm">Reasoning : <span className="font-mono text-neutral-700 dark:text-neutral-300">{aiPrediction.recommendations.pattern.reasoning}</span></div>
+                    <div className="text-sm">Score de confiance : <span className="font-mono text-green-700 dark:text-green-400">{aiPrediction.confidenceScore.toFixed(3)}</span></div>
+                    {/* Description */}
+                    {aiPrediction.description && (
+                      <div className="text-sm">Description : <span className="font-mono text-neutral-700 dark:text-neutral-300">{aiPrediction.description}</span></div>
                     )}
                     {/* Explication IA */}
                     <div className="flex flex-col">
                       <div className="text-lg">Explication IA :</div>
                       <div className="text-sm prose prose-sm max-w-none dark:prose-invert">
-                        <ReactMarkdown>{aiPrediction.recommendations.pattern.reasoning}</ReactMarkdown>
+                        <ReactMarkdown>{aiPrediction.think}</ReactMarkdown>
                       </div>
                     </div>
+                    {/* Résumé Markdown */}
+                    {aiPrediction.content && (
+                      <div className="flex flex-col">
+                        <div className="text-lg">Résumé :</div>
+                        <div className="text-sm prose prose-sm max-w-none dark:prose-invert">
+                          <ReactMarkdown>{aiPrediction.content}</ReactMarkdown>
+                        </div>
+                      </div>
+                    )}
+                    {/* Debug brut */}
+                    {aiPrediction.raw && (
+                      <details className="mt-2 px-6">
+                        <summary className="cursor-pointer font-semibold text-amber-600 dark:text-amber-300">Réponse brute du modèle (debug)</summary>
+                        <pre className="rounded p-3 text-xs overflow-x-auto whitespace-pre-wrap break-words">{aiPrediction.raw}</pre>
+                      </details>
+                    )}
                     {/* Analyse détaillée si présente */}
-                    {aiPrediction.recommendations.analysisFactors && (
+                    {aiPrediction.metadata && (
                       <details className="mt-2 px-6">
                         <summary className="cursor-pointer font-semibold text-primary-600 dark:text-primary-300">Détails de l'analyse</summary>
                         <div className="pl-4 mt-2 text-xs">
-                          {/* Fréquence */}
-                          {aiPrediction.recommendations.analysisFactors.frequencyAnalysis && (
-                            <div className="mb-2">
-                              <div className="font-semibold">Analyse de fréquence :</div>
-                              <ul>
-                                {Object.entries(aiPrediction.recommendations.analysisFactors.frequencyAnalysis).map(([key, value]) => (
-                                  <li key={key}>{key}: <span className="font-mono">{String(value)}</span></li>
-                                ))}
-                              </ul>
-                            </div>
-                          )}
-                         
+                          <pre className="rounded p-3 text-xs overflow-x-auto">{JSON.stringify(aiPrediction.metadata, null, 2)}</pre>
+
                         </div>
                       </details>
                     )}
                   </CardDescription>
+                  {/* Nouvelle section pour afficher toutes les valeurs de metadata */}
+                  {aiPrediction.metadata && (
+                    <div className="p-4 border-t">
+                      <div className="font-semibold mb-2">Toutes les données metadata :</div>
+                      <pre className="rounded p-3 text-xs overflow-x-auto">
+                        {JSON.stringify(aiPrediction.metadata, null, 2)}
+                      </pre>
+                    </div>
+                  )}
                 </Card>
               )}
             </div>
-            {/* Méta-analyse IA */}
-            <div>
-              <h3 className="text-xl font-semibold mb-2 mt-6">Méta-analyse IA</h3>
-              <pre className=" rounded p-3 text-xs overflow-x-auto">{JSON.stringify(aiPrediction.metaAnalysis, null, 2)}</pre>
-            </div>
+            
           </div>
         )}
       </div>
@@ -158,4 +163,4 @@ const PredictionTab: React.FC = () => {
 }
 
 export default PredictionTab;
-            
+

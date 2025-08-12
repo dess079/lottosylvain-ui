@@ -1,4 +1,45 @@
 /**
+ * Interface représentant la réponse AIResponse du backend
+ */
+export interface AIResponse {
+  /** Identifiant de la requête */
+  requestId?: string;
+  /** Contenu de la réponse */
+  content?: string;
+  /** Indique si la requête a réussi */
+  success: boolean;
+  /** Type de jeu */
+  gameType?: string;
+  /** Type d'analyse */
+  analysisType?: string;
+  /** Modèle utilisé */
+  model?: string;
+  /** Temps de traitement en ms */
+  processingTimeMs?: number;
+  /** Timestamp de la réponse (ISO string) */
+  timestamp?: string;
+  /** Code d'erreur */
+  error?: string;
+  /** Message d'erreur spécifique */
+  errorMessage?: string;
+  /** Réponse brute de l'AI */
+  response?: string;
+  /** Nombre de tokens dans le prompt */
+  promptTokens?: number;
+  /** Nombre de tokens dans la complétion */
+  completionTokens?: number;
+  /** Temps d'exécution */
+  executionTime?: string;
+  /** Métadonnées associées */
+  metadata?: Record<string, unknown>;
+  /** Données structurées */
+  data?: Record<string, unknown>;
+  /** Nombres prédits */
+  predictedNumbers?: number[];
+  /** Profondeur d'analyse RAG */
+  depth?: number;
+}
+/**
  * Type definitions for the Lotto-Sylvain UI application
  */
 

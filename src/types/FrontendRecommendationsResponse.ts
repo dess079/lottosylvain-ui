@@ -1,20 +1,13 @@
-// Interface adaptée à la réponse Java FrontendRecommendationsResponse
-
-export interface Pattern {
+// Legacy types kept for backward compatibility with older endpoints
+export interface LegacyPattern {
   numbers: number[];
   confidenceScore: number;
   reasoning?: string;
   strategy?: string;
 }
-export interface Pattern {
-  pattern: Pattern;
-  drawDate?: string; // Date du tirage au format ISO ou YYYY-MM-DD
-}
 
-export interface FrontendRecommendation {
-  pattern: Pattern;
-  
-  /** Date du tirage (format ISO ou YYYY-MM-DD) */
+export interface LegacyFrontendRecommendation {
+  pattern: LegacyPattern;
   drawDate?: string;
   analysisFactors?: {
     frequencyAnalysis?: Record<string, number>;
@@ -23,13 +16,13 @@ export interface FrontendRecommendation {
   };
 }
 
-export interface MetaAnalysis {
+export interface LegacyMetaAnalysis {
   [key: string]: any;
 }
 
 export interface FrontendRecommendationsResponse {
   timestamp: string;
   nextDrawDate: string;
-  recommendations: FrontendRecommendation;
-  metaAnalysis: MetaAnalysis;
+  recommendations: Record<string, any> | LegacyFrontendRecommendation;
+  metaAnalysis: LegacyMetaAnalysis;
 }

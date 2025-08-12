@@ -1,0 +1,6 @@
+/* Assure qu'une scrollbar reserve toujours l'espace (évite shift de largeur) */
+.stable-scroll {
+  scrollbar-gutter: stable; /* Navigateur modernes */
+}
+
+/* Fallback: forcer toujours la scrollbar verticale (déjà via overflow-y-scroll) */

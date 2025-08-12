@@ -16,8 +16,7 @@ const ConfidenceBar: React.FC<{ score: number }> = ({ score }) => {
   }, [scorePercentage]);
 
   // convertir le score en texte avec une précision de 0 chiffres après la virgule
-
-  const formattedScore = (scorePercentage)
+  const formattedScore = Math.round(scorePercentage);
 
   return (
     <div className="w-full mb-5 mt-3">
@@ -31,10 +30,10 @@ const ConfidenceBar: React.FC<{ score: number }> = ({ score }) => {
           </span>
         </div>
       </div>
-      <div className="w-full h- rounded-full overflow-hidden shadow-inner confidence-bar">
+      <div className="w-full rounded-full h-4 bg-gray-200 dark:bg-gray-700 overflow-hidden shadow-inner confidence-bar">
         <div
-          className={`h-full bg-gradient-to-r ${getColor()} rounded-full transition-all duration-500 ease-out`}
-          style={{ width: `${scorePercentage}%` }}
+          className={`h-4 bg-gradient-to-r ${getColor()} rounded-full transition-all duration-500 ease-out`}
+          style={{ width: `${formattedScore}%` }}
         />
       </div>
     </div>
