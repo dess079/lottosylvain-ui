@@ -5,16 +5,16 @@ import { formatDate } from 'date-fns';
 import { motion } from 'framer-motion';
 import { Loader2 } from 'lucide-react';
 import React, { useState } from 'react';
+import ReactMarkdown from 'react-markdown';
 import { fetchSpringAIPrediction } from '../../services/api';
 import { aiPredictionStateSignal } from '../../signals/predictionSignal';
-import AnalysisMarkdownBox from '../AnalysisMarkdownBox';
 import { Button } from '../shadcn';
-import './PredictionSection.css';
 import ConfidenceBar from './ConfidenceBar';
 import ErrorMessage from './ErrorMessage';
-import PredictionBalls from './PredictionBalls';
-import JsonBlock from './JsonBlock';
 import ExpandableCard from './ExpandableCard';
+import JsonBlock from './JsonBlock';
+import PredictionBalls from './PredictionBalls';
+import './PredictionSection.css';
 
 
 /**
@@ -127,9 +127,16 @@ const PredictionSection: React.FC = () => {
               <div className="text-sm mt-1"><b>Justification :</b> {lottoAIResponse.lottoPrediction.justification}</div>
             )}
 
-            {/* Affichage de la date d'analyse si présente dans le champ think */}
+            {/* Affichage de la date d'analyse si présente dans le champ think, dans une carte repliable */}
             {lottoAIResponse.think && (
-              <AnalysisMarkdownBox title="Analyse détaillée" markdown={lottoAIResponse.think} />
+              <ExpandableCard
+                title="Analyse détaillée"
+                colorClass="text-primary-600"
+                open={isMetadataOpen}
+                onToggle={() => setIsMetadataOpen(o => !o)}
+              >
+                 <ReactMarkdown>{lottoAIResponse.think}</ReactMarkdown>
+              </ExpandableCard>
             )}
 
             {/* Affichage de metadataExtra si présent */}

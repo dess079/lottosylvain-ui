@@ -80,7 +80,7 @@ const PredictionTab: React.FC = () => {
               <Button
                 onClick={loadAIPrediction}
                 loading={isLoading}
-                variant="outline"
+                variant="secondary"
                 size="sm"
                 aria-label="Rafraîchir la prédiction IA"
               >

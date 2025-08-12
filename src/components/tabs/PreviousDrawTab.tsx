@@ -109,6 +109,14 @@ const PreviousDrawTab: React.FC<PreviousDrawTabProps> = ({ isActive, ballSize })
 
   const [state, dispatch] = React.useReducer(reducer, initialState);
 
+  useEffect(() => {
+    // Utilise getDrawDates pour garantir la logique métier
+    const [start, end] = getDrawDates(today);
+    loadPreviousDraw(start, end);
+  
+  }, []);
+
+
   // Charge les données seulement quand l'onglet devient actif
   useEffect(() => {
     if (isActive && !state.hasLoaded) {
