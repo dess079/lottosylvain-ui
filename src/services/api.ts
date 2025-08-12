@@ -18,31 +18,6 @@ export const API_VERSION_CONFIG = {
   ENABLE_HEALTH_CHECK: true // Activer les vérifications de santé
 };
 
-/**
- * Fonction utilitaire pour gérer le fallback entre les versions d'API
- */
-async function fetchWithFallback<T>(
-  primaryFetch: () => Promise<T>,
-  fallbackFetch?: () => Promise<T>,
-  errorContext: string = 'API call'
-): Promise<T> {
-  try {
-    return await primaryFetch();
-  } catch (error) {
-    console.warn(`${errorContext}: Primary API failed, trying fallback`, error);
-    
-    if (fallbackFetch && API_VERSION_CONFIG.FALLBACK_TO_V2) {
-      try {
-        return await fallbackFetch();
-      } catch (fallbackError) {
-        console.error(`${errorContext}: Both primary and fallback APIs failed`, fallbackError);
-        throw fallbackError;
-      }
-    }
-    
-    throw error;
-  }
-}
 
 /**
  * Fetches previous lottery draw results
@@ -67,7 +42,6 @@ export async function fetchPreviousResults(startDate?: string, endDate?: string)
     const response = await fetch(url);
     if (!response.ok) {
       if (response.status === 404) {
-        // Message personnalisé si aucun tirage trouvé
         throw new Error("Aucun tirage trouvé pour la période sélectionnée.");
       }
       console.error(`fetchPreviousResults: Failed with status ${response.status} - ${response.statusText}`);
@@ -80,14 +54,17 @@ export async function fetchPreviousResults(startDate?: string, endDate?: string)
     console.info('fetchPreviousResults: Valid data received after transformation', rawData);
     return rawData;
   } catch (error) {
-    if (error instanceof TypeError) {
-      console.error('fetchPreviousResults: Network error or server unreachable:', error);
-    } else {
-      console.error('fetchPreviousResults: Error fetching previous results:', error);
+    if (error instanceof Error) {
+      if (error.message.includes('Aucun tirage trouvé')) {
+        throw error;
+      }
+      if (error instanceof TypeError) {
+        console.error('fetchPreviousResults: Network error or server unreachable:', error);
+      } else {
+        console.error('fetchPreviousResults: Error fetching previous results:', error);
+      }
     }
-    throw new Error(
-      "Le service de résultats précédents n'est pas disponible actuellement. Veuillez vérifier votre connexion ou contacter le support."
-    );
+    throw new Error("Le service de résultats précédents n'est pas disponible actuellement.");
   }
 }
 
@@ -103,48 +80,10 @@ export async function fetchPredictions(): Promise<LottoAIResponse> {
     }
     const data: LottoAIResponse = await response.json();
     console.info('fetchPredictions (Spring AI v3): Response received', data);
-    if (data && data.prediction) {
+    if (data && data.lottoPrediction) {
       return data;
     }
-    throw new Error('Invalid data format from Spring AI API');
-  };
-
-  // Fonction fallback pour l'ancienne API v2
-  const fetchLegacy = async (): Promise<PredictionData[]> => {
-    const response = await fetch(`${API_BASE_URL}${API_CONFIG.ENDPOINTS.PREDICTIONS}`);
-    if (!response.ok) {
-      throw new Error('Failed to fetch legacy predictions');
-    }
-    const data = await response.json();
-    
-    if (data && data.recommendations) {
-      return Object.values(data.recommendations)
-        .map((rec: any) => {
-          if (!rec.numbers) {
-            throw new Error('Données de prédiction incomplètes: numéros manquants');
-          }
-          
-          let numbers = [...rec.numbers];
-          numbers = [...new Set(numbers)];
-          numbers.sort((a: number, b: number) => a - b);
-          
-          if (!rec.confidenceScore) {
-            throw new Error('Données de prédiction incomplètes: score de confiance manquant');
-          }
-          
-          return {
-            numbers: numbers,
-            confidenceScore: rec.confidenceScore,
-            reasoning: rec.reasoning || 'Aucune explication fournie',
-            analysisFactors: rec.analysisFactors || {
-              frequencyAnalysis: {}
-            }
-          };
-        })
-        .slice(0, 3);
-    }
-    
-    throw new Error('Invalid data format from legacy API');
+    throw new Error('Invalid data format from Spring AI API: lottoPrediction manquant');
   };
 
   // Utiliser Spring AI v3 uniquement (plus de fallback legacy)

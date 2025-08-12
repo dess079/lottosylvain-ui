@@ -81,6 +81,12 @@
 }
 
 /* Tailles */
+.lotto-ball-xs {
+  width: 2rem;
+  height: 2rem;
+  font-size: 0.85rem;
+  line-height: 2rem;
+}
 .lotto-ball-sm {
   width: 2.5rem;
   height: 2.5rem;
@@ -100,6 +106,14 @@
   height: 4rem;
   font-size: 1.75rem;
   line-height: 4rem;
+}
+
+/* Responsive scaling: on small screens reduce sizes slightly */
+@media (max-width: 640px) {
+  .lotto-ball-lg { width: 3.25rem; height: 3.25rem; font-size: 1.5rem; line-height: 3.25rem; }
+  .lotto-ball-md { width: 2.5rem; height: 2.5rem; font-size: 1.05rem; line-height: 2.5rem; }
+  .lotto-ball-sm { width: 2.25rem; height: 2.25rem; font-size: 0.95rem; line-height: 2.25rem; }
+  .lotto-ball-xs { width: 1.85rem; height: 1.85rem; font-size: 0.75rem; line-height: 1.85rem; }
 }
 
 /* Types */

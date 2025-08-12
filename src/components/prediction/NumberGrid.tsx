@@ -1,7 +1,5 @@
 import React from 'react';
 import { LottoBall } from '../shadcn';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../shadcn';
-import type { PredictionData } from '../../types';
 
 /**
  * Grille interactive pour sélectionner ou exclure les numéros.

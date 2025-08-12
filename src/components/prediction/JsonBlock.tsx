@@ -18,7 +18,7 @@ const JsonBlock: React.FC<JsonBlockProps> = ({ data, className }) => {
   return (
     <pre
       className={[
-        'bg-gray-100 rounded p-3 text-xs overflow-x-auto break-words whitespace-pre-wrap font-mono leading-snug',
+        'rounded p-3 text-xs overflow-x-auto break-words whitespace-pre-wrap font-mono leading-snug',
         className ?? ''
       ].join(' ').trim()}
     >

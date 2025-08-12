@@ -8,6 +8,8 @@ import './PreviousDrawTab.css';
 
 interface PreviousDrawTabProps {
   isActive: boolean;
+  /** Taille globale forcée des boules (xs, sm, md, lg). Si non définie, logique auto. */
+  ballSize?: 'xs' | 'sm' | 'md' | 'lg';
 }
 
 /**
@@ -55,7 +57,7 @@ function getDrawDates(today: string): [string, string] {
  * Composant pour afficher le dernier tirage officiel
  * Charge les données seulement quand l'onglet est actif
  */
-const PreviousDrawTab: React.FC<PreviousDrawTabProps> = ({ isActive }) => {
+const PreviousDrawTab: React.FC<PreviousDrawTabProps> = ({ isActive, ballSize }) => {
   // Utilise useReducer pour gérer le state du composant
   type State = {
     previousDraw: PreviousResult | null;
@@ -207,6 +209,17 @@ return (
         </form>
       </div>
 
+      {/* Légende unique */}
+      <div className="w-full max-w-4xl flex flex-col items-center mb-6 gap-2">
+        <div className="flex items-center gap-4 text-xs md:text-sm opacity-80 flex-wrap justify-center">
+          <span className="inline-flex items-center gap-1"><span className="w-4 h-4 rounded-full lotto-ball-regular inline-block"></span> Régulier</span>
+          <span className="inline-flex items-center gap-1"><span className="w-4 h-4 rounded-full lotto-ball-bonus inline-block"></span> Bonus</span>
+        </div>
+        <div className="text-[11px] md:text-xs text-slate-500 dark:text-slate-400 mt-1 italic">
+          Maximum 25 tirages affichés.
+        </div>
+      </div>
+
       {/* Contenu centré sous le formulaire */}
       <div className="flex-1 w-full max-w-4xl flex flex-col items-center justify-center">
         {/* Loader animé pendant le chargement */}
@@ -225,26 +238,37 @@ return (
         )}
         
         {/* Résultat ou message si aucun résultat */}
-        {!state.drawLoading && state.previousDraw && Array.isArray(state.previousDraw) ? (
-          state.previousDraw.length > 0 ? (
+        {!state.drawLoading && state.previousDraw ? (
+          Array.isArray(state.previousDraw.previousResult) && state.previousDraw.previousResult.length > 0 ? (
             <div className="flex flex-col items-center justify-center gap-8 previous-draw-animation animate-fade-in w-full max-w-4xl">
-              {state.previousDraw.map((draw, idx) => (
+              {state.previousDraw.previousResult.map((draw, idx) => (
                 <div key={draw.previousResultDate + '-' + idx} className="w-full flex flex-col items-center gap-2 border-b border-slate-200 dark:border-slate-700 pb-6 mb-6 last:border-b-0 last:pb-0 last:mb-0">
                   <div className="flex flex-wrap justify-center gap-4 mb-2 w-full">
-                    {/* Affiche les numéros gagnants pour ce tirage */}
-                    {Array.isArray(draw.resultNumbers) && draw.resultNumbers.length > 0
-                      ? draw.resultNumbers.map((num: number, i: number) => (
-                          <LottoBall key={i} number={num} size="md" type="regular" />
-                        ))
-                      : <span className="text-slate-400 text-base">Aucun numéro à afficher</span>
-                    }
-                    {/* Affiche le numéro bonus si présent */}
+                    {Array.isArray(draw.resultNumbers) && draw.resultNumbers.length > 0 ? (
+                      draw.resultNumbers.map((num: number, i: number) => {
+                        const computedSize = ballSize || (draw.resultNumbers.length > 6 ? 'sm' : 'md');
+                        return (
+                          <LottoBall
+                            key={i}
+                            number={num}
+                            size={computedSize}
+                            type="regular"
+                          />
+                        );
+                      })
+                    ) : (
+                      <span className="text-slate-400 text-base">Aucun numéro à afficher</span>
+                    )}
                     {typeof draw.bonusNumber === 'number' && (
-                      <LottoBall number={draw.bonusNumber} size="md" type="bonus" />
+                      <LottoBall
+                        number={draw.bonusNumber}
+                        size={ballSize || (draw.resultNumbers.length > 6 ? 'sm' : 'md')}
+                        type="bonus"
+                      />
                     )}
                   </div>
-                  <div className="text-sm mt-2 opacity-70 text-center w-full">
-                    Tirage en date du {draw.previousResultDate}
+                  <div className="text-sm mt-2 opacity-70 text-center w-full flex flex-col gap-1">
+                    <span>Tirage en date du {draw.previousResultDate}</span>
                   </div>
                   {draw.message && (
                     <div className="text-xs text-red-500 mt-1">{draw.message}</div>
@@ -253,19 +277,19 @@ return (
               ))}
             </div>
           ) : (
+            !state.drawError && (
+              <div className="w-full max-w-xl text-center text-base text-slate-500 dark:text-slate-400 flex flex-col items-center justify-center">
+                Aucun résultat trouvé pour la période sélectionnée.
+              </div>
+            )
+          )
+        ) : (
+          !state.drawLoading && !state.drawError && (
             <div className="w-full max-w-xl text-center text-base text-slate-500 dark:text-slate-400 flex flex-col items-center justify-center">
-              {/* Debug structure reçue */}
-              <pre className="text-xs text-slate-400 bg-slate-50 dark:bg-slate-900 p-2 rounded mb-2">{JSON.stringify(state.previousDraw, null, 2)}</pre>
               Aucun résultat trouvé pour la période sélectionnée.
             </div>
           )
-        ) : (!state.drawLoading && !state.drawError && (
-          <div className="w-full max-w-xl text-center text-base text-slate-500 dark:text-slate-400 flex flex-col items-center justify-center">
-            {/* Affichage explicite si previousDraw absent ou mal typé */}
-            <pre className="text-xs text-slate-400 bg-slate-50 dark:bg-slate-900 p-2 rounded mb-2">{JSON.stringify(state.previousDraw, null, 2)}</pre>
-            Aucun résultat trouvé pour la période sélectionnée.
-          </div>
-        ))}
+        )}
       </div>
     </div>
   );

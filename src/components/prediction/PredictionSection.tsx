@@ -15,7 +15,6 @@ import ErrorMessage from './ErrorMessage';
 import PredictionBalls from './PredictionBalls';
 import JsonBlock from './JsonBlock';
 import ExpandableCard from './ExpandableCard';
-import useLockedWidth from '@/hooks/useLockedWidth';
 
 
 /**
@@ -70,10 +69,9 @@ const PredictionSection: React.FC = () => {
   // } = aiPredictionStateSignal.value;
 
   const { isAILoading, lottoAIResponse, error } = aiPredictionStateSignal.value;
-  const lockedWidth = useLockedWidth<HTMLDivElement>();
 
   return (
-    <div className='flex flex-col w-full h-full'>
+  <div className='flex flex-col w-full h-full items-center'>
       <h2 className="text-4xl font-bold text-center gradient-text">Prédiction pour le prochain tirage</h2>
       <h3 className="text-lg text-center font-semibold text-primary-600">
         {formatDate(nextDrawDate, 'yyyy-MM-dd')}
@@ -87,7 +85,7 @@ const PredictionSection: React.FC = () => {
       )}
 
       {/* Affichage de la prédiction IA principale */}
-  <div className="block min-h-0 overflow-y-scroll stable-scroll px-3 md:px-6 pb-4">{/* overflow-y-scroll + stable-scroll pour éviter le shift de largeur lors de l'apparition de la scrollbar */}
+  <div className="block min-h-0 px-3 md:px-6 pb-4 flex-1 w-full max-w-5xl">{/* Conteneur centré avec largeur max fixe pour stabilité */}
      
         {/* Bouton pour lancer la prédiction IA */}
         <div className="mb-6 text-center">
@@ -104,12 +102,10 @@ const PredictionSection: React.FC = () => {
 
         {lottoAIResponse && (
           <motion.div
-            ref={lockedWidth.ref}
-            style={lockedWidth.style}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="flex flex-col gap-4 min-w-0">
+            className="prediction-motion flex flex-col gap-4">
            
             <PredictionBalls prediction={lottoAIResponse.lottoPrediction?.predictedNumbers || []} />
             <ConfidenceBar score={lottoAIResponse.lottoPrediction?.confidenceScore as number} />

@@ -9,6 +9,8 @@ interface CalendarDateInputProps {
   value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   ariaLabel: string;
+  /** Active le mode compact (petites cases + moins de padding) */
+  compact?: boolean;
 }
 
 /**
@@ -19,7 +21,7 @@ interface CalendarDateInputProps {
  * @param onChange Callback lors du changement
  * @param ariaLabel Label d'accessibilité
  */
-const CalendarDateInput: React.FC<CalendarDateInputProps> = ({ id, label, value, onChange, ariaLabel }) => (
+const CalendarDateInput: React.FC<CalendarDateInputProps> = ({ id, label, value, onChange, ariaLabel, compact = false }) => (
   (() => {
     const [open, setOpen] = React.useState(false);
     // Convert string (YYYY-MM-DD) to Date | null
@@ -49,24 +51,35 @@ const CalendarDateInput: React.FC<CalendarDateInputProps> = ({ id, label, value,
       setOpen(false);
     };
     return (
-      <div className="flex flex-col items-center w-full sm:w-auto">
-        <label htmlFor={id} className="mb-1 text-center">{label}</label>
+  <div className={"flex flex-col items-center w-full sm:w-auto " + (compact ? 'calendar-density-compact' : '')}>
+        <label htmlFor={id} className="mb-1 text-center font-medium tracking-wide">
+          {label}
+        </label>
         <Popover open={open} onOpenChange={setOpen}>
           <PopoverTrigger asChild>
-            <Button variant="outline" className="w-full flex justify-between items-center">
-              <span>{value ? value : 'Sélectionner une date'}</span>
+            <Button
+              variant="outline"
+              className="w-full flex justify-between items-center text-slate-800 dark:text-slate-100 bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-1 focus:ring-offset-white dark:focus:ring-offset-slate-900"
+            >
+              <span className="font-mono tracking-tight text-sm text-slate-700 dark:text-slate-100">
+                {value ? value : 'Sélectionner une date'}
+              </span>
               <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="ml-2 text-slate-400 dark:text-slate-300">
                 <rect x="3" y="5" width="18" height="16" rx="2" strokeWidth="2"/>
                 <path strokeWidth="2" d="M16 3v4M8 3v4M3 9h18"/>
               </svg>
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="p-0 w-auto bg-white dark:bg-slate-900" align="start" style={{ zIndex: 9999, position: 'relative', opacity: 1 }}>
+          <PopoverContent
+            className={"p-0 w-auto bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 shadow-lg " + (compact ? 'calendar-density-compact' : '')}
+            align="start"
+            style={{ zIndex: 9999, position: 'relative', opacity: 1 }}
+          >
             <Calendar
               value={parseDate(value)}
               onChange={(value) => handleCalendarChange(Array.isArray(value) ? value[0] ?? null : value as Date | null)}
               aria-label={ariaLabel}
-              className="rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 shadow-md text-slate-900 dark:text-slate-200"
+              className={"rounded border border-transparent " + (compact ? 'calendar-compact' : '')}
             />
           </PopoverContent>
         </Popover>

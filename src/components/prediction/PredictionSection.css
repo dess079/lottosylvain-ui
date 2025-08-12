@@ -4,3 +4,18 @@
 }
 
 /* Fallback: forcer toujours la scrollbar verticale (déjà via overflow-y-scroll) */
+
+/* Verrouillage pure CSS : on isole la mise en page du bloc animé pour éviter des recalculs de largeur */
+.prediction-motion {
+  width: 100%;
+  /* Empêche des influences externes de layout sur largeur interne pendant animations */
+  contain: layout paint;
+  /* Garantit que le contenu ne déclenche pas de débordement horizontal caché */
+  min-width: 0;
+}
+
+/* Option: si on veut réserver un léger espace constant à droite pour absorber les variations de scrollbar overlay (macOS) */
+@supports (scrollbar-gutter: stable) {
+  .prediction-motion { padding-right: 0; }
+}
+
