@@ -6,6 +6,7 @@
  */
 export interface LottoAIResponse {
   think: string;
+  reponse: string;
   lottoPrediction: LottoPrediction;
   metadataExtra: Record<string, string>;
 }
@@ -15,6 +16,7 @@ export interface LottoAIResponse {
  */
 export interface LottoPrediction {
   predictedNumbers: number[];
+  detailAnalysis?: string;
   confidenceScore?: number;
   justification?: string;
   analysisDepth?: number;

@@ -20,23 +20,22 @@ const TabsLotto: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col flex-1 min-h-0">
-      <Tabs defaultValue="previous" onValueChange={handleTabChange} className="flex-1 flex flex-col min-h-0">
-        <TabsList className="flex">
-          <div className="flex" id="tabs-container" ref={tabsListRef}>
-            <TabsTrigger value="previous" className="bar-tab-trigger min-w-[10rem] text-center whitespace-nowrap font-semibold transition-all duration-300">Dernier tirage officiel</TabsTrigger>
-            <TabsTrigger value="prediction" className="bar-tab-trigger min-w-[10rem] text-center whitespace-nowrap font-semibold transition-all duration-300">Prédiction complète</TabsTrigger>
-            <TabsTrigger value="graph" className="bar-tab-trigger min-w-[10rem] text-center whitespace-nowrap font-semibold transition-all duration-300">Graphique temporel</TabsTrigger>
-            <TabsTrigger value="section" className="bar-tab-trigger min-w-[10rem] text-center whitespace-nowrap font-semibold transition-all duration-300">Prédiction IA</TabsTrigger>
-            <TabsTrigger value="line" className="bar-tab-trigger min-w-[10rem] text-center whitespace-nowrap font-semibold transition-all duration-300">Graphique linéaire</TabsTrigger>
-            <TabsTrigger value="pie" className="bar-tab-trigger min-w-[10rem] text-center whitespace-nowrap font-semibold transition-all duration-300">Graphique en secteurs</TabsTrigger>
-            <TabsTrigger value="scatter" className="bar-tab-trigger min-w-[10rem] text-center whitespace-nowrap font-semibold transition-all duration-300">Graphique de dispersion</TabsTrigger>
-            <TabsTrigger value="ai" className="bar-tab-trigger min-w-[10rem] text-center whitespace-nowrap font-semibold transition-all duration-300">IA Lotto649</TabsTrigger>
-            <TabsTrigger value="directai" className="bar-tab-trigger min-w-[10rem] text-center whitespace-nowrap font-semibold transition-all duration-300">Direct AI</TabsTrigger>
-          </div>
+
+      <Tabs defaultValue="previous" onValueChange={handleTabChange} className="flex-1 flex flex-col min-h-0 ">
+        <TabsList className="flex" id="tabs-container" ref={tabsListRef}>
+          <TabsTrigger value="previous" className="bar-tab-trigger min-w-[10rem] text-center whitespace-nowrap font-semibold transition-all duration-300">Dernier tirage officiel</TabsTrigger>
+          <TabsTrigger value="prediction" className="bar-tab-trigger min-w-[10rem] text-center whitespace-nowrap font-semibold transition-all duration-300">Prédiction complète</TabsTrigger>
+          <TabsTrigger value="graph" className="bar-tab-trigger min-w-[10rem] text-center whitespace-nowrap font-semibold transition-all duration-300">Graphique temporel</TabsTrigger>
+          <TabsTrigger value="section" className="bar-tab-trigger min-w-[10rem] text-center whitespace-nowrap font-semibold transition-all duration-300">Prédiction IA</TabsTrigger>
+          <TabsTrigger value="line" className="bar-tab-trigger min-w-[10rem] text-center whitespace-nowrap font-semibold transition-all duration-300">Graphique linéaire</TabsTrigger>
+          <TabsTrigger value="pie" className="bar-tab-trigger min-w-[10rem] text-center whitespace-nowrap font-semibold transition-all duration-300">Graphique en secteurs</TabsTrigger>
+          <TabsTrigger value="scatter" className="bar-tab-trigger min-w-[10rem] text-center whitespace-nowrap font-semibold transition-all duration-300">Graphique de dispersion</TabsTrigger>
+          <TabsTrigger value="ai" className="bar-tab-trigger min-w-[10rem] text-center whitespace-nowrap font-semibold transition-all duration-300">IA Lotto649</TabsTrigger>
+          <TabsTrigger value="directai" className="bar-tab-trigger min-w-[10rem] text-center whitespace-nowrap font-semibold transition-all duration-300">Direct AI</TabsTrigger>
         </TabsList>
+
         <TabsContent value="previous" className="tabs-lotto-animation flex-1 min-h-0 flex flex-col overflow-y-auto"><PreviousDrawTab isActive={activeTab === 'previous'} /></TabsContent>
-        <TabsContent value="prediction" className="tabs-lotto-animation flex-1 min-h-0 flex flex-col overflow-y-auto"><PredictionSection /></TabsContent>
+        <TabsContent value="prediction" className="tabs-lotto-animation flex-1 min-h-0 flex flex-col overflow-y-auto border-1"><PredictionSection /></TabsContent>
         <TabsContent value="graph" className="tabs-lotto-animation flex-1 min-h-0 flex flex-col overflow-y-auto"><GraphTab isActive={activeTab === 'graph'} /></TabsContent>
         <TabsContent value="section" className="tabs-lotto-animation flex-1 min-h-0 flex flex-col overflow-y-auto"><PredictionTab /></TabsContent>
         <TabsContent value="line" className="tabs-lotto-animation flex-1 min-h-0 flex flex-col overflow-y-auto"><LineChartTab isActive={activeTab === 'line'} /></TabsContent>
@@ -45,7 +44,7 @@ const TabsLotto: React.FC = () => {
         <TabsContent value="ai" className="tabs-lotto-animation flex-1 min-h-0 flex flex-col overflow-y-auto"><AITab /></TabsContent>
         <TabsContent value="directai" className="tabs-lotto-animation flex-1 min-h-0 flex flex-col overflow-y-auto"><DirectAITab /></TabsContent>
       </Tabs>
-    </div>
+  
   );
 };
 

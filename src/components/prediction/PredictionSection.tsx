@@ -28,7 +28,7 @@ const PredictionSection: React.FC = () => {
   const [isMetadataExtraOpen, setIsMetadataExtraOpen] = useState(false);
   const [isMetadataOpen, setIsMetadataOpen] = useState(false);
   const [isFullResponseOpen, setIsFullResponseOpen] = useState(false);
-
+  const [isThinkOpen, setIsThinkOpen] = useState(false);
   const nextDrawDate = getNextDrawDate();
 
   /**
@@ -127,15 +127,27 @@ const PredictionSection: React.FC = () => {
               <div className="text-sm mt-1"><b>Justification :</b> {lottoAIResponse.lottoPrediction.justification}</div>
             )}
 
-            {/* Affichage de la date d'analyse si présente dans le champ think, dans une carte repliable */}
-            {lottoAIResponse.think && (
+            {/* Affichage du detail de l'analyse */}
+            {lottoAIResponse.lottoPrediction.detailAnalysis && (
               <ExpandableCard
                 title="Analyse détaillée"
                 colorClass="text-primary-600"
                 open={isMetadataOpen}
                 onToggle={() => setIsMetadataOpen(o => !o)}
               >
-                 <ReactMarkdown>{lottoAIResponse.think}</ReactMarkdown>
+                 <ReactMarkdown>{lottoAIResponse.lottoPrediction.detailAnalysis}</ReactMarkdown>
+              </ExpandableCard>
+            )}
+
+            {/* Affichage du detail de l'analyse */}
+            {lottoAIResponse.think && (
+              <ExpandableCard
+                title="Raisonnement de l'IA"
+                colorClass="text-primary-600"
+                open={isThinkOpen}
+                onToggle={() => setIsThinkOpen(o => !o)}
+              >
+                <ReactMarkdown>{lottoAIResponse.think}</ReactMarkdown>
               </ExpandableCard>
             )}
 
