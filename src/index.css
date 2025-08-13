@@ -136,10 +136,44 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
+/* Subtle spin animation for refresh icon */
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 0.5s ease-in-out 1;
+}
+
 body {
   background-size: 300% 300%;
   animation: gradientMovement 30s ease infinite;
   background-attachment: fixed;
+}
+
+/* Ensure native calendar icons are visible in dark mode */
+input[type="date"],
+input[type="datetime-local"] {
+  /* Render form controls suited for dark backgrounds */
+  color-scheme: dark;
+}
+
+.light input[type="date"],
+.light input[type="datetime-local"] {
+  /* Restore light look in light theme */
+  color-scheme: light;
+}
+
+/* WebKit-specific: improve visibility of the calendar button icon in dark */
+input[type="date"]::-webkit-calendar-picker-indicator,
+input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+  filter: invert(1) opacity(0.9);
+}
+
+.light input[type="date"]::-webkit-calendar-picker-indicator,
+.light input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+  filter: none;
 }
 
 /* Classes personnalisées */

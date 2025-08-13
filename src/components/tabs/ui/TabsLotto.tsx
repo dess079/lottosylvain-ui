@@ -10,13 +10,14 @@ import PredictionSection from '../../prediction/PredictionSection';
 import AITab from '../AITab';
 import DirectAITab from '../DirectAITab';
 import './TabsLotto.css';
+import PredictionsTab from '../../../features/ai-predictions/components/PredictionsTab';
 
 const TabsLotto: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'previous' | 'graph' | 'prediction' | 'section' | 'line' | 'pie' | 'scatter' | 'ai' | 'directai'>('prediction');
+  const [activeTab, setActiveTab] = useState<'previous' | 'graph' | 'prediction' | 'section' | 'line' | 'pie' | 'scatter' | 'ai' | 'directai' | 'aipreds'>('prediction');
   const tabsListRef = useRef<HTMLDivElement>(null);
 
   const handleTabChange = (value: string) => {
-    setActiveTab(value as 'previous' | 'graph' | 'prediction' | 'section' | 'line' | 'pie' | 'scatter' | 'ai' | 'directai');
+  setActiveTab(value as any);
   };
 
   return (
@@ -32,6 +33,7 @@ const TabsLotto: React.FC = () => {
           <TabsTrigger value="scatter" className="bar-tab-trigger min-w-[10rem] text-center whitespace-nowrap font-semibold transition-all duration-300">Graphique de dispersion</TabsTrigger>
           <TabsTrigger value="ai" className="bar-tab-trigger min-w-[10rem] text-center whitespace-nowrap font-semibold transition-all duration-300">IA Lotto649</TabsTrigger>
           <TabsTrigger value="directai" className="bar-tab-trigger min-w-[10rem] text-center whitespace-nowrap font-semibold transition-all duration-300">Direct AI</TabsTrigger>
+          <TabsTrigger value="aipreds" className="bar-tab-trigger min-w-[10rem] text-center whitespace-nowrap font-semibold transition-all duration-300">Gestion Prédictions AI</TabsTrigger>
         </TabsList>
 
         <TabsContent value="previous" className="tabs-lotto-animation flex-1 min-h-0 flex flex-col overflow-y-auto"><PreviousDrawTab isActive={activeTab === 'previous'} /></TabsContent>
@@ -43,6 +45,7 @@ const TabsLotto: React.FC = () => {
         <TabsContent value="scatter" className="tabs-lotto-animation flex-1 min-h-0 flex flex-col overflow-y-auto"><ScatterPlotTab isActive={activeTab === 'scatter'} /></TabsContent>
         <TabsContent value="ai" className="tabs-lotto-animation flex-1 min-h-0 flex flex-col overflow-y-auto"><AITab /></TabsContent>
         <TabsContent value="directai" className="tabs-lotto-animation flex-1 min-h-0 flex flex-col overflow-y-auto"><DirectAITab /></TabsContent>
+        <TabsContent value="aipreds" className="tabs-lotto-animation flex-1 min-h-0 flex flex-col overflow-y-auto"><PredictionsTab /></TabsContent>
       </Tabs>
   
   );

@@ -70,22 +70,17 @@ const CalendarRangeInput: React.FC<CalendarRangeInputProps> = ({
 
   return (
     <div className={`flex flex-col items-center w-full sm:w-auto ${compact ? 'calendar-density-compact' : ''}`}>
-      <label htmlFor={id} className="mb-1 text-center text-slate-700 dark:text-slate-100  tracking-wide">{label}</label>
+      <label htmlFor={id} className="mb-1 text-center tracking-wide">{label}</label>
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button
             variant="outline"
-            className="w-full flex justify-between items-center text-slate-800 dark:text-slate-100 dark:bg-slate-800 border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700"
+            className="w-full flex justify-between items-center bg-background text-foreground  hover:bg-accent/10"
           >
-            <span className="font-mono tracking-tight text-sm text-slate-700 dark:text-slate-100">{display}</span>
-            <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="ml-2 text-slate-400 dark:text-slate-300">
-              <rect x="3" y="5" width="18" height="16" rx="2" strokeWidth="2"/>
-              <path strokeWidth="2" d="M16 3v4M8 3v4M3 9h18"/>
-            </svg>
           </Button>
         </PopoverTrigger>
         <PopoverContent
-          className={`p-0 w-auto dark:bg-slate-900 border border-slate-200 dark:border-slate-700 shadow-lg ${compact ? 'calendar-density-compact' : ''}`}
+          className={`p-0 w-auto bg-popover text-popover-foreground  shadow-lg ${compact ? 'calendar-density-compact' : ''}`}
           align="start"
           style={{ zIndex: 9999, position: 'relative', opacity: 1 }}
         >
@@ -94,7 +89,7 @@ const CalendarRangeInput: React.FC<CalendarRangeInputProps> = ({
             value={internalRange as any}
             onChange={handleCalendarChange as any}
             aria-label={ariaLabel}
-            className={`rounded border border-transparent dark:bg-slate-900 text-slate-900 dark:text-slate-100 ${compact ? 'calendar-compact' : ''}`}
+            className={`rounded text-foreground ${compact ? 'calendar-compact' : ''}`}
           />
         </PopoverContent>
       </Popover>

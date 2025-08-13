@@ -59,19 +59,19 @@ const CalendarDateInput: React.FC<CalendarDateInputProps> = ({ id, label, value,
           <PopoverTrigger asChild>
             <Button
               variant="outline"
-              className="w-full flex justify-between items-center text-slate-800 dark:text-slate-100 bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-1 focus:ring-offset-white dark:focus:ring-offset-slate-900"
+              className="w-full flex justify-between items-center bg-background text-foreground border-input hover:bg-accent/10 focus:ring-2 focus:ring-ring/50 focus:ring-offset-1 focus:ring-offset-background"
             >
-              <span className="font-mono tracking-tight text-sm text-slate-700 dark:text-slate-100">
+              <span className="font-mono tracking-tight text-sm text-foreground">
                 {value ? value : 'Sélectionner une date'}
               </span>
-              <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="ml-2 text-slate-400 dark:text-slate-300">
+              <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="ml-2 text-muted-foreground">
                 <rect x="3" y="5" width="18" height="16" rx="2" strokeWidth="2"/>
                 <path strokeWidth="2" d="M16 3v4M8 3v4M3 9h18"/>
               </svg>
             </Button>
           </PopoverTrigger>
           <PopoverContent
-            className={"p-0 w-auto bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 shadow-lg " + (compact ? 'calendar-density-compact' : '')}
+            className={"p-0 w-auto bg-popover text-popover-foreground border shadow-lg " + (compact ? 'calendar-density-compact' : '')}
             align="start"
             style={{ zIndex: 9999, position: 'relative', opacity: 1 }}
           >
@@ -79,7 +79,7 @@ const CalendarDateInput: React.FC<CalendarDateInputProps> = ({ id, label, value,
               value={parseDate(value)}
               onChange={(value) => handleCalendarChange(Array.isArray(value) ? value[0] ?? null : value as Date | null)}
               aria-label={ariaLabel}
-              className={"rounded border border-transparent " + (compact ? 'calendar-compact' : '')}
+              className={"rounded border border-transparent bg-background text-foreground " + (compact ? 'calendar-compact' : '')}
             />
           </PopoverContent>
         </Popover>

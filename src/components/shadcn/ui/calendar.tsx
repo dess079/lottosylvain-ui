@@ -48,10 +48,9 @@ function Calendar({ className, inputRef, onChange, ...props }: React.ComponentPr
   return (
     <div
       className={cn(
-        'p-3 rounded-md mx-auto',
+        'rounded-md mx-auto',
         'max-w-xs', // Tailwind: max-width: 20rem (320px)
-        'bg-white text-slate-900', // light mode
-        'dark:bg-slate-900 dark:text-slate-200', // dark mode
+       
         className
       )}
     >
@@ -60,8 +59,7 @@ function Calendar({ className, inputRef, onChange, ...props }: React.ComponentPr
         onChange={handleChange}
         className={cn(
           'w-full',
-          'bg-white text-slate-900',
-          'dark:bg-slate-900 dark:text-slate-200'
+       
         )}
       />
     </div>
