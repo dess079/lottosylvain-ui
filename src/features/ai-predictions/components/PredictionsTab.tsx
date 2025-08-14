@@ -3,11 +3,14 @@ import PredictionsFilters from './PredictionsFilters';
 import PredictionsTable from './PredictionsTable';
 import PredictionsPagination from './PredictionsPagination';
 import PredictionDetailModal from './PredictionDetailModal';
-import { useAiPredictions } from '../hooks/useAiPredictions';
+import { useAiPredictions, invalidateAiPredictionsCache } from '../hooks/useAiPredictions';
+import { deletePrediction } from '../services/aiPredictionsApi';
 import { AiPredictionFilters } from '../types/aiPrediction';
 import { Card, CardHeader, CardTitle, CardContent } from '../../../components/shadcn';
 import { Button } from '../../../components/shadcn';
 import { RotateCcw, Maximize2, Minimize2 } from 'lucide-react';
+import PredictionsNumbersGraph from './PredictionsNumbersGraph';
+import PredictionsNumbers3DScatter from './PredictionsNumbers3DScatter';
 
 const PredictionsTab: React.FC = () => {
   // Filtres appliqués (ceux réellement envoyés à l'API)
@@ -16,6 +19,13 @@ const PredictionsTab: React.FC = () => {
   const { data, loading, error } = useAiPredictions(appliedFilters);
   // ID de la prédiction sélectionnée pour le détail
   const [selectedId, setSelectedId] = useState<number | null>(null);
+  async function handleDelete(id: number) {
+    await deletePrediction(id);
+    invalidateAiPredictionsCache();
+    // Recharger en ré-utilisant setAppliedFilters pour déclencher useEffect
+    setAppliedFilters(f => ({ ...f }));
+    if (selectedId === id) setSelectedId(null);
+  }
 
   const items = data?.content || [];
 
@@ -113,7 +123,13 @@ const PredictionsTab: React.FC = () => {
             <CardContent className="flex flex-col gap-0 overflow-hidden p-0 pt-0 flex-1">
               <div className="flex-1 relative overflow-auto">
                 <div className="min-h-full flex flex-col">
-                  <PredictionsTable items={items} loading={loading} error={error} onSelect={id => setSelectedId(id)} />
+                  <PredictionsTable
+                    items={items}
+                    loading={loading}
+                    error={error}
+                    onSelect={id => setSelectedId(id)}
+                    onDelete={handleDelete}
+                  />
                   {data && (
                     <div className="sticky bottom-0 z-30 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-t px-4 py-2 shadow-sm">
                       <PredictionsPagination page={data.page} size={data.size} totalPages={data.totalPages} onChange={handlePageChange} />
@@ -124,7 +140,19 @@ const PredictionsTab: React.FC = () => {
             </CardContent>
           </Card>
         </div>
+
+        <div className="flex flex-col gap-6">
+        <div className="">
+          <PredictionsNumbersGraph items={items} />
+        </div>
+        <div className="">
+          <PredictionsNumbers3DScatter items={items} />
+        </div>
+        
       </div>
+      </div>
+    
+
       <PredictionDetailModal id={selectedId} onClose={() => setSelectedId(null)} />
     </div>
   );

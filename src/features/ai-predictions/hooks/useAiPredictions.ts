@@ -3,7 +3,8 @@ import { AiPredictionFilters, AiPredictionPageResponse } from '../types/aiPredic
 import { fetchPredictions } from '../services/aiPredictionsApi';
 
 // Cache mémoire clé = JSON(filters)
-const cache = new Map<string, AiPredictionPageResponse>();
+export const aiPredictionsCache = new Map<string, AiPredictionPageResponse>();
+export function invalidateAiPredictionsCache() { aiPredictionsCache.clear(); }
 
 export function useAiPredictions(filters: AiPredictionFilters) {
   const [data, setData] = useState<AiPredictionPageResponse | null>(null);
@@ -13,8 +14,8 @@ export function useAiPredictions(filters: AiPredictionFilters) {
 
   useEffect(() => {
     const key = JSON.stringify(filters);
-    if (cache.has(key)) {
-      setData(cache.get(key)!);
+    if (aiPredictionsCache.has(key)) {
+      setData(aiPredictionsCache.get(key)!);
       return;
     }
     setLoading(true);
@@ -23,7 +24,7 @@ export function useAiPredictions(filters: AiPredictionFilters) {
     debounceRef.current = window.setTimeout(() => {
       fetchPredictions(filters)
         .then(resp => {
-          cache.set(key, resp);
+          aiPredictionsCache.set(key, resp);
           setData(resp);
         })
         .catch(e => setError(e.message))

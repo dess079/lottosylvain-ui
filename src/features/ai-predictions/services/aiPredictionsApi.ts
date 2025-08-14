@@ -43,3 +43,14 @@ export async function fetchModels(): Promise<string[]> {
   }
   return res.json();
 }
+
+/**
+ * Supprime une prédiction par son identifiant.
+ * @param id identifiant prédiction
+ */
+export async function deletePrediction(id: number): Promise<void> {
+  const res = await fetch(`${BASE_URL}/${id}`, { method: 'DELETE' });
+  if (!res.ok) {
+    throw new Error(`Erreur API (${res.status}) lors de la suppression de la prédiction`);
+  }
+}

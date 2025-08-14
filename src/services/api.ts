@@ -250,6 +250,23 @@ export async function fetchSpringAIPrediction(targetDate?: string): Promise<Lott
   return data;
 }
 
+/**
+ * Supprime une prédiction côté backend (endpoint supposé RESTful DELETE /recommendations/{id})
+ * @param id Identifiant de la prédiction
+ */
+export async function deletePrediction(id: number): Promise<void> {
+  try {
+    const url = `${API_BASE_URL}${API_CONFIG.ENDPOINTS.SPRING_AI_RECOMMENDATIONS}/${id}`;
+    const response = await fetch(url, { method: 'DELETE' });
+    if (!response.ok) {
+      throw new Error(`Echec suppression prédiction ${id}: ${response.status}`);
+    }
+  } catch (error) {
+    console.error('deletePrediction: erreur', error);
+    throw new Error("La suppression de la prédiction a échoué.");
+  }
+}
+
 
 /**
  * Vérifie le statut de santé du service Spring AI

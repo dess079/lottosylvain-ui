@@ -58,16 +58,16 @@
 }
 .dark .react-calendar__navigation button {
   background: #0f172a;
-  color: #f1f5f9;
 }
 
 .react-calendar__navigation button:hover {
   background: #2563eb;
-  color: #ffffff;
+
+  
 }
 .dark .react-calendar__navigation button:hover {
   background: #1d4ed8;
-  color: #ffffff;
+  
 }
 
 .react-calendar__month-view__weekdays {

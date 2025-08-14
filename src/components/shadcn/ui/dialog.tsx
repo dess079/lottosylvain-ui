@@ -36,17 +36,25 @@ function DialogClose({
   return <DialogPrimitive.Close data-slot="dialog-close" {...props} />
 }
 
+// Overlay avec intensité configurable
 function DialogOverlay({
   className,
+  strength = "medium",
   ...props
-}: React.ComponentProps<typeof DialogPrimitive.Overlay>) {
+}: React.ComponentProps<typeof DialogPrimitive.Overlay> & { strength?: "none" | "light" | "medium" | "strong" }) {
+  const strengthClass = strength === "none"
+    ? "bg-transparent"
+    : strength === "light"
+      ? "bg-black/30 dark:bg-black/40"
+      : strength === "strong"
+        ? "bg-black/80 dark:bg-black/85"
+        : "bg-black/60 dark:bg-black/70";
   return (
     <DialogPrimitive.Overlay
       data-slot="dialog-overlay"
-      // Overlay assombri clairement l'arrière-plan; z-index aligné avec content
       className={cn(
-  // Retrait du blur, conservation d'un assombrissement franc
-  "fixed inset-0 z-[140] bg-black/60 dark:bg-black/70 transition-opacity data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
+        "fixed inset-0 z-[140] transition-opacity data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
+        strengthClass,
         className
       )}
       {...props}
@@ -86,21 +94,25 @@ function DialogContent({
   children,
   showCloseButton = true,
   size = "lg",
+  overlayStrength = "medium",
+  fullscreen = false,
   ...props
 }: React.ComponentProps<typeof DialogPrimitive.Content> & {
   showCloseButton?: boolean
   size?: DialogContentSize
+  overlayStrength?: "none" | "light" | "medium" | "strong"
+  fullscreen?: boolean
 }) {
   return (
     <DialogPortal data-slot="dialog-portal">
-      <DialogOverlay />
+      <DialogOverlay strength={overlayStrength} />
     <DialogPrimitive.Content
         data-slot="dialog-content"
         className={cn(
-          // Theme tokens ensure correct colors in light/dark with full opacity
-          // Fallback explicit hsl(var(--background)) to avoid transparency if utility not generated
-          "bg-background bg-[hsl(var(--background))] text-foreground border border-border shadow-sm isolate data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 fixed top-[50%] left-[50%] z-[150] grid w-full max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] gap-4 rounded-lg p-6 duration-200",
-          sizeClassMap[size],
+          "bg-background bg-[hsl(var(--background))] text-foreground border border-border shadow-sm isolate data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 fixed z-[150] grid w-full max-w-[calc(100%-2rem)] gap-4 rounded-lg p-6 duration-200",
+          fullscreen
+            ? "inset-0 top-0 left-0 h-screen max-w-none translate-x-0 translate-y-0 rounded-none border-0 p-4 sm:p-6"
+            : "top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] " + sizeClassMap[size],
           className
         )}
         {...props}

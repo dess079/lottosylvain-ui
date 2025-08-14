@@ -1,10 +1,7 @@
 import React from 'react';
-import { useAiPredictionDetail } from '../hooks/useAiPredictionDetail';
-import DOMPurify from 'dompurify';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '../../../components/shadcn';
-import { Separator } from '../../../components/shadcn';
-import { Button } from '../../../components/shadcn';
 import AnalysisMarkdownBox from '../../../components/AnalysisMarkdownBox';
+import { Button, Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Separator } from '../../../components/shadcn';
+import { useAiPredictionDetail } from '../hooks/useAiPredictionDetail';
 
 interface Props { id: number | null; onClose: () => void; }
 
@@ -13,7 +10,7 @@ const PredictionDetailModal: React.FC<Props> = ({ id, onClose }) => {
   const open = id != null;
   return (
     <Dialog open={open} onOpenChange={(o) => { if (!o) onClose(); }}>
-  <DialogContent size="6xl" className="w-full max-h-[90vh] overflow-y-auto">
+     <DialogContent size="6xl" className="w-full max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Prédiction #{id}</DialogTitle>
           <DialogDescription>Détails complets de la prédiction AI sélectionnée.</DialogDescription>
