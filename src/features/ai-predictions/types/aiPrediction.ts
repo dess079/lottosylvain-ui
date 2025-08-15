@@ -5,6 +5,7 @@ export interface AiPredictionListItem {
   dateTirageCible: string; // YYYY-MM-DD
   numbers: number[]; // ordre original
   modelName: string;
+  confidencePercentage?: number; // 0-100
 }
 
 export interface AiPredictionPageResponse {

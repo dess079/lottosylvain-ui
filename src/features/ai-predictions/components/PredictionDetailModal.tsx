@@ -21,6 +21,7 @@ const PredictionDetailModal: React.FC<Props> = ({ id, onClose }) => {
           <div className="space-y-6">
             <div className="grid md:grid-cols-2 gap-3 text-xs md:text-sm">
               <div><span className="font-semibold">Date prédiction:</span> {new Date(data.dateHeurePrediction).toLocaleString()}</div>
+              <div><span className="font-semibold">Confiance:</span> {data.confidencePercentage != null ? `${data.confidencePercentage.toFixed(1)} %` : '—'}</div>
               <div><span className="font-semibold">Date tirage cible:</span> {data.dateTirageCible}</div>
               <div><span className="font-semibold">Modèle:</span> {data.modelName}</div>
               <div className="font-mono"><span className="font-semibold">Numéros:</span> {data.numbers.join('-')} <span className="text-muted-foreground">(triés: {data.sortedNumbers.join('-')})</span></div>

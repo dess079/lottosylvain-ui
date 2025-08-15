@@ -11,13 +11,13 @@ import { TabsLotto } from './components/tabs/ui';
 const App: React.FC = () => {
 
   return (
-    <div className="min-h-screen bg-background text-foreground flex flex-col items-center">
-      {/* Barre d'outils futuriste avec ref pour mesurer sa hauteur */}     
+    <div className="flex flex-col min-h-screen bg-background text-foreground">
+      {/* Barre d'outils futuriste avec ref pour mesurer sa hauteur */}
       <FuturisticToolbar />
-      {/* TabsLotto avec padding-top dynamique basé sur la hauteur réelle de la toolbar */}
-     
-      <TabsLotto />
-   
+      {/* TabsLotto occupe tout l'espace disponible entre la toolbar et le footer */}
+      <div className="flex-1 flex flex-col">
+        <TabsLotto />
+      </div>
       <FooterSection />
     </div>
   );

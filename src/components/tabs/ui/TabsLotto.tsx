@@ -8,9 +8,10 @@ import PieChartTab from '../PieChartTab';
 import ScatterPlotTab from '../ScatterPlotTab';
 import PredictionSection from '../../prediction/PredictionSection';
 import AITab from '../AITab';
-import DirectAITab from '../DirectAITab';
 import './TabsLotto.css';
 import PredictionsTab from '../../../features/ai-predictions/components/PredictionsTab';
+import { DirectAITab } from '@/components/directai';
+
 
 const TabsLotto: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'previous' | 'graph' | 'prediction' | 'section' | 'line' | 'pie' | 'scatter' | 'ai' | 'directai' | 'aipreds'>('prediction');

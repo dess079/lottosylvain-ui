@@ -3,9 +3,7 @@ import { AiPredictionListItem } from '../types/aiPrediction';
 import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from '../../../components/shadcn';
 import { Button } from '../../../components/shadcn';
 import PredictionDeleteDialog from './PredictionDeleteDialog';
-import PredictionsNumbersGraph from './PredictionsNumbersGraph';
 import { Eye, Trash2 } from 'lucide-react';
-import PredictionsNumbers3DScatter from './PredictionsNumbers3DScatter';
 
 interface Props {
   items: AiPredictionListItem[];
@@ -65,6 +63,7 @@ const PredictionsTable: React.FC<Props> = ({ items, loading, error, onSelect, on
               <TableHead className="w-48">Date prédiction</TableHead>
               <TableHead className="w-32">Date tirage</TableHead>
               <TableHead className="min-w-52">Numéros</TableHead>
+              <TableHead className="w-28">Confiance %</TableHead>
               <TableHead className="w-40">Modèle</TableHead>
               <TableHead className="w-24 text-right">Actions</TableHead>
             </TableRow>
@@ -72,17 +71,17 @@ const PredictionsTable: React.FC<Props> = ({ items, loading, error, onSelect, on
           <TableBody>
             {loading && (
               <TableRow>
-                <TableCell colSpan={6} className="text-center py-8 text-sm text-muted-foreground">Chargement des prédictions...</TableCell>
+                <TableCell colSpan={7} className="text-center py-8 text-sm text-muted-foreground">Chargement des prédictions...</TableCell>
               </TableRow>
             )}
             {error && !loading && (
               <TableRow>
-                <TableCell colSpan={6} className="text-center py-6 text-destructive text-sm">Erreur: {error}</TableCell>
+                <TableCell colSpan={7} className="text-center py-6 text-destructive text-sm">Erreur: {error}</TableCell>
               </TableRow>
             )}
             {!loading && !error && items.length === 0 && (
               <TableRow>
-                <TableCell colSpan={6} className="text-center py-6 text-sm text-muted-foreground italic">Aucune prédiction trouvée avec les filtres courants.</TableCell>
+                <TableCell colSpan={7} className="text-center py-6 text-sm text-muted-foreground italic">Aucune prédiction trouvée avec les filtres courants.</TableCell>
               </TableRow>
             )}
             {!loading && !error && items.map(it => (
@@ -101,6 +100,7 @@ const PredictionsTable: React.FC<Props> = ({ items, loading, error, onSelect, on
                 <TableCell className="whitespace-nowrap">{new Date(it.dateHeurePrediction).toLocaleString()}</TableCell>
                 <TableCell>{it.dateTirageCible}</TableCell>
                 <TableCell className="font-mono text-xs">{it.numbers.join('-')}</TableCell>
+                <TableCell>{it.confidencePercentage != null ? it.confidencePercentage.toFixed(1) : '—'}</TableCell>
                 <TableCell>
                   <span className="inline-flex max-w-[9rem] truncate" title={it.modelName}>{it.modelName}</span>
                 </TableCell>

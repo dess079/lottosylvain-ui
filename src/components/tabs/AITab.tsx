@@ -1,11 +1,11 @@
+import { Loader2 } from 'lucide-react';
 import React, { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
-import { Loader2, RotateCcw } from 'lucide-react';
-import { fetchAIPrediction } from '../../services/api';
 import '../../index.css';
-import LottoBall from '../shadcn/ui/lotto-ball';
+import { fetchAIPrediction } from '../../services/api';
 import LoadingSpinner from '../LoadingSpinner';
 import { Button } from '../shadcn';
+import LottoBall from '../shadcn/ui/lotto-ball';
 
 /**
  * Onglet affichant les informations retournées par l'IA Lotto649
