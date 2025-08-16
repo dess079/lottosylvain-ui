@@ -45,7 +45,7 @@ const TabsLotto: React.FC = () => {
         <TabsContent value="pie" className="tabs-lotto-animation flex-1 min-h-0 flex flex-col overflow-y-auto"><PieChartTab isActive={activeTab === 'pie'} /></TabsContent>
         <TabsContent value="scatter" className="tabs-lotto-animation flex-1 min-h-0 flex flex-col overflow-y-auto"><ScatterPlotTab isActive={activeTab === 'scatter'} /></TabsContent>
         <TabsContent value="ai" className="tabs-lotto-animation flex-1 min-h-0 flex flex-col overflow-y-auto"><AITab /></TabsContent>
-        <TabsContent value="directai" className="tabs-lotto-animation flex-1 min-h-0 flex flex-col overflow-y-auto"><DirectAITab /></TabsContent>
+  <TabsContent value="directai" className="tabs-lotto-animation flex-1 min-h-0 flex flex-col overflow-hidden"><DirectAITab /></TabsContent>
         <TabsContent value="aipreds" className="tabs-lotto-animation flex-1 min-h-0 flex flex-col overflow-y-auto"><PredictionsTab /></TabsContent>
       </Tabs>
   

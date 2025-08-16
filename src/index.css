@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+/* Assure la propagation de la hauteur pour layouts plein écran */
+html, body, #root { height: 100%; }
+body { margin: 0; }
+
 /* Palette de couleurs futuristes tendance 2026 */
 :root {
   --cosmic-violet: hsl(270, 80%, 60%);
@@ -560,4 +564,76 @@ section::after {
   100% {
     transform: translateX(100%);
   }
+}
+
+/* ---- Scrollbar utilities (Tailwind @layer) ---- */
+@layer utilities {
+  /* Base mixin conceptuel (non utilisable directement, documentation) */
+  /* Chaque variante ci‑dessous applique: width, track, thumb hover + dark mode */
+
+  /* 1. Variante principale (déjà utilisée) */
+  .scrollbar-primary { scrollbar-width: thin; scrollbar-color: #3b82f6 transparent; }
+  .scrollbar-primary::-webkit-scrollbar { width: 10px; }
+  .scrollbar-primary::-webkit-scrollbar-track { background: transparent; }
+  .scrollbar-primary::-webkit-scrollbar-thumb { background: #3b82f6; border-radius: 8px; border: 2px solid transparent; background-clip: content-box; }
+  .scrollbar-primary:hover::-webkit-scrollbar-thumb { background: #2563eb; }
+  .dark .scrollbar-primary::-webkit-scrollbar-thumb { background: #2563eb; }
+  .dark .scrollbar-primary:hover::-webkit-scrollbar-thumb { background: #1d4ed8; }
+  .scrollbar-primary code.block { line-height: 1.4; }
+
+  /* 2. Variante accent (utilise la couleur "accent" / cosmic-violet -> electric-aqua gradient mimic) */
+  .scrollbar-accent { scrollbar-width: thin; scrollbar-color: hsl(var(--accent)) transparent; }
+  .scrollbar-accent::-webkit-scrollbar { width: 10px; }
+  .scrollbar-accent::-webkit-scrollbar-track { background: transparent; }
+  .scrollbar-accent::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, var(--cosmic-violet), var(--electric-aqua));
+    border-radius: 12px; border: 2px solid rgba(0,0,0,0); background-clip: padding-box;
+  }
+  .dark .scrollbar-accent::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, var(--electric-aqua), var(--neon-coral));
+  }
+  .scrollbar-accent:hover::-webkit-scrollbar-thumb { filter: brightness(1.1) contrast(1.1); }
+
+  /* 3. Variante discrète / muted */
+  .scrollbar-muted { scrollbar-width: thin; scrollbar-color: hsl(var(--muted-foreground)) transparent; }
+  .scrollbar-muted::-webkit-scrollbar { width: 8px; }
+  .scrollbar-muted::-webkit-scrollbar-track { background: transparent; }
+  .scrollbar-muted::-webkit-scrollbar-thumb { background: rgba(120,120,130,0.35); border-radius: 6px; }
+  .scrollbar-muted:hover::-webkit-scrollbar-thumb { background: rgba(120,120,130,0.55); }
+  .dark .scrollbar-muted::-webkit-scrollbar-thumb { background: rgba(150,150,160,0.35); }
+  .dark .scrollbar-muted:hover::-webkit-scrollbar-thumb { background: rgba(150,150,160,0.55); }
+
+  /* 4. Ultra fine (pour panneaux secondaires) */
+  .scrollbar-thin { scrollbar-width: thin; scrollbar-color: rgba(120,120,130,0.4) transparent; }
+  .scrollbar-thin::-webkit-scrollbar { width: 6px; }
+  .scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
+  .scrollbar-thin::-webkit-scrollbar-thumb { background: rgba(120,120,130,0.4); border-radius: 9999px; }
+  .scrollbar-thin:hover::-webkit-scrollbar-thumb { background: rgba(120,120,130,0.6); }
+  .dark .scrollbar-thin::-webkit-scrollbar-thumb { background: rgba(180,180,190,0.35); }
+  .dark .scrollbar-thin:hover::-webkit-scrollbar-thumb { background: rgba(180,180,190,0.55); }
+
+  /* 5. Effet glass (fond translucide) */
+  .scrollbar-glass { scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.35) transparent; backdrop-filter: blur(4px); }
+  .scrollbar-glass::-webkit-scrollbar { width: 12px; }
+  .scrollbar-glass::-webkit-scrollbar-track { background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02)); border-radius: 10px; }
+  .scrollbar-glass::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.35); border-radius: 10px; border: 2px solid rgba(255,255,255,0.15); }
+  .scrollbar-glass:hover::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.55); }
+  .dark .scrollbar-glass::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.30); }
+  .dark .scrollbar-glass:hover::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.55); }
+
+  /* 6. Auto mode (change selon thème via CSS variables) */
+  .scrollbar-auto { scrollbar-width: thin; scrollbar-color: hsl(var(--primary)) transparent; }
+  .scrollbar-auto::-webkit-scrollbar { width: 10px; }
+  .scrollbar-auto::-webkit-scrollbar-track { background: transparent; }
+  .scrollbar-auto::-webkit-scrollbar-thumb { background: hsl(var(--primary)); border-radius: 8px; border: 2px solid transparent; background-clip: content-box; }
+  .light .scrollbar-auto::-webkit-scrollbar-thumb { filter: brightness(0.9); }
+  .scrollbar-auto:hover::-webkit-scrollbar-thumb { filter: brightness(1.1); }
+
+  /* 7. Large (accessibilité) */
+  .scrollbar-access { scrollbar-width: auto; scrollbar-color: #6366f1 rgba(0,0,0,0.15); }
+  .scrollbar-access::-webkit-scrollbar { width: 16px; }
+  .scrollbar-access::-webkit-scrollbar-track { background: rgba(0,0,0,0.06); }
+  .scrollbar-access::-webkit-scrollbar-thumb { background: #6366f1; border-radius: 12px; border: 3px solid rgba(0,0,0,0.06); }
+  .dark .scrollbar-access::-webkit-scrollbar-track { background: rgba(255,255,255,0.08); }
+  .dark .scrollbar-access::-webkit-scrollbar-thumb { background: #818cf8; border-color: rgba(255,255,255,0.08); }
 }
