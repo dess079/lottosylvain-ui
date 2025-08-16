@@ -21,14 +21,14 @@ const DirectAIFooter = forwardRef<HTMLDivElement, DirectAIFooterProps>(({
   onClear
 }, ref) => {
   return (
-    <div ref={ref} className="w-full bg-white dark:bg-zinc-900 p-4">
-      <form onSubmit={e => { e.preventDefault(); onSend(); }} className="flex gap-3 items-center">
+    
+      <form onSubmit={e => { e.preventDefault(); onSend(); }} className="flex gap-3 items-center w-1/2 mx-auto p-4">
         <Input 
           value={prompt} 
           onChange={e => onChangePrompt(e.target.value)} 
           placeholder="Entrez votre prompt ici..." 
           disabled={loading} 
-          className="flex-1"
+         
         />
         <Button 
           type="submit" 
@@ -44,7 +44,7 @@ const DirectAIFooter = forwardRef<HTMLDivElement, DirectAIFooterProps>(({
           Effacer
         </Button>
       </form>
-    </div>
+
   );
 });
 
