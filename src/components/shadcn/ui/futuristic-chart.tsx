@@ -196,7 +196,7 @@ const FuturisticChart: React.FC<FuturisticChartProps> = ({
           className="rounded-lg"
         />
         {/* Effet de brillance */}
-        <div className="absolute inset-0 pointer-events-none rounded-lg bg-gradient-to-t from-transparent to-white/5"></div>
+  <div className="absolute inset-0 pointer-events-none rounded-lg" style={{ background: 'linear-gradient(to top, rgba(255,255,255,0.02), rgba(255,255,255,0))' }}></div>
       </div>
     </div>
   );

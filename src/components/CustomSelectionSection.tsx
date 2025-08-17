@@ -10,11 +10,11 @@ export const CustomSelectionSection: React.FC = () => (
       <h2 className="text-xl font-bold mb-6 gradient-text">Sélection personnalisée</h2>
       <div className="flex flex-wrap items-center justify-center gap-4 mb-8 text-center text-xs opacity-70">
         <div className="flex items-center gap-2">
-          <div className="w-3 h-3 rounded-full" style={{ background: 'radial-gradient(circle at 30% 30%, #c084fc, #a855f7 45%, #7e22ce)' }}></div>
+          <div className="w-3 h-3 rounded-full" style={{ background: '#7e22ce' }}></div>
           <span>Numéros réguliers</span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="w-3 h-3 rounded-full" style={{ background: 'radial-gradient(circle at 30% 30%, #f87171, #ef4444 45%, #b91c1c)' }}></div>
+          <div className="w-3 h-3 rounded-full" style={{ background: '#ef4444' }}></div>
           <span>Complémentaire</span>
         </div>
         <div className="flex items-center gap-2">

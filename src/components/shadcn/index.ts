@@ -6,7 +6,7 @@
 export { default as LottoBall } from './ui/lotto-ball';
 export { default as ThemeToggle } from './ui/theme-toggle';
 export { default as FuturisticToolbar } from './ui/futuristic-toolbar';
-export { default as FuturisticDataDisplay } from './ui/futuristic-data-display';
+
 export { default as FuturisticChart } from './ui/futuristic-chart';
 export { Button, buttonVariants } from './ui/button';
 export {

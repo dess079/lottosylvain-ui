@@ -183,7 +183,8 @@ const PreviousDrawTab: React.FC<PreviousDrawTabProps> = ({ isActive, ballSize })
   };
 
 return (
-  <div className="h-full w-full flex flex-col items-center justify-start py-8 px-4">
+  <div className="h-full w-full flex flex-col items-center justify-start ">
+      <h2 className="text-4xl font-bold text-center gradient-text">Précédent tirage(s)</h2>
       {/* Formulaire de sélection de dates */}
       <div className="w-full flex justify-center mb-8">
         <form

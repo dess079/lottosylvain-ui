@@ -42,7 +42,7 @@ const PredictionSection: React.FC = () => {
     };
 
     try {
-  const data: LottoAIResponse = await fetchSpringAIPrediction();
+      const data: LottoAIResponse = await fetchSpringAIPrediction();
       console.log('API Prediction Response:', data);
       
       // Adapte selon la vraie structure de la réponse

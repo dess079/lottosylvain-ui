@@ -160,12 +160,12 @@ const PredictionTabs: React.FC<PredictionTabsProps> = ({
           </div>
           <div className="flex justify-center">
             <Button
-              onClick={loadCustomPredictions}
-              disabled={isCustomLoading}
-              variant="secondary"
-              size="lg"
-              className="relative px-12 py-8 text-lg font-bold shadow-xl hover:shadow-2xl transition-shadow bg-gradient-to-r from-primary-600 to-primary-700"
-            >
+                onClick={loadCustomPredictions}
+                disabled={isCustomLoading}
+                variant="secondary"
+                size="lg"
+                className="relative px-12 py-8 text-lg font-bold shadow-xl hover:shadow-2xl transition-shadow bg-card"
+              >
               {isCustomLoading ? (
                 <>
                   <Loader2 className="mr-2 h-5 w-5 animate-spin" />
@@ -199,7 +199,7 @@ const PredictionTabs: React.FC<PredictionTabsProps> = ({
             {customPredictions.map((prediction, index) => (
               <div
                 key={index}
-                className="p-10 border-2 rounded-2xl shadow-2xl transition-all duration-300 hover:shadow-3xl hover:translate-y-[-5px] relative overflow-hidden before:absolute before:inset-0 before:rounded-2xl before:bg-gradient-to-br before:from-white/10 before:to-transparent before:content-[''] dark:before:from-gray-800/10 dark:before:to-transparent"
+                className="p-10 border-2 rounded-2xl shadow-2xl transition-all duration-300 hover:shadow-3xl hover:translate-y-[-5px] relative overflow-hidden"
               >
                 <h3 className="text-2xl font-bold mb-6 text-primary-600 dark:text-primary-400">
                   Combinaison personnalisée #{index + 1}

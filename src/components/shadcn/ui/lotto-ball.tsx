@@ -225,7 +225,7 @@ const LottoBall: React.FC<LottoBallProps> = ({
         <div 
           className="absolute inset-0 opacity-15"
           style={{ 
-            background: 'radial-gradient(circle at 30% 30%, rgba(255,255,255,0.5), transparent 70%)'
+            background: 'rgba(255,255,255,0.06)'
           }}
         />
       </div>

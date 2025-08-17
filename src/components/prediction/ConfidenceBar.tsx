@@ -24,7 +24,7 @@ const ConfidenceBar: React.FC<{ score: number }> = ({ score }) => {
         <span className="text-sm font-medium">Indice de confiance</span>
         <div className="flex items-center">
           <span
-            className={`px-3 py-1 rounded-full text-xs font-bold  bg-gradient-to-r ${getColor()} shadow-sm`}
+            className={`px-3 py-1 rounded-full text-xs font-bold  ${getColor()} shadow-sm`}
           >
             {formattedScore}%
           </span>
@@ -32,7 +32,7 @@ const ConfidenceBar: React.FC<{ score: number }> = ({ score }) => {
       </div>
       <div className="w-full rounded-full h-4 bg-gray-200 dark:bg-gray-700 overflow-hidden shadow-inner confidence-bar">
         <div
-          className={`h-4 bg-gradient-to-r ${getColor()} rounded-full transition-all duration-500 ease-out`}
+          className={`h-4 ${getColor()} rounded-full transition-all duration-500 ease-out`}
           style={{ width: `${formattedScore}%` }}
         />
       </div>
