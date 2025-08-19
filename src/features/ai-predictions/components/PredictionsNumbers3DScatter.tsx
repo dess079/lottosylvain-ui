@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 import { AiPredictionListItem } from '../types/aiPrediction';
 import Plot from 'react-plotly.js';
 
@@ -13,32 +13,7 @@ interface Props {
  * le thème Tailwind (dark / light).
  */
 const PredictionsNumbers3DScatter: React.FC<Props> = ({ items }) => {
-  const [plotVars, setPlotVars] = useState({
-    paperBg: '#0b1220',
-    plotBg: '#071026',
-    fontColor: '#e6eef8',
-    gridColor: 'rgba(255,255,255,0.06)',
-    sceneBg: '#071026'
-  });
-
-  useEffect(() => {
-    const root = document.documentElement;
-    const readVars = () => {
-      const s = getComputedStyle(root);
-      setPlotVars({
-        paperBg: s.getPropertyValue('--plot-paper-bg').trim() || '#ffffff',
-        plotBg: s.getPropertyValue('--plot-plot-bg').trim() || '#ffffff',
-        fontColor: s.getPropertyValue('--plot-font-color').trim() || '#111827',
-        gridColor: s.getPropertyValue('--plot-grid-color').trim() || 'rgba(0,0,0,0.06)',
-        sceneBg: s.getPropertyValue('--plot-scene-bg').trim() || '#ffffff'
-      });
-    };
-
-  // Read CSS variables once on mount. Removed MutationObserver to avoid continuous background updates.
-  readVars();
-  // No observer: avoid reacting to frequent class attribute changes which caused continuous bg updates.
-  return () => {};
-  }, []);
+  // Le background est maintenant géré par TailwindCSS via la classe du conteneur principal.
 
   const trace = useMemo(() => {
     const x: (string | number)[] = [];
@@ -67,24 +42,33 @@ const PredictionsNumbers3DScatter: React.FC<Props> = ({ items }) => {
         color: z,
         colorscale: 'Viridis',
         opacity: 0.9,
-        line: { color: plotVars.plotBg || '#fff', width: 0.5 }
+        line: { color: '#fff', width: 1.5 }
       }
     };
-  }, [items, plotVars.plotBg]);
+  }, [items]);
+
+  // Récupère dynamiquement les couleurs du thème via CSS variables pour supporter le dark mode
+  const plotVars = useMemo(() => {
+    const root = document.documentElement;
+    const gridColor = getComputedStyle(root).getPropertyValue('--plot-grid-color')?.trim() || 'rgba(0,0,0,0';
+    const sceneBg = getComputedStyle(root).getPropertyValue('--plot-scene-bg')?.trim() || 'rgba(0,0,0,0)';
+    return { gridColor, sceneBg };
+  }, []);
 
   const layout = useMemo(() => ({
     autosize: true,
-    margin: { l: 0, r: 0, b: 40, t: 20 },
-    paper_bgcolor: plotVars.paperBg,
-    plot_bgcolor: plotVars.plotBg,
-    font: { color: plotVars.fontColor },
+    margin: { l: 0, r: 0, b: 0, t: 0 },
+    // Le background est géré par Tailwind, donc on laisse Plotly transparent
+    paper_bgcolor: 'rgba(0,0,0,0)',
+    plot_bgcolor: 'rgba(0,0,0,0)',
+    font: { color: '#111827' },
     scene: {
       xaxis: { title: 'Date prédiction', tickformat: '%d/%m/%Y', gridcolor: plotVars.gridColor, zerolinecolor: plotVars.gridColor },
       yaxis: { title: 'Index numéro', gridcolor: plotVars.gridColor },
       zaxis: { title: 'Numéro', gridcolor: plotVars.gridColor },
       bgcolor: plotVars.sceneBg
     }
-  }), [plotVars]);
+  }), []);
 
   return (
     <div className="w-full h-[350px] p-2">

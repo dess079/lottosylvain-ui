@@ -4,7 +4,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from './index';
 import PreviousDrawTab from '../PreviousDrawTab';
 import GraphTab from '../GraphTab';
 import PredictionTab from '../../prediction/PredictionTab';
-import LineChartTab from '../LineChartTab';
+import LineChartTab, { NumberFrequencyBarChart } from '../LineChartTab';
 import PieChartTab from '../PieChartTab';
 import ScatterPlotTab from '../ScatterPlotTab';
 import PredictionSection from '../../prediction/PredictionSection';
@@ -64,10 +64,10 @@ const TabsLotto: React.FC = () => {
       </div>
 
       <TabsContent value="previous" className="flex-1 min-h-0 flex flex-col overflow-y-auto"><PreviousDrawTab isActive={activeTab === 'previous'} /></TabsContent>
-      <TabsContent value="prediction" className="flex-1 min-h-0 flex flex-col overflow-y-auto"><PredictionSection isActive={activeTab === 'prediction'} /></TabsContent>
+      <TabsContent value="prediction" className="flex-1 min-h-0 flex flex-col overflow-y-auto"><PredictionSection /></TabsContent>
       <TabsContent value="graph" className="flex-1 min-h-0 flex flex-col overflow-y-auto"><GraphTab isActive={activeTab === 'graph'} /></TabsContent>
       <TabsContent value="section" className="flex-1 min-h-0 flex flex-col overflow-y-auto"><PredictionTab /></TabsContent>
-      <TabsContent value="line" className="flex-1 min-h-0 flex flex-col overflow-y-auto"><LineChartTab isActive={activeTab === 'line'} /></TabsContent>
+      <TabsContent value="line" className="flex-1 min-h-0 flex flex-col overflow-y-auto"><NumberFrequencyBarChart isActive={activeTab === 'line'} /></TabsContent>
       <TabsContent value="pie" className="flex-1 min-h-0 flex flex-col overflow-y-auto"><PieChartTab isActive={activeTab === 'pie'} /></TabsContent>
       <TabsContent value="scatter" className="flex-1 min-h-0 flex flex-col overflow-y-auto"><ScatterPlotTab isActive={activeTab === 'scatter'} /></TabsContent>
       <TabsContent value="ai" className="flex-1 min-h-0 flex flex-col overflow-y-auto"><AITab /></TabsContent>

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer, BarChart, Bar, Legend } from 'recharts';
 import LoadingSpinner from '../LoadingSpinner';
 import './LineChartTab.css';
 
@@ -146,3 +146,115 @@ const LineChartTab: React.FC<LineChartTabProps> = ({ isActive }) => {
 };
 
 export default LineChartTab;
+
+/**
+ * Composant pour afficher la fréquence d'apparition de chaque numéro (1 à 49) dans l'année courante
+ */
+// ...existing code...
+
+/**
+ * Récupère tous les tirages Lotto 6/49 pour une année donnée via l'API backend officielle
+ * @param year Année à récupérer
+ * @returns Tableau de tirages, chaque tirage étant un tableau de 6 numéros
+ */
+const fetchDrawsForYear = async (year: number): Promise<number[][]> => {
+  try {
+    const res = await fetch(`/api/lottery/649/${year}`);
+    if (!res.ok) throw new Error(`HTTP ${res.status} ${res.statusText}`);
+    const draws = await res.json();
+    // On suppose que chaque élément est une chaîne comme "2025-07-02 : [1, 2, 3, 4, 5, 6] (bonus: 7)"
+    // On extrait les 6 numéros principaux avec une regex
+    return draws.map((entry: string) => {
+      const match = entry.match(/\[(.*?)\]/);
+      if (match && match[1]) {
+        return match[1].split(',').map((n: string) => parseInt(n.trim(), 10)).filter(n => !isNaN(n));
+      }
+      return [];
+    });
+  } catch (e) {
+    console.error('Erreur lors de la récupération des tirages', e);
+    throw e;
+  }
+};
+
+/**
+ * Calcule la fréquence d'apparition de chaque numéro (1 à 49) dans les tirages fournis
+ */
+const computeNumberFrequencies = (draws: number[][]): { number: number; count: number }[] => {
+  const freq = Array(49).fill(0);
+  draws.forEach(numbers => {
+    numbers.forEach(num => {
+      if (num >= 1 && num <= 49) freq[num - 1]++;
+    });
+  });
+  return freq.map((count, idx) => ({ number: idx + 1, count }));
+};
+
+/**
+ * Composant pour le graphique en barres de fréquence des numéros
+ */
+export const NumberFrequencyBarChart: React.FC<{ isActive: boolean }> = ({ isActive }) => {
+  const [data, setData] = useState<{ number: number; count: number }[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let mounted = true;
+    const load = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const year = new Date().getFullYear();
+        const draws = await fetchDrawsForYear(year);
+        if (!mounted) return;
+        setData(computeNumberFrequencies(draws));
+      } catch (e: any) {
+        if (!mounted) return;
+        setError(e?.message ?? 'Erreur lors de la récupération des données');
+      } finally {
+        if (mounted) setLoading(false);
+      }
+    };
+    if (isActive) load();
+    return () => { mounted = false; };
+  }, [isActive]);
+
+  if (!isActive) {
+    return (
+      <section>
+        <h2 className="text-2xl font-semibold mb-6">Fréquence d'apparition des numéros (1 à 49) dans l'année</h2>
+        <div className="text-center text-base opacity-70 flex items-center justify-center min-h-96">
+          Cliquez sur cet onglet pour charger le graphique de fréquence
+        </div>
+      </section>
+    );
+  }
+
+  return (
+    <section className="number-frequency-bar-chart">
+      <h2 className="text-2xl font-semibold mb-6">Fréquence d'apparition des numéros (1 à 49) dans l'année</h2>
+      {loading ? (
+        <div className="flex items-center justify-center min-h-48">
+          <LoadingSpinner text="Chargement des données..." />
+        </div>
+      ) : error ? (
+        <div className="text-center text-base text-red-600">Erreur: {error}</div>
+      ) : data.length === 0 ? (
+        <div className="text-center text-base opacity-70 flex items-center justify-center min-h-48">
+          Aucune donnée disponible pour le graphique
+        </div>
+      ) : (
+        <ResponsiveContainer width="100%" height={400}>
+          <BarChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="number" label={{ value: 'Numéro', position: 'insideBottom', offset: -5 }} interval={0} tick={{ fontSize: 10 }} />
+            <YAxis label={{ value: 'Nombre de fois', angle: -90, position: 'insideLeft' }} allowDecimals={false} />
+            <Tooltip />
+            <Legend />
+            <Bar dataKey="count" fill="#8884d8" name="Nombre de fois sorti" />
+          </BarChart>
+        </ResponsiveContainer>
+      )}
+    </section>
+  );
+};

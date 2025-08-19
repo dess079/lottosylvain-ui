@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import AILoadingIndicator from './AILoadingIndicator';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeRaw from 'rehype-raw';
@@ -161,7 +162,7 @@ const AIResponseBox: React.FC<AIResponseBoxProps> = ({ messages, className = '',
                         : '')
                     }
                   >
-                  
+
                     <div className={`flex items-start ${compact ? 'gap-1' : 'gap-2'}`}>
                       <div className="flex-1 min-w-0">
                         <ReactMarkdown
@@ -216,40 +217,12 @@ const AIResponseBox: React.FC<AIResponseBoxProps> = ({ messages, className = '',
                   
                 </div>
             )} 
-
-
             </div>
               
           );
         })}
       </div>
-      {loading && (
-        <div className="flex justify-start">
-          <div className="flex items-center gap-2 text-xs text-zinc-500 dark:text-zinc-400 pl-1">
-            <svg
-              className="h-4 w-4 animate-spin text-blue-500 dark:text-blue-400"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-            >
-              <circle
-                className="opacity-25"
-                cx="12"
-                cy="12"
-                r="10"
-                stroke="currentColor"
-                strokeWidth="4"
-              />
-              <path
-                className="opacity-75"
-                fill="currentColor"
-                d="M4 12a8 8 0 0 1 8-8v4a4 4 0 0 0-4 4H4z"
-              />
-            </svg>
-            <span className="italic select-none">Génération…</span>
-          </div>
-        </div>
-      )}
+
       {/* Élément ancre invisible pour forcer le scroll vers le bas */}
       <div 
         ref={scrollAnchorRef} 

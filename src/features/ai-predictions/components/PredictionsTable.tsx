@@ -59,12 +59,12 @@ const PredictionsTable: React.FC<Props> = ({ items, loading, error, onSelect, on
         <Table className="table-fixed">
           <TableHeader className="sticky top-0 z-20 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 shadow-sm">
             <TableRow>
-              <TableHead className="w-14">ID</TableHead>
-              <TableHead className="w-48">Date prédiction</TableHead>
-              <TableHead className="w-32">Date tirage</TableHead>
-              <TableHead className="min-w-52">Numéros</TableHead>
-              <TableHead className="w-28">Confiance %</TableHead>
-              <TableHead className="w-40">Modèle</TableHead>
+              <TableHead className="w-8">ID</TableHead>
+              <TableHead className="w-30">Date prédiction</TableHead>
+              <TableHead className="w-22">Date tirage</TableHead>
+              <TableHead className="w-20">Numéros</TableHead>
+              <TableHead className="text-right w-30">Confiance %</TableHead>
+              <TableHead className="w-20">Modèle</TableHead>
               <TableHead className="w-24 text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
@@ -99,8 +99,10 @@ const PredictionsTable: React.FC<Props> = ({ items, loading, error, onSelect, on
                 <TableCell>{it.id}</TableCell>
                 <TableCell className="whitespace-nowrap">{new Date(it.dateHeurePrediction).toLocaleString()}</TableCell>
                 <TableCell>{it.dateTirageCible}</TableCell>
-                <TableCell className="font-mono text-xs">{it.numbers.join('-')}</TableCell>
-                <TableCell>{it.confidencePercentage != null ? it.confidencePercentage.toFixed(1) : '—'}</TableCell>
+                <TableCell>{it.numbers.join('-')}</TableCell>
+
+                <TableCell className="text-right">{it.confidencePercentage != null ? (it.confidencePercentage * 100).toFixed(0) + '%' : '—'}</TableCell>
+                
                 <TableCell>
                   <span className="inline-flex max-w-[9rem] truncate" title={it.modelName}>{it.modelName}</span>
                 </TableCell>
