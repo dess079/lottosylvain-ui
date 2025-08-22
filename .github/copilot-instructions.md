@@ -23,8 +23,7 @@ The `essais` directory of lottoquebec project contains the API that exploits the
 - Use meaningful variable and function names
 - Include JSDoc comments for complex functions
 - Follow ESLint and Prettier configurations if present
-- Fait des composant functionnel et pas de classe et pour chaque composant fait un fichier .tsx et un fichier .css
-
+- Fait des composant functionnel et utilise tailwindcss pour le style et les composants shadcn/ui
 
 ## Technologies
 - React 19+ with functional components and hooks ([Installation](https://react.dev/learn/installation))
