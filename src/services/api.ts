@@ -95,22 +95,23 @@ export async function fetchPredictions(): Promise<LottoAIResponse> {
  */
 export async function fetchLottoStatistics(): Promise<DrawStatistics> {
   try {
-    const response = await fetch(`${API_BASE_URL}${API_CONFIG.ENDPOINTS.STATISTICS}`);
+    // Use the new v3 API endpoint
+    const response = await fetch(`${API_BASE_URL}/lotto-matrix/stats`);
     if (!response.ok) {
       throw new Error('Failed to fetch statistics');
     }
     const data = await response.json();
-    
-    // Transform the backend response to match our frontend types
-    if (data && data.success) {
+
+    // The v3 API returns data in the format we expect
+    if (data) {
       return {
-        mostFrequentNumbers: data.frequentNumbers,
-        leastFrequentNumbers: data.rareNumbers,
-        numbersFrequency: data.allFrequencies,
-        numbersLastAppearance: data.lastAppearances
+        mostFrequentNumbers: data.mostFrequentNumbers || {},
+        leastFrequentNumbers: data.leastFrequentNumbers || {},
+        numbersFrequency: data.numbersFrequency || {},
+        numbersLastAppearance: data.numbersLastAppearance || {}
       };
     }
-    
+
     throw new Error('Invalid data format from API');
   } catch (error) {
     console.error('Error fetching statistics:', error);

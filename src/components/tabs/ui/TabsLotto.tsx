@@ -4,7 +4,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from './index';
 import PreviousDrawTab from '../PreviousDrawTab';
 import GraphTab from '../GraphTab';
 import PredictionTab from '../../prediction/PredictionTab';
-import LineChartTab, { NumberFrequencyBarChart } from '../LineChartTab';
+import { NumberFrequencyBarChart } from '../LineChartTab';
+import NumberFrequencyBarChart2 from '../../NumberFrequencyBarChart2';
 import PieChartTab from '../PieChartTab';
 import ScatterPlotTab from '../ScatterPlotTab';
 import PredictionSection from '../../prediction/PredictionSection';
@@ -50,6 +51,7 @@ const TabsLotto: React.FC = () => {
                 <TabItem value="graph" label="graph" />
                 <TabItem value="section" label="section" />
                 <TabItem value="line" label="line" />
+                <TabItem value="line2" label="line2" />
                 <TabItem value="pie" label="pie" />
                 <TabItem value="scatter" label="scatter" />
                 <TabItem value="ai" label="ai" />
@@ -68,6 +70,7 @@ const TabsLotto: React.FC = () => {
       <TabsContent value="graph" className="flex-1 min-h-0 flex flex-col overflow-y-auto"><GraphTab isActive={activeTab === 'graph'} /></TabsContent>
       <TabsContent value="section" className="flex-1 min-h-0 flex flex-col overflow-y-auto"><PredictionTab /></TabsContent>
       <TabsContent value="line" className="flex-1 min-h-0 flex flex-col overflow-y-auto"><NumberFrequencyBarChart isActive={activeTab === 'line'} /></TabsContent>
+      <TabsContent value="line2" className="flex-1 min-h-0 flex flex-col overflow-y-auto"><NumberFrequencyBarChart2 /></TabsContent>
       <TabsContent value="pie" className="flex-1 min-h-0 flex flex-col overflow-y-auto"><PieChartTab isActive={activeTab === 'pie'} /></TabsContent>
       <TabsContent value="scatter" className="flex-1 min-h-0 flex flex-col overflow-y-auto"><ScatterPlotTab isActive={activeTab === 'scatter'} /></TabsContent>
       <TabsContent value="ai" className="flex-1 min-h-0 flex flex-col overflow-y-auto"><AITab /></TabsContent>

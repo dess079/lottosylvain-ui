@@ -40,8 +40,7 @@ const translations: Translations = {
     pie: { fr: 'Répartition', en: 'Distribution' },
     scatter: { fr: 'Points', en: 'Points' },
     ai: { fr: 'Analyse', en: 'Analysis' },
-    directai: { fr: 'Chat & prompts', en: 'Chat & prompts' },
-    aipreds: { fr: 'Historique IA', en: 'AI history' }
+    directai: { fr: 'Chat & prompts', en: 'Chat & prompts' }
   },
   toolbar: {
     style: { fr: 'Affichage', en: 'Style' },

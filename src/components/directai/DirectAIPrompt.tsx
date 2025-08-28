@@ -28,6 +28,12 @@ const DirectAIFooter = forwardRef<HTMLDivElement, DirectAIFooterProps>(({
           <textarea
             value={prompt}
             onChange={e => onChangePrompt(e.target.value)}
+            onKeyDown={e => {
+              if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                onSend();
+              }
+            }}
             placeholder="Entrez votre prompt ici..."
             disabled={loading}
             className="flex-1 w-full min-h-[48px] max-h-40 resize-y rounded-md border bg-transparent px-3 py-2 text-base shadow-xs transition outline-none focus-visible:border-blue-400 focus-visible:ring-2 focus-visible:ring-blue-200 dark:bg-zinc-800/30 dark:text-zinc-100"
