@@ -91,31 +91,29 @@ export async function fetchPredictions(): Promise<LottoAIResponse> {
 }
 
 /**
- * Fetches lottery statistics
+ * Fetches detailed number statistics from PostgreSQL
  */
-export async function fetchLottoStatistics(): Promise<DrawStatistics> {
+export async function fetchDetailedNumberStatistics(): Promise<Map<number, any>> {
   try {
-    // Use the new v3 API endpoint
-    const response = await fetch(`${API_BASE_URL}/lotto-matrix/stats`);
+    // Utiliser l'URL complète pour l'endpoint des statistiques
+    const response = await fetch(`http://localhost:8090/api/essais/lotto-matrix/stats`);
     if (!response.ok) {
-      throw new Error('Failed to fetch statistics');
+      throw new Error('Failed to fetch detailed statistics');
     }
     const data = await response.json();
 
-    // The v3 API returns data in the format we expect
-    if (data) {
-      return {
-        mostFrequentNumbers: data.mostFrequentNumbers || {},
-        leastFrequentNumbers: data.leastFrequentNumbers || {},
-        numbersFrequency: data.numbersFrequency || {},
-        numbersLastAppearance: data.numbersLastAppearance || {}
-      };
+    // Convertir l'objet en Map pour un accès plus facile
+    const statsMap = new Map<number, any>();
+    if (data.success && data.data) {
+      Object.entries(data.data).forEach(([key, value]) => {
+        statsMap.set(parseInt(key), value);
+      });
     }
 
-    throw new Error('Invalid data format from API');
+    return statsMap;
   } catch (error) {
-    console.error('Error fetching statistics:', error);
-    throw new Error('Le service de statistiques n\'est pas disponible actuellement');
+    console.error('Error fetching detailed statistics:', error);
+    throw new Error('Les statistiques détaillées ne sont pas disponibles');
   }
 }
 
