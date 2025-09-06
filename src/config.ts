@@ -6,7 +6,7 @@
  * API configuration
  */
 export const API_CONFIG = {
-  BASE_URL: 'http://localhost:8090/api/v3/lotto',
+  BASE_URL: '/api/v3/lotto',
   ENDPOINTS: {
     PREVIOUS_RESULTS: '/lotto-matrix/previous-results',
     PREDICTIONS: '/lotto-matrix/recommendations',
