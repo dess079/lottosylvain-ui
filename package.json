@@ -65,6 +65,8 @@
     "start": "vite --config vite.config.ts",
     "build": "vite build --config vite.config.ts",
     "dev": "vite --config vite.config.ts",
+    "dev:local": "cp .env.local .env && vite --config vite.config.ts",
+    "dev:docker": "cp .env.docker .env && vite --config vite.config.ts",
     "test": "vitest",
     "shadcn:add": "npx shadcn@latest add",
     "preview": "vite preview"
