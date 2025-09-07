@@ -1,16 +1,89 @@
-import React, { useEffect, useRef, useState } from 'react';
-import AILoadingIndicator from './AILoadingIndicator';
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
-import rehypeRaw from 'rehype-raw';
-import rehypeHighlight from 'rehype-highlight';
+/**
+ * Génère un ID Mermaid valide pour l'injection SVG
+ * @returns string - ID commençant par une lettre et sans caractères spéciaux
+ */
+function generateMermaidId(): string {
+  return 'mermaidGraph_' + Math.random().toString(36).substring(2, 10);
+}
+
+/**
+ * Composant MermaidGraph pour le rendu SVG Mermaid
+ * @param code - Code Mermaid à interpréter
+ * Adapte le thème Mermaid au mode light/dark
+ */
+const MermaidGraph: React.FC<{ code: string }> = ({ code }) => {
+  const [svg, setSvg] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  // Détection du mode dark/light via media query
+  const isDark = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+  useEffect(() => {
+    let cancelled = false;
+    setSvg(null);
+    setError(null);
+    // Configuration du thème Mermaid selon le mode
+    mermaid.initialize({
+      theme: isDark ? 'dark' : 'default',
+      themeVariables: isDark
+        ? {
+            background: '#18181b',
+            fontFamily: 'inherit',
+            primaryColor: '#a78bfa',
+            edgeLabelBackground: '#18181b',
+            nodeTextColor: '#e0e7ff',
+            clusterBkg: '#27272a',
+            clusterBorder: '#a78bfa',
+            lineColor: '#e0e7ff', // Couleur des lignes et flèches
+            arrowheadColor: '#a78bfa', // Couleur des têtes de flèche
+            edgeStrokeWidth: 2, // Épaisseur des lignes
+            edgeColor: '#e0e7ff',
+            edgeLabelColor: '#e0e7ff',
+          }
+        : {
+            background: '#f8fafc',
+            fontFamily: 'inherit',
+            primaryColor: '#6366f1',
+            edgeLabelBackground: '#f8fafc',
+            nodeTextColor: '#312e81',
+            clusterBkg: '#e0e7ff',
+            clusterBorder: '#6366f1',
+            lineColor: '#312e81', // Couleur des lignes et flèches
+            arrowheadColor: '#6366f1', // Couleur des têtes de flèche
+            edgeStrokeWidth: 2, // Épaisseur des lignes
+            edgeColor: '#312e81',
+            edgeLabelColor: '#312e81',
+          }
+    });
+    const safeId = generateMermaidId();
+    try {
+      mermaid.parse(code); // validation
+      mermaid.render(safeId, code).then(({ svg }) => {
+        if (!cancelled) setSvg(svg);
+      }).catch(e => {
+        if (!cancelled) setError(String(e));
+      });
+    } catch (e) {
+      setError(String(e));
+    }
+    return () => { cancelled = true; };
+  }, [code, isDark]);
+  if (error) return <pre style={{ color: 'red' }}>Erreur Mermaid: {error}</pre>;
+  if (!svg) return <div>Chargement du graphe…</div>;
+  return <div dangerouslySetInnerHTML={{ __html: svg }} />;
+};
 import 'highlight.js/styles/github-dark.css';
+import React, { useEffect, useRef, useState } from 'react';
+import ReactMarkdown from 'react-markdown';
+import rehypeHighlight from 'rehype-highlight';
+import rehypeRaw from 'rehype-raw';
+import remarkGfm from 'remark-gfm';
+import mermaid from 'mermaid';
 
 /**
  * Composant pour afficher la réponse IA avec interprétation Markdown et défilement automatique
  * @param messages - Liste des messages structurés avec rôle
  */
-export type AIMessage = { role: 'user' | 'assistant'; content: string };
+export type AIMessage = { id: string; role: 'user' | 'assistant'; content: string };
 
 interface AIResponseBoxProps {
   messages: AIMessage[];
@@ -114,12 +187,12 @@ const AIResponseBox: React.FC<AIResponseBoxProps> = ({ messages, className = '',
     return () => onContainerRef?.(null); 
   }, [onContainerRef]);
 
-  const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
+  const [copiedIndex, setCopiedIndex] = useState<string | null>(null);
 
-  const handleCopy = async (text: string, index: number) => {
+  const handleCopy = async (text: string, messageId: string) => {
     try {
       await navigator.clipboard.writeText(text);
-      setCopiedIndex(index);
+      setCopiedIndex(messageId);
       setTimeout(() => setCopiedIndex(null), 1800);
     } catch (e) {
       // Silent fail – could add toast later
@@ -137,26 +210,26 @@ const AIResponseBox: React.FC<AIResponseBoxProps> = ({ messages, className = '',
       {messages.length === 0 && (
         <div className="opacity-60 text-center italic">Posez votre première question…</div>
       )}
-      <div className="mx-auto w-full max-w-5xl flex flex-col">
+      <div className="w-full flex flex-col">
         {messages.map((m, idx) => {
           const isUser = m.role === 'user';
-          const copied = copiedIndex === idx;
+          const copied = copiedIndex === m.id;
           const prev = messages[idx - 1];
           const newGroup = !prev || prev.role !== m.role;
           const roleLabel = isUser ? 'Utilisateur' : 'IA';
 
           return (
             
-            <div key={idx} className={`flex ${isUser ? 'justify-end' : 'justify-start'} w-full ${compact ? 'py-0.5' : 'py-1.5'}`}>
+            <div key={m.id} className={`flex ${isUser ? 'justify-end' : 'justify-start'} w-full ${compact ? 'py-0.5' : 'py-1.5'}`}>
               {m.content && (
-                <div className={`flex flex-col ${isUser ? 'items-end' : 'items-start'} ${compact ? 'max-w-[82%]' : 'max-w-[78%]'} w-fit`}>
+                <div className={`flex flex-col ${isUser ? 'items-end' : 'items-start'} ${compact ? 'max-w-[82%]' : 'max-w-[88%]'} `}>
                   {newGroup && (
                     <span className={`mb-1 text-[10px] font-semibold tracking-wide uppercase select-none ${isUser ? 'text-blue-500 dark:text-blue-400' : 'text-fuchsia-500 dark:text-fuchsia-400'}`}>{roleLabel}</span>
                   )}
                   <div
                     className={
-                      'rounded-xl whitespace-pre-wrap break-words border transition-colors leading-relaxed shadow-sm ' +
-                      (compact ? 'px-3 py-1.5 text-[13px]' : 'px-4 py-2 text-sm') + ' ' +
+                      'rounded-xl whitespace-pre-wrap break-words border-1 text-wrap  transition-colors leading-relaxed  ' +
+                      (compact ? 'px-3 py-1.5 text-[13px] max-w-[82%]' : 'px-4 py-2 text-sm max-w-[88%]') + ' ' +
                       (isUser
                         ? 'bg-blue-200/90'
                         : '')
@@ -172,13 +245,22 @@ const AIResponseBox: React.FC<AIResponseBoxProps> = ({ messages, className = '',
                             code(codeProps) {
                               const { children, className } = codeProps as { children: React.ReactNode; className?: string };
                               const content = String(children || '');
+                              const isMermaid = className?.includes('language-mermaid');
                               const isBlock = content.includes('\n');
+
+                              if (isMermaid && isBlock) {
+                                return <MermaidGraph key={`mermaid-${m.id}`} code={content} />;
+                              }
                               if (isBlock) {
                                 return (
-                                  <code className={`block rounded-md px-3 py-2 text-[0.85rem] overflow-x-auto mt-2 mb-2 bg-zinc-900/80 text-zinc-100 ${className || ''}`}>{children}</code>
+                                  <code key={`code-block-${m.id}-${idx}`} className={`block rounded-md px-3 py-2 text-[0.85rem] overflow-x-auto mt-2 mb-2 bg-zinc-900/80 text-zinc-100 ${className || ''}`}>
+                                    {children}
+                                  </code>
                                 );
                               }
-                              return <code className="px-1 py-0.5 rounded bg-zinc-800/70 text-zinc-100 text-[0.75rem]">{children}</code>;
+                              return  <code key={`code-inline-${m.id}-${idx}`} className="px-1 py-0.5 rounded bg-zinc-800/70 text-zinc-100 text-[0.75rem]">
+                                        {children}
+                                      </code>;
                             }
                           }}
                         >
@@ -189,7 +271,7 @@ const AIResponseBox: React.FC<AIResponseBoxProps> = ({ messages, className = '',
                       <button
                         type="button"
                         aria-label="Copier le message"
-                        onClick={() => handleCopy(m.content, idx)}
+                        onClick={() => handleCopy(m.content, m.id)}
                         className={'shrink-0 inline-flex items-center justify-center h-7 w-7 rounded-md border text-xs transition ' + (isUser ? 'bg-white/20 border-white/30 text-white hover:bg-white/30' : 'bg-zinc-100 dark:bg-zinc-700 border-zinc-300 dark:border-zinc-600 text-zinc-600 dark:text-zinc-200 hover:bg-zinc-200 dark:hover:bg-zinc-600')}
                       >
                         {copied ? (

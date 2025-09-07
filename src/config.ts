@@ -5,21 +5,44 @@
 /**
  * API configuration
  */
-export const API_CONFIG = {
+
+// API config for Docker/Container
+const API_CONFIG_CONTAINER = {
   BASE_URL: '/api/v3/lotto',
   ENDPOINTS: {
     PREVIOUS_RESULTS: '/lotto-matrix/previous-results',
     PREDICTIONS: '/lotto-matrix/recommendations',
     STATISTICS: '/lotto-matrix/stats',
     CUSTOM_PREDICTIONS: '/lotto-matrix/recommend',
-    DRAW_COUNT: '/lotto-matrix/draw-count', // Endpoint spécifique pour le nombre de tirages
-    DATA_STATS: '/lotto-matrix/data-stats', // Endpoint pour les statistiques de données
-    // Endpoints Spring AI v3 (définitifs)
+    DRAW_COUNT: '/lotto-matrix/draw-count',
+    DATA_STATS: '/lotto-matrix/data-stats',
     SPRING_AI_RECOMMENDATIONS: '/recommendations',
     SPRING_AI_STREAMING: '/predictions/stream',
     SPRING_AI_HEALTH: '/health'
   }
 };
+
+// API config for local dev
+const API_CONFIG_LOCAL = {
+  BASE_URL: 'http://localhost:5173/api/v3/lotto',
+  ENDPOINTS: {
+    PREVIOUS_RESULTS: '/lotto-matrix/previous-results',
+    PREDICTIONS: '/lotto-matrix/recommendations',
+    STATISTICS: '/lotto-matrix/stats',
+    CUSTOM_PREDICTIONS: '/lotto-matrix/recommend',
+    DRAW_COUNT: '/lotto-matrix/draw-count',
+    DATA_STATS: '/lotto-matrix/data-stats',
+    SPRING_AI_RECOMMENDATIONS: '/recommendations',
+    SPRING_AI_STREAMING: '/predictions/stream',
+    SPRING_AI_HEALTH: '/health'
+  }
+};
+
+// Export config based on environment
+export const API_CONFIG =
+  import.meta.env.MODE === 'development'
+    ? API_CONFIG_LOCAL
+    : API_CONFIG_CONTAINER;
 
 /**
  * Application configuration
