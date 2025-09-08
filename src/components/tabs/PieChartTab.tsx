@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts';
-import './PieChartTab.css';
+import { PieChart, Pie, Cell, Tooltip } from 'recharts';
 
 interface PieChartTabProps {
   isActive: boolean;
@@ -42,10 +41,10 @@ const PieChartTab: React.FC<PieChartTabProps> = ({ isActive }) => {
   }
 
   return (
-    <section className="pie-chart-tab">
-      <h2 className="text-2xl font-semibold mb-6">Graphique en secteurs des nombres pairs/impairs</h2>
-      <ResponsiveContainer width="100%" height={400}>
-        <PieChart>
+    <section className="flex flex-col h-full">
+      <h2 className="text-2xl font-semibold mb-6 flex-shrink-0">Graphique en secteurs des nombres pairs/impairs</h2>
+      <div className="flex-1 min-h-0 flex justify-center items-center">
+        <PieChart width={800} height={500}>
           <Pie
             data={data}
             dataKey="value"
@@ -62,7 +61,7 @@ const PieChartTab: React.FC<PieChartTabProps> = ({ isActive }) => {
           </Pie>
           <Tooltip />
         </PieChart>
-      </ResponsiveContainer>
+      </div>
     </section>
   );
 };

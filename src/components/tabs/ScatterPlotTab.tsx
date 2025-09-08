@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { ScatterChart, Scatter, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer } from 'recharts';
-import './ScatterPlotTab.css';
+import { ScatterChart, Scatter, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
 
 interface ScatterPlotTabProps {
   isActive: boolean;
@@ -43,17 +42,17 @@ const ScatterPlotTab: React.FC<ScatterPlotTabProps> = ({ isActive }) => {
   }
 
   return (
-    <section className="scatter-plot-tab">
-      <h2 className="text-2xl font-semibold mb-6">Graphique de dispersion des plages de numéros</h2>
-      <ResponsiveContainer width="100%" height={400}>
-        <ScatterChart margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+    <section className="flex flex-col h-full">
+      <h2 className="text-2xl font-semibold mb-6 flex-shrink-0">Graphique de dispersion des plages de numéros</h2>
+      <div className="flex-1 min-h-0 flex justify-center items-center">
+        <ScatterChart width={1000} height={500} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
           <CartesianGrid />
           <XAxis dataKey="number" name="Numéro" label={{ value: 'Numéro', position: 'insideBottom', offset: -5 }} />
-          <YAxis dataKey="range" name="Plage" label={{ value: 'Plage', angle: -90, position: 'insideLeft' }} />
+          <YAxis dataKey="range" name="Plage" label={{ value: 'Plage', angle: -90, position: 'insideLeft', textAnchor: 'middle' }} />
           <Tooltip cursor={{ strokeDasharray: '3 3' }} />
           <Scatter name="Plage de numéros" data={data} fill="#8884d8" />
         </ScatterChart>
-      </ResponsiveContainer>
+      </div>
     </section>
   );
 };

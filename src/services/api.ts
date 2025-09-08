@@ -193,14 +193,18 @@ export async function fetchDrawCount(): Promise<number> {
     if (!response.ok) {
       throw new Error('Failed to fetch draw count');
     }
-    
+
     const data = await response.json();
-    
-    // Extract the total count of draws
-    if (data && data.success && data.count !== undefined) {
+    console.warn('[fetchDrawCount] Réponse brute API:', data);
+
+    // Accepte { count: number }, { success: boolean, count: number } ou { totalDraws: number }
+    if (data && typeof data.count === 'number') {
       return data.count;
     }
-    
+    if (data && typeof data.totalDraws === 'number') {
+      return data.totalDraws;
+    }
+
     throw new Error('Invalid data format from API');
   } catch (error) {
     console.error('Error in fetchDrawCount:', error);

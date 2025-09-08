@@ -58,7 +58,8 @@ function getDrawDates(today: string): [string, string] {
  * Charge les données seulement quand l'onglet est actif
  */
 const PreviousDrawTab: React.FC<PreviousDrawTabProps> = ({ isActive, ballSize }) => {
-  // Utilise useReducer pour gérer le state du composant
+
+  // Types et reducer (déclaration unique, sans doublons)
   type State = {
     previousDraw: PreviousResult | null;
     drawError: string | null;
@@ -67,7 +68,6 @@ const PreviousDrawTab: React.FC<PreviousDrawTabProps> = ({ isActive, ballSize })
     startDate: string;
     endDate: string;
   };
-
   type Action =
     | { type: 'SET_PREVIOUS_DRAW'; payload: PreviousResult }
     | { type: 'SET_ERROR'; payload: string | null }
@@ -77,15 +77,14 @@ const PreviousDrawTab: React.FC<PreviousDrawTabProps> = ({ isActive, ballSize })
     | { type: 'SET_END_DATE'; payload: string };
 
   const today = new Date().toISOString().slice(0, 10);
-  // Utilise getDrawDates pour initialiser correctement les dates
   const [initialStartDate, initialEndDate] = getDrawDates(today);
   const initialState: State = {
     previousDraw: null,
     drawError: null,
     drawLoading: false,
     hasLoaded: false,
-    startDate: initialStartDate, // dernier mercredi/samedi < aujourd'hui
-    endDate: initialEndDate,     // prochain mercredi/samedi > aujourd'hui
+    startDate: initialStartDate,
+    endDate: initialEndDate,
   };
 
   function reducer(state: State, action: Action): State {
@@ -108,6 +107,16 @@ const PreviousDrawTab: React.FC<PreviousDrawTabProps> = ({ isActive, ballSize })
   }
 
   const [state, dispatch] = React.useReducer(reducer, initialState);
+
+  // Log state for debugging when error or data changes
+  React.useEffect(() => {
+    if (state.drawError) {
+      console.error('[PreviousDrawTab] Erreur affichée:', state.drawError);
+    }
+    if (state.previousDraw) {
+      console.info('[PreviousDrawTab] Données reçues:', state.previousDraw);
+    }
+  }, [state.drawError, state.previousDraw]);
 
   useEffect(() => {
     // Utilise getDrawDates pour garantir la logique métier
@@ -243,6 +252,7 @@ return (
         {state.drawError && (
           <div className="mb-4 p-3 bg-red-500/10 border border-red-500/30 rounded-lg flex items-center justify-center w-full max-w-xl">
             <span className="text-red-500">{state.drawError}</span>
+            <pre className="text-xs text-red-700 mt-2">{JSON.stringify(state, null, 2)}</pre>
           </div>
         )}
         
