@@ -6,7 +6,6 @@ import { fetchModels } from '../services/aiPredictionsApi';
 import { Button, Badge } from '../../../components/shadcn';
 import CalendarDateInput from '../../../components/CalendarDateInput';
 import dayjs from 'dayjs';
-import { Separator } from '../../../components/shadcn';
 import { aiPredictionFiltersSignal } from '../../../signals/predictionSignal';
 
 interface Props {
@@ -145,11 +144,15 @@ const PredictionsFilters: React.FC<Props> = ({ onApply, resetSignal }) => {
   };
 
   return (
-    <div className="flex flex-col gap-4">
-      <div className="flex flex-col gap-3">
-        <div className="flex flex-col gap-1">
-          <span className="text-xs font-semibold tracking-wide">Dates prédictions</span>
-          <div className="flex flex-wrap items-center gap-2">
+    <div className="space-y-4 px-4 sm:px-6 w-full">
+      {/* Section des dates */}
+      <div className="space-y-3 w-full">
+        <h3 className="text-sm font-semibold text-foreground">Plages de dates</h3>
+        
+        {/* Dates de prédiction */}
+        <div className="space-y-2 w-full">
+          <span className="text-xs font-medium text-muted-foreground">Dates de prédictions</span>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 w-full">
             <CalendarDateInput
               id="pred-from"
               label="Du"
@@ -178,9 +181,11 @@ const PredictionsFilters: React.FC<Props> = ({ onApply, resetSignal }) => {
             />
           </div>
         </div>
-        <div className="flex flex-col gap-1">
-          <span className="text-xs font-semibold tracking-wide">Dates tirage</span>
-          <div className="flex flex-wrap items-center gap-2">
+
+        {/* Dates de tirage */}
+        <div className="space-y-2 w-full">
+          <span className="text-xs font-medium text-muted-foreground">Dates de tirages</span>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 w-full">
             <CalendarDateInput
               id="tirage-from"
               label="Du"
@@ -209,45 +214,147 @@ const PredictionsFilters: React.FC<Props> = ({ onApply, resetSignal }) => {
             />
           </div>
         </div>
+
+        {/* Presets rapides */}
+        <div className="space-y-2 w-full">
+          <span className="text-xs font-medium text-muted-foreground">Raccourcis</span>
+          <div className="grid grid-cols-2 gap-1 w-full">
+            <Button 
+              type="button" 
+              size="sm" 
+              variant="outline" 
+              onClick={() => applyPreset('mois')} 
+              className="text-xs h-8 w-full transition-all duration-200 hover:shadow-lg hover:bg-primary hover:text-primary-foreground hover:-translate-y-0.5 active:translate-y-0 focus:ring-2 focus:ring-primary/30"
+            >
+              Ce mois
+            </Button>
+            <Button 
+              type="button" 
+              size="sm" 
+              variant="outline" 
+              onClick={() => applyPreset('30j')} 
+              className="text-xs h-8 w-full transition-all duration-200 hover:shadow-lg hover:bg-primary hover:text-primary-foreground hover:-translate-y-0.5 active:translate-y-0 focus:ring-2 focus:ring-primary/30"
+            >
+              30 jours
+            </Button>
+            <Button 
+              type="button" 
+              size="sm" 
+              variant="outline" 
+              onClick={() => applyPreset('7j')} 
+              className="text-xs h-8 w-full transition-all duration-200 hover:shadow-lg hover:bg-primary hover:text-primary-foreground hover:-translate-y-0.5 active:translate-y-0 focus:ring-2 focus:ring-primary/30"
+            >
+              7 jours
+            </Button>
+            <Button 
+              type="button" 
+              size="sm" 
+              variant="outline" 
+              onClick={() => applyPreset('tout')} 
+              className="text-xs h-8 w-full transition-all duration-200 hover:shadow-lg hover:bg-primary hover:text-primary-foreground hover:-translate-y-0.5 active:translate-y-0 focus:ring-2 focus:ring-primary/30"
+            >
+              Tout
+            </Button>
+          </div>
+        </div>
       </div>
-      <div className="flex flex-col gap-2">
-        <div className="flex items-center justify-between gap-2">
-          <span className="text-xs font-medium tracking-wide">Modèles ({filtersSignal.value.models.length})</span>
+
+      {/* Section des modèles */}
+      <div className="space-y-3 w-full">
+        <div className="flex items-center justify-between w-full">
+          <h3 className="text-sm font-semibold text-foreground flex-1">
+            Modèles ({filtersSignal.value.models.length})
+          </h3>
           {filtersSignal.value.selectedModels.length > 0 && (
-            <Button size="sm" variant="ghost" onClick={() => filtersSignal.value = { ...filtersSignal.value, selectedModels: [] }}>Vider</Button>
+            <Button 
+              size="sm" 
+              variant="ghost" 
+              className="text-xs h-6 px-2 flex-shrink-0 transition-all duration-200 hover:bg-destructive/20 hover:text-destructive hover:-translate-y-0.5 active:translate-y-0 focus:ring-2 focus:ring-destructive/30"
+              onClick={() => filtersSignal.value = { ...filtersSignal.value, selectedModels: [] }}
+            >
+              Vider
+            </Button>
           )}
         </div>
-        <div className="flex flex-wrap gap-2">
-          {filtersSignal.value.models.map(m => {
-            const active = filtersSignal.value.selectedModels.includes(m);
-            return (
-              <Badge
-                key={m}
-                onClick={() => toggleModel(m)}
-                variant={active ? 'default' : 'outline'}
-                className={`cursor-pointer select-none transition ${active ? 'ring-1 ring-primary/50' : ''}`}
-              >
-                {m}
-              </Badge>
-            );
-          })}
-          {!filtersSignal.value.models.length && !filtersSignal.value.error && (
-            <span className="text-xs text-muted-foreground italic">Chargement modèles...</span>
+        
+        <div className="space-y-3 w-full">
+          {filtersSignal.value.selectedModels.length > 0 && (
+            <div className="text-xs text-muted-foreground bg-primary/5 px-2 py-1 rounded border border-primary/20">
+              ✓ {filtersSignal.value.selectedModels.length} modèle(s) sélectionné(s)
+            </div>
           )}
+          
+          <div className="border border-border/50 rounded-lg p-3 bg-card/30 backdrop-blur-sm">
+            <div className="flex flex-wrap gap-2 max-h-32 overflow-y-auto scrollbar-thin scrollbar-thumb-muted scrollbar-track-transparent w-full">
+              {filtersSignal.value.models.map(m => {
+                const active = filtersSignal.value.selectedModels.includes(m);
+                return (
+                  <Badge
+                    key={m}
+                    onClick={() => toggleModel(m)}
+                    variant={active ? 'default' : 'secondary'}
+                    className={`cursor-pointer select-none transition-all duration-200 text-xs px-3 py-1.5 break-all hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 focus:ring-2 focus:ring-primary/30 font-medium ${
+                      active 
+                        ? 'bg-primary text-primary-foreground shadow-sm hover:bg-primary/90' 
+                        : 'bg-muted/80 text-muted-foreground hover:bg-primary/10 hover:text-foreground'
+                    }`}
+                    style={{
+                      borderWidth: '2px',
+                      borderStyle: 'solid'
+                    }}
+                  >
+                    <span className="flex items-center gap-1">
+                      {active && <span className="text-xs">✓</span>}
+                      {m}
+                    </span>
+                  </Badge>
+                );
+              })}
+              {!filtersSignal.value.models.length && !filtersSignal.value.error && (
+                <div className="w-full text-center py-4">
+                  <div className="animate-pulse flex items-center justify-center space-x-2">
+                    <div className="w-2 h-2 bg-muted-foreground rounded-full"></div>
+                    <span className="text-xs text-muted-foreground italic">Chargement des modèles...</span>
+                  </div>
+                </div>
+              )}
+              {filtersSignal.value.models.length === 0 && filtersSignal.value.error && (
+                <div className="w-full text-center py-4 text-destructive text-xs">
+                  ⚠️ Erreur lors du chargement des modèles
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       </div>
-      <div className="flex flex-wrap gap-2">
-        <Button type="button" size="sm" variant="default" onClick={() => applyPreset('mois')}>Ce mois</Button>
-        <Button type="button" size="sm" variant="default" onClick={() => applyPreset('30j')}>30 jours</Button>
-        <Button type="button" size="sm" variant="default" onClick={() => applyPreset('7j')}>7 jours</Button>
-        <Button type="button" size="sm" variant="default" onClick={() => applyPreset('tout')}>Tout</Button>
+
+      {/* Messages d'erreur - plus compact */}
+      {filtersSignal.value.validationMsg && (
+        <div className="p-2 bg-destructive/10 border border-destructive/20 rounded text-xs text-destructive font-medium w-full break-words">
+          {filtersSignal.value.validationMsg}
+        </div>
+      )}
+      
+      {filtersSignal.value.error && (
+        <div className="p-2 bg-destructive/10 border border-destructive/20 rounded text-xs text-destructive font-medium w-full break-words">
+          {filtersSignal.value.error}
+        </div>
+      )}
+
+      {/* Bouton d'application */}
+      <div className="pt-2 border-t w-full">
+        <Button 
+          onClick={apply} 
+          disabled={!!filtersSignal.value.validationMsg}
+          className="w-full h-9 transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 focus:ring-2 focus:ring-primary/30 disabled:hover:shadow-none disabled:hover:-translate-y-0"
+          size="sm"
+        >
+          <span className="flex items-center gap-2">
+            Appliquer les filtres
+            <span className="text-xs opacity-70">✓</span>
+          </span>
+        </Button>
       </div>
-      {filtersSignal.value.validationMsg && <p className="text-[11px] text-destructive font-medium">{filtersSignal.value.validationMsg}</p>}
-      <div className="flex justify-end">
-        <Button size="sm" onClick={apply} disabled={!!filtersSignal.value.validationMsg}>Appliquer</Button>
-      </div>
-      {filtersSignal.value.error && <p className="text-destructive text-xs font-medium text-red-600">{filtersSignal.value.error}</p>}
-      <Separator />
     </div>
   );
 };
