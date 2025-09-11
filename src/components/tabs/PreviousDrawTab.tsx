@@ -250,7 +250,7 @@ const PreviousDrawTab: React.FC<PreviousDrawTabProps> = ({ isActive, ballSize })
       </div>
 
       {/* Contenu centré sous le formulaire */}
-      <div className="flex-1 w-full max-w-4xl flex flex-col items-center justify-center">
+      <div className="flex-1 w-full flex flex-col items-center justify-center px-4">
         {/* Loader animé pendant le chargement */}
         {state.drawLoading && (
           <div className="flex flex-col items-center justify-center my-8 w-full">
@@ -270,10 +270,25 @@ const PreviousDrawTab: React.FC<PreviousDrawTabProps> = ({ isActive, ballSize })
         {/* Résultat ou message si aucun résultat */}
         {!state.drawLoading && state.previousDraw ? (
           Array.isArray(state.previousDraw.previousResult) && state.previousDraw.previousResult.length > 0 ? (
-            <div className="flex flex-col items-center justify-center gap-8 previous-draw-animation animate-fade-in w-full max-w-4xl">
+            <div className="flex flex-wrap justify-center gap-4 previous-draw-animation animate-fade-in w-full">
               {state.previousDraw.previousResult.slice(0, 25).map((draw, idx) => (
-                <div key={draw.previousResultDate + '-' + idx} className="w-full flex flex-col items-center gap-2 border-b border-slate-200 dark:border-slate-700 pb-6 mb-6 last:border-b-0 last:pb-0 last:mb-0">
-                  <div className="flex flex-wrap justify-center gap-4 mb-2 w-full">
+                <div 
+                  key={draw.previousResultDate + '-' + idx} 
+                  className="rounded-lg shadow-lg border-2
+                   p-3 min-w-[240px] max-w-[280px] flex-shrink-0"
+                >
+                  {/* Date du tirage */}
+                  <div className="text-center mb-3">
+                    <h3 className="text-sm font-semibold text-slate-600 dark:text-slate-300 mb-1">
+                      Tirage du
+                    </h3>
+                    <p className="text-lg font-bold text-indigo-600 dark:text-indigo-400">
+                      {formatDate(new Date(draw.previousResultDate), 'dd/MM/yyyy')}
+                    </p>
+                  </div>
+
+                  {/* Numéros du tirage */}
+                  <div className="flex justify-center gap-1 mb-3">
                     {Array.isArray(draw.resultNumbers) && draw.resultNumbers.length > 0 ? (
                       (() => {
                         // Defensive: resultNumbers may include the bonus as 7th element.
@@ -293,7 +308,7 @@ const PreviousDrawTab: React.FC<PreviousDrawTabProps> = ({ isActive, ballSize })
                         // Prefer explicit bonusNumber field if present, otherwise use bonus parsed from array.
                         const computedBonus: number | undefined = typeof draw.bonusNumber === 'number' ? draw.bonusNumber : bonusFromArray;
 
-                        const computedSize = ballSize || (numbersArray.length > 6 ? 'sm' : 'md');
+                        const computedSize = ballSize || 'xs';
 
                         return (
                           <>
@@ -318,13 +333,13 @@ const PreviousDrawTab: React.FC<PreviousDrawTabProps> = ({ isActive, ballSize })
                     ) : (
                       <span className="text-slate-400 text-base">Aucun numéro à afficher</span>
                     )}
-                    {/* Bonus rendered above when resultNumbers may include it; avoid duplicate rendering here */}
                   </div>
-                  <div className="text-sm mt-2 opacity-70 text-center w-full flex flex-col gap-1">
-                    <span>Tirage en date du {draw.previousResultDate}</span>
-                  </div>
+
+                  {/* Message d'erreur s'il y en a un */}
                   {draw.message && (
-                    <div className="text-xs text-red-500 mt-1">{draw.message}</div>
+                    <div className="text-xs text-red-500 text-center mt-2">
+                      {draw.message}
+                    </div>
                   )}
                 </div>
               ))}
