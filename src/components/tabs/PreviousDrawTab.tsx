@@ -270,80 +270,152 @@ const PreviousDrawTab: React.FC<PreviousDrawTabProps> = ({ isActive, ballSize })
         {/* Résultat ou message si aucun résultat */}
         {!state.drawLoading && state.previousDraw ? (
           Array.isArray(state.previousDraw.previousResult) && state.previousDraw.previousResult.length > 0 ? (
-            <div className="flex flex-wrap justify-center gap-4 previous-draw-animation animate-fade-in w-full">
-              {state.previousDraw.previousResult.slice(0, 25).map((draw, idx) => (
-                <div 
-                  key={draw.previousResultDate + '-' + idx} 
-                  className="rounded-lg shadow-lg border-2
-                   p-3 min-w-[240px] max-w-[280px] flex-shrink-0"
-                >
-                  {/* Date du tirage */}
-                  <div className="text-center mb-3">
-                    <h3 className="text-sm font-semibold text-slate-600 dark:text-slate-300 mb-1">
-                      Tirage du
-                    </h3>
-                    <p className="text-lg font-bold text-indigo-600 dark:text-indigo-400">
-                      {formatDate(new Date(draw.previousResultDate), 'dd/MM/yyyy')}
-                    </p>
-                  </div>
+            state.previousDraw.previousResult.length === 1 ? (
+              // Affichage spécial pour un seul tirage : boules en grand centré
+              <div className="flex flex-col items-center justify-center gap-8 previous-draw-animation animate-fade-in w-full">
+                {state.previousDraw.previousResult.slice(0, 1).map((draw, idx) => {
+                  // Calcul des numéros comme avant
+                  const numbersArray: number[] = Array.isArray(draw.resultNumbers) ? [...draw.resultNumbers] : [];
+                  let mainNumbers: number[] = numbersArray;
+                  let bonusFromArray: number | undefined = undefined;
+                  if (numbersArray.length === 7) {
+                    mainNumbers = numbersArray.slice(0, 6);
+                    bonusFromArray = numbersArray[6];
+                  } else if (numbersArray.length > 6) {
+                    mainNumbers = numbersArray.slice(0, 6);
+                  }
+                  const computedBonus: number | undefined = typeof draw.bonusNumber === 'number' ? draw.bonusNumber : bonusFromArray;
 
-                  {/* Numéros du tirage */}
-                  <div className="flex justify-center gap-1 mb-3">
-                    {Array.isArray(draw.resultNumbers) && draw.resultNumbers.length > 0 ? (
-                      (() => {
-                        // Defensive: resultNumbers may include the bonus as 7th element.
-                        const numbersArray: number[] = Array.isArray(draw.resultNumbers) ? [...draw.resultNumbers] : [];
+                  return (
+                    <div key={draw.previousResultDate + '-' + idx} className="w-full flex flex-col items-center gap-6">
+                      {/* Date du tirage */}
+                      <div className="text-center">
+                        <h3 className="text-xl font-semibold text-slate-600 dark:text-slate-300 mb-2">
+                          Tirage du
+                        </h3>
+                        <p className="text-3xl font-bold text-indigo-600 dark:text-indigo-400">
+                          {formatDate(new Date(draw.previousResultDate), 'dd/MM/yyyy')}
+                        </p>
+                      </div>
 
-                        // If the array contains 7 elements, treat the last as the bonus and take the first 6 as main numbers.
-                        let mainNumbers: number[] = numbersArray;
-                        let bonusFromArray: number | undefined = undefined;
-                        if (numbersArray.length === 7) {
-                          mainNumbers = numbersArray.slice(0, 6);
-                          bonusFromArray = numbersArray[6];
-                        } else if (numbersArray.length > 6) {
-                          // Protect against malformed arrays: always keep first 6 as main numbers.
-                          mainNumbers = numbersArray.slice(0, 6);
-                        }
+                      {/* Les 6 numéros principaux en grand, prenant toute la largeur */}
+                      <div className="flex justify-center gap-8 mb-6 w-full max-w-6xl flex-wrap">
+                        {Array.isArray(draw.resultNumbers) && draw.resultNumbers.length > 0 ? (
+                          mainNumbers.map((num: number, i: number) => (
+                            <LottoBall
+                              key={i}
+                              number={num}
+                              size="lg"
+                              type="regular"
+                              className="!w-32 !h-32 !text-5xl !leading-[8rem]"
+                            />
+                          ))
+                        ) : (
+                          <span className="text-slate-400 text-2xl">Aucun numéro à afficher</span>
+                        )}
+                      </div>
 
-                        // Prefer explicit bonusNumber field if present, otherwise use bonus parsed from array.
-                        const computedBonus: number | undefined = typeof draw.bonusNumber === 'number' ? draw.bonusNumber : bonusFromArray;
+                      {/* Numéro bonus centré en dessous */}
+                      {typeof computedBonus === 'number' && (
+                        <div className="flex flex-col items-center gap-4">
+                          <h4 className="text-2xl font-semibold text-slate-600 dark:text-slate-300">
+                            Numéro Bonus
+                          </h4>
+                          <LottoBall
+                            number={computedBonus}
+                            size="lg"
+                            type="bonus"
+                            className="!w-32 !h-32 !text-5xl !leading-[8rem]"
+                          />
+                        </div>
+                      )}
 
-                        const computedSize = ballSize || 'xs';
+                      {/* Message d'erreur s'il y en a un */}
+                      {draw.message && (
+                        <div className="text-sm text-red-500 text-center mt-4">
+                          {draw.message}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              // Affichage normal pour plusieurs tirages : cards
+              <div className="flex flex-wrap justify-center gap-4 previous-draw-animation animate-fade-in w-full">
+                {state.previousDraw.previousResult.slice(0, 25).map((draw, idx) => (
+                  <div 
+                    key={draw.previousResultDate + '-' + idx} 
+                    className="rounded-lg shadow-lg border-2 p-3 min-w-[240px] max-w-[280px] flex-shrink-0"
+                  >
+                    {/* Date du tirage */}
+                    <div className="text-center mb-3">
+                      <h3 className="text-sm font-semibold text-slate-600 dark:text-slate-300 mb-1">
+                        Tirage du
+                      </h3>
+                      <p className="text-lg font-bold text-indigo-600 dark:text-indigo-400">
+                        {formatDate(new Date(draw.previousResultDate), 'dd/MM/yyyy')}
+                      </p>
+                    </div>
 
-                        return (
-                          <>
-                            {mainNumbers.map((num: number, i: number) => (
-                              <LottoBall
-                                key={i}
-                                number={num}
-                                size={computedSize}
-                                type="regular"
-                              />
-                            ))}
-                            {typeof computedBonus === 'number' && (
-                              <LottoBall
-                                number={computedBonus}
-                                size={computedSize}
-                                type="bonus"
-                              />
-                            )}
-                          </>
-                        );
-                      })()
-                    ) : (
-                      <span className="text-slate-400 text-base">Aucun numéro à afficher</span>
+                    {/* Numéros du tirage */}
+                    <div className="flex justify-center gap-1 mb-3">
+                      {Array.isArray(draw.resultNumbers) && draw.resultNumbers.length > 0 ? (
+                        (() => {
+                          // Defensive: resultNumbers may include the bonus as 7th element.
+                          const numbersArray: number[] = Array.isArray(draw.resultNumbers) ? [...draw.resultNumbers] : [];
+
+                          // If the array contains 7 elements, treat the last as the bonus and take the first 6 as main numbers.
+                          let mainNumbers: number[] = numbersArray;
+                          let bonusFromArray: number | undefined = undefined;
+                          if (numbersArray.length === 7) {
+                            mainNumbers = numbersArray.slice(0, 6);
+                            bonusFromArray = numbersArray[6];
+                          } else if (numbersArray.length > 6) {
+                            // Protect against malformed arrays: always keep first 6 as main numbers.
+                            mainNumbers = numbersArray.slice(0, 6);
+                          }
+
+                          // Prefer explicit bonusNumber field if present, otherwise use bonus parsed from array.
+                          const computedBonus: number | undefined = typeof draw.bonusNumber === 'number' ? draw.bonusNumber : bonusFromArray;
+
+                          const computedSize = ballSize || 'xs';
+
+                          return (
+                            <>
+                              {mainNumbers.map((num: number, i: number) => (
+                                <LottoBall
+                                  key={i}
+                                  number={num}
+                                  size={computedSize}
+                                  type="regular"
+                                />
+                              ))}
+                              {typeof computedBonus === 'number' && (
+                                <LottoBall
+                                  number={computedBonus}
+                                  size={computedSize}
+                                  type="bonus"
+                                />
+                              )}
+                            </>
+                          );
+                        })()
+                      ) : (
+                        <span className="text-slate-400 text-base">Aucun numéro à afficher</span>
+                      )}
+                    </div>
+
+                    {/* Message d'erreur s'il y en a un */}
+                    {draw.message && (
+                      <div className="text-xs text-red-500 text-center mt-2">
+                        {draw.message}
+                      </div>
                     )}
                   </div>
-
-                  {/* Message d'erreur s'il y en a un */}
-                  {draw.message && (
-                    <div className="text-xs text-red-500 text-center mt-2">
-                      {draw.message}
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )
           ) : (
             !state.drawError && (
               <div className="w-full max-w-xl text-center text-base text-slate-500 dark:text-slate-400 flex flex-col items-center justify-center">
