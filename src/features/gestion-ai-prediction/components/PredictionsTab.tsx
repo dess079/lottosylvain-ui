@@ -58,14 +58,14 @@ const PredictionsTab: React.FC = () => {
     return parts.join(' | ');
   };
 
-  // Hauteur dynamique: soustraire marge/padding externe éventuel (ici 1rem top + 1rem bottom approx)
-  const dynamicHeightClass = 'h-[calc(100vh-2rem)]';
+  // Hauteur dynamique: soustraire header + footer + padding (approximativement 12rem)
+  const dynamicHeightClass = 'h-[calc(100vh-12rem)]';
 
   return (
-    <div className={`flex flex-col flex-1 min-h-0 gap-4 p-4 bg-background ${dynamicHeightClass}`}>
-      {/* Header */}
-      <div className="flex items-center justify-between flex-wrap gap-2 bg-card/30 backdrop-blur-sm rounded-lg p-3 border">
-        <h1 className="text-xl font-semibold tracking-tight text-foreground">Gestion des Prédictions AI</h1>
+    <div className={`flex flex-col flex-1 min-h-0 gap-3 p-3 bg-background ${dynamicHeightClass}`}>
+      {/* Header - hauteur fixe compacte */}
+      <div className="flex items-center justify-between flex-wrap gap-2 bg-card/30 backdrop-blur-sm rounded-lg p-2 border flex-shrink-0">
+        <h1 className="text-lg font-semibold tracking-tight text-foreground">Gestion des Prédictions AI</h1>
         <div className="flex gap-2">
           <FilterSheet
             onApply={f => setAppliedFilters(prev => ({ ...prev, ...f, page: 0 }))}
@@ -75,7 +75,7 @@ const PredictionsTab: React.FC = () => {
           />
           <Button
             variant="outline"
-            size="icon"
+            size="sm"
             onClick={() => {
               setRefreshSpin(true);
               resetFilters();
@@ -83,33 +83,33 @@ const PredictionsTab: React.FC = () => {
             }}
             aria-label="Réinitialiser"
             title="Réinitialiser"
-            className="bg-background/50"
+            className="bg-background/50 h-8 w-8"
           >
-            <RotateCcw className={`h-4 w-4 transition-transform ${refreshSpin ? 'animate-spin-slow' : ''}`} />
+            <RotateCcw className={`h-3 w-3 transition-transform ${refreshSpin ? 'animate-spin-slow' : ''}`} />
           </Button>
           <Button
             variant={fullScreen ? 'secondary' : 'outline'}
-            size="icon"
+            size="sm"
             onClick={() => setFullScreen(v => !v)}
             aria-label={fullScreen ? 'Quitter plein écran' : 'Plein écran'}
             title={fullScreen ? 'Quitter plein écran' : 'Plein écran'}
-            className="bg-background/50"
+            className="bg-background/50 h-8 w-8"
           >
             {fullScreen ? (
-              <Minimize2 className="h-4 w-4" />
+              <Minimize2 className="h-3 w-3" />
             ) : (
-              <Maximize2 className="h-4 w-4" />
+              <Maximize2 className="h-3 w-3" />
             )}
           </Button>
         </div>
       </div>
 
-      {/* Zone de contenu principal avec graphiques */}
-      <div className="flex flex-1 min-h-0 gap-4">
+      {/* Zone de contenu principal avec graphiques - prend tout l'espace restant */}
+      <div className="flex flex-1 min-h-0 gap-3">
         <div className="flex flex-col flex-1 min-h-0">
           <Card className="flex flex-col flex-1 min-h-0 bg-card border shadow-sm">
-            <CardHeader className="pb-2 bg-card/50">
-              <CardTitle className="text-base text-card-foreground">Résultats ({data?.totalElements ?? 0})</CardTitle>
+            <CardHeader className="pb-1 bg-card/50 flex-shrink-0">
+              <CardTitle className="text-sm text-card-foreground">Résultats ({data?.totalElements ?? 0})</CardTitle>
               <p className="text-xs text-muted-foreground min-h-4">
                 {buildSummary() || 'Aucun filtre spécifique (ensemble complet).'}
               </p>
@@ -118,18 +118,18 @@ const PredictionsTab: React.FC = () => {
               <div className="flex-1 relative overflow-auto">
                 <div className="min-h-full flex flex-col bg-background/50">
                   {loading && (
-                    <div className="flex-1 flex items-center justify-center p-8">
-                      <div className="text-center space-y-4">
-                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
-                        <p className="text-muted-foreground">Chargement des prédictions...</p>
+                    <div className="flex-1 flex items-center justify-center p-4">
+                      <div className="text-center space-y-2">
+                        <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary mx-auto"></div>
+                        <p className="text-muted-foreground text-sm">Chargement des prédictions...</p>
                       </div>
                     </div>
                   )}
                   {error && !loading && (
-                    <div className="flex-1 flex items-center justify-center p-8">
-                      <div className="text-center space-y-4">
+                    <div className="flex-1 flex items-center justify-center p-4">
+                      <div className="text-center space-y-2">
                         <div className="text-destructive text-lg">⚠️</div>
-                        <p className="text-destructive">Erreur: {error}</p>
+                        <p className="text-destructive text-sm">Erreur: {error}</p>
                       </div>
                     </div>
                   )}
@@ -143,7 +143,7 @@ const PredictionsTab: React.FC = () => {
                     />
                   )}
                   {data && (
-                    <div className="sticky bottom-0 z-30 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-t px-4 py-2 shadow-sm">
+                    <div className="sticky bottom-0 z-30 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-t px-3 py-1 shadow-sm flex-shrink-0">
                       <PredictionsPagination page={data.page} size={data.size} totalPages={data.totalPages} onChange={handlePageChange} />
                     </div>
                   )}
@@ -153,12 +153,12 @@ const PredictionsTab: React.FC = () => {
           </Card>
         </div>
 
-        {/* Graphiques à droite */}
-        <div className="flex flex-col gap-6">
-          <div className="bg-card rounded-lg border shadow-sm">
+        {/* Graphiques à droite - hauteur fixe optimisée */}
+        <div className="flex flex-col gap-3 w-[400px] flex-shrink-0">
+          <div className="bg-card rounded-lg border shadow-sm h-[45%] min-h-0">
             <PredictionsNumbersGraph items={items} />
           </div>
-          <div className="bg-card rounded-lg border shadow-sm">
+          <div className="bg-card rounded-lg border shadow-sm h-[45%] min-h-0">
             <PredictionsNumbers3DScatter items={items} />
           </div>
         </div>

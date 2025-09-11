@@ -1,5 +1,3 @@
-// Utilitaire local pour formater les dates en YYYY-MM-DD
-const isoDate = (d: dayjs.Dayjs) => d.format('YYYY-MM-DD');
 import React, { useEffect } from 'react';
 import { AiPredictionFilters } from '../types/aiPrediction';
 import { fetchModels } from '../services/aiPredictionsApi';
@@ -19,6 +17,41 @@ interface Props {
 const filtersSignal = aiPredictionFiltersSignal;
 
 const PredictionsFilters: React.FC<Props> = ({ onApply, resetSignal }) => {
+  // Restaure l'état depuis localStorage au chargement
+  useEffect(() => {
+    const savedFilters = localStorage.getItem('aiPredictionFilters');
+    if (savedFilters) {
+      try {
+        const parsed = JSON.parse(savedFilters);
+        // Ne restaure que les sélections utilisateur, pas les données temporaires
+        filtersSignal.value = {
+          ...filtersSignal.value,
+          datePredictionFrom: parsed.datePredictionFrom || filtersSignal.value.datePredictionFrom,
+          datePredictionTo: parsed.datePredictionTo || filtersSignal.value.datePredictionTo,
+          dateTirageFrom: parsed.dateTirageFrom || filtersSignal.value.dateTirageFrom,
+          dateTirageTo: parsed.dateTirageTo || filtersSignal.value.dateTirageTo,
+          selectedModels: parsed.selectedModels || [],
+        };
+      } catch (e) {
+        console.warn('Erreur lors de la restauration des filtres:', e);
+      }
+    }
+  }, []);
+
+  // Sauvegarde l'état dans localStorage à chaque changement
+  useEffect(() => {
+    const filtersToSave = {
+      datePredictionFrom: filtersSignal.value.datePredictionFrom,
+      datePredictionTo: filtersSignal.value.datePredictionTo,
+      dateTirageFrom: filtersSignal.value.dateTirageFrom,
+      dateTirageTo: filtersSignal.value.dateTirageTo,
+      selectedModels: filtersSignal.value.selectedModels,
+    };
+    localStorage.setItem('aiPredictionFilters', JSON.stringify(filtersToSave));
+  }, [filtersSignal.value.datePredictionFrom, filtersSignal.value.datePredictionTo, 
+      filtersSignal.value.dateTirageFrom, filtersSignal.value.dateTirageTo, 
+      filtersSignal.value.selectedModels]);
+
   // Chargement des modèles
   useEffect(() => {
     fetchModels()
@@ -70,12 +103,27 @@ const PredictionsFilters: React.FC<Props> = ({ onApply, resetSignal }) => {
   };
 
   /**
-   * Réinitialise tous les filtres à leur valeur par défaut
+   * Réinitialise PARTIELLEMENT les filtres selon resetSignal (conserve les sélections utilisateur)
    */
   useEffect(() => {
     if (resetSignal === undefined) return;
+    
+    // Réinitialise uniquement les messages d'erreur et de validation
+    // CONSERVE les sélections de modèles et les dates personnalisées
+    filtersSignal.value = {
+      ...filtersSignal.value,
+      validationMsg: null,
+      error: null, // Efface les erreurs mais garde les sélections
+    };
+  }, [resetSignal]);
+
+  /**
+   * Réinitialise COMPLÈTEMENT tous les filtres (utilisé par le bouton dédié)
+   */
+  const resetAllFilters = () => {
     const now = dayjs();
     const firstDay = now.startOf('month');
+    const isoDate = (d: dayjs.Dayjs) => d.format('YYYY-MM-DD');
     let d = firstDay;
     let fws = firstDay;
     for (let i = 0; i < 14; i++) {
@@ -90,12 +138,11 @@ const PredictionsFilters: React.FC<Props> = ({ onApply, resetSignal }) => {
       dateTirageTo: isoDate(now),
       selectedModels: [],
       validationMsg: null,
+      error: null,
     };
-  }, [resetSignal]);
-
-  /**
-   * Ajoute ou retire un modèle de la sélection
-   */
+    // Efface aussi le localStorage
+    localStorage.removeItem('aiPredictionFilters');
+  };
   const toggleModel = (m: string) => {
     const { selectedModels } = filtersSignal.value;
     filtersSignal.value = {
@@ -265,16 +312,27 @@ const PredictionsFilters: React.FC<Props> = ({ onApply, resetSignal }) => {
           <h3 className="text-sm font-semibold text-foreground flex-1">
             Modèles ({filtersSignal.value.models.length})
           </h3>
-          {filtersSignal.value.selectedModels.length > 0 && (
+          <div className="flex gap-1">
+            {filtersSignal.value.selectedModels.length > 0 && (
+              <Button 
+                size="sm" 
+                variant="ghost" 
+                className="text-xs h-6 px-2 flex-shrink-0 transition-all duration-200 hover:bg-destructive/20 hover:text-destructive hover:-translate-y-0.5 active:translate-y-0 focus:ring-2 focus:ring-destructive/30"
+                onClick={() => filtersSignal.value = { ...filtersSignal.value, selectedModels: [] }}
+              >
+                Vider
+              </Button>
+            )}
             <Button 
               size="sm" 
               variant="ghost" 
               className="text-xs h-6 px-2 flex-shrink-0 transition-all duration-200 hover:bg-destructive/20 hover:text-destructive hover:-translate-y-0.5 active:translate-y-0 focus:ring-2 focus:ring-destructive/30"
-              onClick={() => filtersSignal.value = { ...filtersSignal.value, selectedModels: [] }}
+              onClick={resetAllFilters}
+              title="Remet tous les filtres à zéro"
             >
-              Vider
+              Reset tout
             </Button>
-          )}
+          </div>
         </div>
         
         <div className="space-y-3 w-full">
