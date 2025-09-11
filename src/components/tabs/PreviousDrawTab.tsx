@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useReducer } from 'react';
 import { addDays, subDays, getDay, format as formatDate } from 'date-fns';
 import { LottoBall } from '../shadcn';
 import { fetchPreviousResults } from '../../services/api';
@@ -58,7 +58,6 @@ function getDrawDates(today: string): [string, string] {
  * Charge les données seulement quand l'onglet est actif
  */
 const PreviousDrawTab: React.FC<PreviousDrawTabProps> = ({ isActive, ballSize }) => {
-
   // Types et reducer (déclaration unique, sans doublons)
   type State = {
     previousDraw: PreviousResult | null;
@@ -66,15 +65,18 @@ const PreviousDrawTab: React.FC<PreviousDrawTabProps> = ({ isActive, ballSize })
     drawLoading: boolean;
     hasLoaded: boolean;
     startDate: string;
-    endDate: string;
+  endDate: string;
+  // si l'utilisateur a modifié les dates via le formulaire
+  datesEditedByUser: boolean;
   };
   type Action =
     | { type: 'SET_PREVIOUS_DRAW'; payload: PreviousResult }
     | { type: 'SET_ERROR'; payload: string | null }
     | { type: 'SET_LOADING'; payload: boolean }
     | { type: 'SET_LOADED'; payload: boolean }
-    | { type: 'SET_START_DATE'; payload: string }
-    | { type: 'SET_END_DATE'; payload: string };
+  | { type: 'SET_START_DATE'; payload: string }
+  | { type: 'SET_END_DATE'; payload: string }
+  | { type: 'SET_DATES_EDITED'; payload: boolean };
 
   const today = new Date().toISOString().slice(0, 10);
   const [initialStartDate, initialEndDate] = getDrawDates(today);
@@ -85,6 +87,7 @@ const PreviousDrawTab: React.FC<PreviousDrawTabProps> = ({ isActive, ballSize })
     hasLoaded: false,
     startDate: initialStartDate,
     endDate: initialEndDate,
+  datesEditedByUser: false,
   };
 
   function reducer(state: State, action: Action): State {
@@ -101,12 +104,15 @@ const PreviousDrawTab: React.FC<PreviousDrawTabProps> = ({ isActive, ballSize })
         return { ...state, startDate: action.payload };
       case 'SET_END_DATE':
         return { ...state, endDate: action.payload };
+      case 'SET_DATES_EDITED':
+        return { ...state, datesEditedByUser: action.payload };
       default:
         return state;
     }
   }
 
-  const [state, dispatch] = React.useReducer(reducer, initialState);
+  // Ajout du hook useReducer pour la gestion d'état
+  const [state, dispatch] = useReducer(reducer, initialState);
 
   // Log state for debugging when error or data changes
   React.useEffect(() => {
@@ -122,17 +128,16 @@ const PreviousDrawTab: React.FC<PreviousDrawTabProps> = ({ isActive, ballSize })
     // Utilise getDrawDates pour garantir la logique métier
     const [start, end] = getDrawDates(today);
     loadPreviousDraw(start, end);
-  
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
 
   // Charge les données seulement quand l'onglet devient actif
   useEffect(() => {
     if (isActive && !state.hasLoaded) {
-      // Utilise getDrawDates pour garantir la logique métier
       const [start, end] = getDrawDates(today);
       loadPreviousDraw(start, end);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isActive, state.hasLoaded]);
 
   /**
@@ -141,17 +146,17 @@ const PreviousDrawTab: React.FC<PreviousDrawTabProps> = ({ isActive, ballSize })
    * endDate = prochain mercredi ou samedi suivant cette date
    */
   useEffect(() => {
+    // Ne pas écraser les dates si l'utilisateur les a modifiées
     if (
+      !state.datesEditedByUser &&
       state.previousDraw &&
       Array.isArray(state.previousDraw.previousResult) &&
       state.previousDraw.previousResult.length > 0 &&
       typeof state.previousDraw.previousResult[0].previousResultDate === 'string'
     ) {
-      // Met à jour startDate avec la date du dernier tirage
       dispatch({ type: 'SET_START_DATE', payload: state.previousDraw.previousResult[0].previousResultDate });
     }
-  }, [state.previousDraw]);
-
+  }, [state.previousDraw, state.datesEditedByUser]);
 
   /**
    * Récupère les données du dernier tirage
@@ -191,8 +196,8 @@ const PreviousDrawTab: React.FC<PreviousDrawTabProps> = ({ isActive, ballSize })
     loadPreviousDraw(state.startDate, state.endDate);
   };
 
-return (
-  <div className="h-full w-full flex flex-col items-center justify-start ">
+  return (
+    <div className="h-full w-full flex flex-col items-center justify-start ">
       <h2 className="text-4xl font-bold text-center gradient-text">Précédent tirage(s)</h2>
       {/* Formulaire de sélection de dates */}
       <div className="w-full flex justify-center mb-8">
@@ -206,14 +211,20 @@ return (
               id="start-date"
               label="Date de début"
               value={state.startDate}
-              onChange={e => dispatch({ type: 'SET_START_DATE', payload: e.target.value })}
+              onChange={e => {
+                dispatch({ type: 'SET_START_DATE', payload: e.target.value });
+                dispatch({ type: 'SET_DATES_EDITED', payload: true });
+              }}
               ariaLabel="Date de début"
             />
             <CalendarDateInput
               id="end-date"
               label="Date de fin"
               value={state.endDate}
-              onChange={e => dispatch({ type: 'SET_END_DATE', payload: e.target.value })}
+              onChange={e => {
+                dispatch({ type: 'SET_END_DATE', payload: e.target.value });
+                dispatch({ type: 'SET_DATES_EDITED', payload: true });
+              }}
               ariaLabel="Date de fin"
             />
           </div>
@@ -260,31 +271,54 @@ return (
         {!state.drawLoading && state.previousDraw ? (
           Array.isArray(state.previousDraw.previousResult) && state.previousDraw.previousResult.length > 0 ? (
             <div className="flex flex-col items-center justify-center gap-8 previous-draw-animation animate-fade-in w-full max-w-4xl">
-              {state.previousDraw.previousResult.map((draw, idx) => (
+              {state.previousDraw.previousResult.slice(0, 25).map((draw, idx) => (
                 <div key={draw.previousResultDate + '-' + idx} className="w-full flex flex-col items-center gap-2 border-b border-slate-200 dark:border-slate-700 pb-6 mb-6 last:border-b-0 last:pb-0 last:mb-0">
                   <div className="flex flex-wrap justify-center gap-4 mb-2 w-full">
                     {Array.isArray(draw.resultNumbers) && draw.resultNumbers.length > 0 ? (
-                      draw.resultNumbers.map((num: number, i: number) => {
-                        const computedSize = ballSize || (draw.resultNumbers.length > 6 ? 'sm' : 'md');
+                      (() => {
+                        // Defensive: resultNumbers may include the bonus as 7th element.
+                        const numbersArray: number[] = Array.isArray(draw.resultNumbers) ? [...draw.resultNumbers] : [];
+
+                        // If the array contains 7 elements, treat the last as the bonus and take the first 6 as main numbers.
+                        let mainNumbers: number[] = numbersArray;
+                        let bonusFromArray: number | undefined = undefined;
+                        if (numbersArray.length === 7) {
+                          mainNumbers = numbersArray.slice(0, 6);
+                          bonusFromArray = numbersArray[6];
+                        } else if (numbersArray.length > 6) {
+                          // Protect against malformed arrays: always keep first 6 as main numbers.
+                          mainNumbers = numbersArray.slice(0, 6);
+                        }
+
+                        // Prefer explicit bonusNumber field if present, otherwise use bonus parsed from array.
+                        const computedBonus: number | undefined = typeof draw.bonusNumber === 'number' ? draw.bonusNumber : bonusFromArray;
+
+                        const computedSize = ballSize || (numbersArray.length > 6 ? 'sm' : 'md');
+
                         return (
-                          <LottoBall
-                            key={i}
-                            number={num}
-                            size={computedSize}
-                            type="regular"
-                          />
+                          <>
+                            {mainNumbers.map((num: number, i: number) => (
+                              <LottoBall
+                                key={i}
+                                number={num}
+                                size={computedSize}
+                                type="regular"
+                              />
+                            ))}
+                            {typeof computedBonus === 'number' && (
+                              <LottoBall
+                                number={computedBonus}
+                                size={computedSize}
+                                type="bonus"
+                              />
+                            )}
+                          </>
                         );
-                      })
+                      })()
                     ) : (
                       <span className="text-slate-400 text-base">Aucun numéro à afficher</span>
                     )}
-                    {typeof draw.bonusNumber === 'number' && (
-                      <LottoBall
-                        number={draw.bonusNumber}
-                        size={ballSize || (draw.resultNumbers.length > 6 ? 'sm' : 'md')}
-                        type="bonus"
-                      />
-                    )}
+                    {/* Bonus rendered above when resultNumbers may include it; avoid duplicate rendering here */}
                   </div>
                   <div className="text-sm mt-2 opacity-70 text-center w-full flex flex-col gap-1">
                     <span>Tirage en date du {draw.previousResultDate}</span>
