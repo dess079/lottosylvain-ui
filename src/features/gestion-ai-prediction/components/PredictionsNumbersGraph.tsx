@@ -37,7 +37,7 @@ const PredictionsNumbersGraph: React.FC<Props> = ({ items }) => {
   // Affichage quand il n'y a pas de données
   if (items.length === 0) {
     return (
-      <div className="w-full h-full p-2 flex items-center justify-center">
+      <div className="w-full h-full flex items-center justify-center overflow-hidden">
         <div className="text-center space-y-3">
           <div className="text-4xl text-muted-foreground/50">📊</div>
           <div className="text-sm text-muted-foreground font-medium">
@@ -52,7 +52,7 @@ const PredictionsNumbersGraph: React.FC<Props> = ({ items }) => {
   }
 
   return (
-    <div className="w-full h-full p-2">
+    <div className="w-full h-full overflow-hidden">
       <ResponsiveContainer width="100%" height="100%">
         <LineChart data={graphData} margin={{ top: 10, right: 15, left: 0, bottom: 5 }}>
           <CartesianGrid strokeDasharray="3 3" className="stroke-border/30" />

@@ -108,8 +108,16 @@
   line-height: 4rem;
 }
 
+.lotto-ball-xl {
+  width: 5rem;
+  height: 5rem;
+  font-size: 2.25rem;
+  line-height: 5rem;
+}
+
 /* Responsive scaling: on small screens reduce sizes slightly */
 @media (max-width: 640px) {
+  .lotto-ball-xl { width: 4rem; height: 4rem; font-size: 2rem; line-height: 4rem; }
   .lotto-ball-lg { width: 3.25rem; height: 3.25rem; font-size: 1.5rem; line-height: 3.25rem; }
   .lotto-ball-md { width: 2.5rem; height: 2.5rem; font-size: 1.05rem; line-height: 2.5rem; }
   .lotto-ball-sm { width: 2.25rem; height: 2.25rem; font-size: 0.95rem; line-height: 2.25rem; }

@@ -5,6 +5,35 @@ import { Button, Badge } from '../../../components/shadcn';
 import CalendarDateInput from '../../../components/CalendarDateInput';
 import dayjs from 'dayjs';
 import { aiPredictionFiltersSignal } from '../../../signals/predictionSignal';
+import { CheckCircle, X } from 'lucide-react';
+
+// Composant pour afficher le nombre de modèles sélectionnés
+interface SelectedModelsIndicatorProps {
+  count: number;
+  onClear?: () => void;
+}
+
+const SelectedModelsIndicator: React.FC<SelectedModelsIndicatorProps> = ({ count, onClear }) => {
+  if (count === 0) return null;
+
+  return (
+    <div className="flex items-center justify-between text-xs text-muted-foreground bg-primary/5 px-2 py-1 rounded border border-primary/20">
+      <div className="flex items-center gap-1">
+        <CheckCircle className="h-3 w-3 text-primary" />
+        <span>{count} modèle{count > 1 ? 's' : ''} sélectionné{count > 1 ? 's' : ''}</span>
+      </div>
+      {onClear && (
+        <button
+          onClick={onClear}
+          className="ml-2 hover:bg-primary/10 rounded p-0.5 transition-colors"
+          title="Désélectionner tous les modèles"
+        >
+          <X className="h-3 w-3" />
+        </button>
+      )}
+    </div>
+  );
+};
 
 interface Props {
   // Callback quand l'utilisateur clique sur "Appliquer"
@@ -313,16 +342,6 @@ const PredictionsFilters: React.FC<Props> = ({ onApply, resetSignal }) => {
             Modèles ({filtersSignal.value.models.length})
           </h3>
           <div className="flex gap-1">
-            {filtersSignal.value.selectedModels.length > 0 && (
-              <Button 
-                size="sm" 
-                variant="ghost" 
-                className="text-xs h-6 px-2 flex-shrink-0 transition-all duration-200 hover:bg-destructive/20 hover:text-destructive hover:-translate-y-0.5 active:translate-y-0 focus:ring-2 focus:ring-destructive/30"
-                onClick={() => filtersSignal.value = { ...filtersSignal.value, selectedModels: [] }}
-              >
-                Vider
-              </Button>
-            )}
             <Button 
               size="sm" 
               variant="ghost" 
@@ -337,9 +356,10 @@ const PredictionsFilters: React.FC<Props> = ({ onApply, resetSignal }) => {
         
         <div className="space-y-3 w-full">
           {filtersSignal.value.selectedModels.length > 0 && (
-            <div className="text-xs text-muted-foreground bg-primary/5 px-2 py-1 rounded border border-primary/20">
-              ✓ {filtersSignal.value.selectedModels.length} modèle(s) sélectionné(s)
-            </div>
+            <SelectedModelsIndicator
+              count={filtersSignal.value.selectedModels.length}
+              onClear={() => filtersSignal.value = { ...filtersSignal.value, selectedModels: [] }}
+            />
           )}
           
           <div className="border border-border/50 rounded-lg p-3 bg-card/30 backdrop-blur-sm">

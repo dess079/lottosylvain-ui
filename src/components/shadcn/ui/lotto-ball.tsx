@@ -5,7 +5,7 @@ import './lotto-ball.css';
 
 interface LottoBallProps {
   number: number;
-  size?: 'xs' | 'sm' | 'md' | 'lg';
+  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
   type?: 'regular' | 'bonus' | 'prediction';
   isHighlighted?: boolean;
   isSelected?: boolean;

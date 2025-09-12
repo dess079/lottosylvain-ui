@@ -58,13 +58,13 @@ const PredictionsTab: React.FC = () => {
     return parts.join(' | ');
   };
 
-  // Hauteur dynamique: soustraire header + footer + padding (approximativement 12rem)
-  const dynamicHeightClass = 'h-[calc(100vh-12rem)]';
+  // Hauteur calculée pour tenir compte du padding et garantir que tout est visible
+  const dynamicHeightClass = 'h-[calc(100vh-1.5rem)]';
 
   return (
-    <div className={`flex flex-col flex-1 min-h-0 gap-3 p-3 bg-background ${dynamicHeightClass}`}>
+    <div className={`flex flex-col flex-1 min-h-0 gap-3 bg-background ${dynamicHeightClass}`}>
       {/* Header - hauteur fixe compacte */}
-      <div className="flex items-center justify-between flex-wrap gap-2 bg-card/30 backdrop-blur-sm rounded-lg p-2 border flex-shrink-0">
+      <div className="flex items-center justify-between flex-wrap gap-2 bg-card/30 backdrop-blur-sm rounded-lg p-2 border flex-shrink-0 mx-3 mt-3">
         <h1 className="text-lg font-semibold tracking-tight text-foreground">Gestion des Prédictions AI</h1>
         <div className="flex gap-2">
           <FilterSheet
@@ -75,7 +75,7 @@ const PredictionsTab: React.FC = () => {
           />
           <Button
             variant="outline"
-            size="sm"
+            size="icon"
             onClick={() => {
               setRefreshSpin(true);
               resetFilters();
@@ -83,88 +83,47 @@ const PredictionsTab: React.FC = () => {
             }}
             aria-label="Réinitialiser"
             title="Réinitialiser"
-            className="bg-background/50 h-8 w-8"
+            className="bg-background/50"
           >
             <RotateCcw className={`h-3 w-3 transition-transform ${refreshSpin ? 'animate-spin-slow' : ''}`} />
           </Button>
-          <Button
-            variant={fullScreen ? 'secondary' : 'outline'}
-            size="sm"
-            onClick={() => setFullScreen(v => !v)}
-            aria-label={fullScreen ? 'Quitter plein écran' : 'Plein écran'}
-            title={fullScreen ? 'Quitter plein écran' : 'Plein écran'}
-            className="bg-background/50 h-8 w-8"
-          >
-            {fullScreen ? (
-              <Minimize2 className="h-3 w-3" />
-            ) : (
-              <Maximize2 className="h-3 w-3" />
-            )}
-          </Button>
+         
         </div>
       </div>
-
+      
       {/* Zone de contenu principal avec graphiques - prend tout l'espace restant */}
-      <div className="flex flex-1 min-h-0 gap-3">
-        <div className="flex flex-col flex-1 min-h-0">
-          <Card className="flex flex-col flex-1 min-h-0 bg-card border shadow-sm">
+      <div className="flex flex-1 min-h-0 gap-3 h-full mx-3 mb-3">
+        <div className="flex flex-col gap-3 flex-1 min-h-0 h-full">
+          <Card className="flex flex-col flex-1 min-h-0 bg-card border shadow-sm h-full">
+            <PredictionsTable
+              items={items}
+              loading={loading}
+              error={error}
+              onSelect={id => setSelectedId(id)}
+            onDelete={handleDelete}/>
+          </Card>
+
+          <Card className="flex flex-col flex-1 min-h-0 bg-card border shadow-sm h-full">
             <CardHeader className="pb-1 bg-card/50 flex-shrink-0">
               <CardTitle className="text-sm text-card-foreground">Résultats ({data?.totalElements ?? 0})</CardTitle>
               <p className="text-xs text-muted-foreground min-h-4">
                 {buildSummary() || 'Aucun filtre spécifique (ensemble complet).'}
               </p>
             </CardHeader>
-            <CardContent className="flex flex-col gap-0 overflow-hidden p-0 pt-0 flex-1 bg-card">
-              <div className="flex-1 relative overflow-auto">
-                <div className="min-h-full flex flex-col bg-background/50">
-                  {loading && (
-                    <div className="flex-1 flex items-center justify-center p-4">
-                      <div className="text-center space-y-2">
-                        <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary mx-auto"></div>
-                        <p className="text-muted-foreground text-sm">Chargement des prédictions...</p>
-                      </div>
-                    </div>
-                  )}
-                  {error && !loading && (
-                    <div className="flex-1 flex items-center justify-center p-4">
-                      <div className="text-center space-y-2">
-                        <div className="text-destructive text-lg">⚠️</div>
-                        <p className="text-destructive text-sm">Erreur: {error}</p>
-                      </div>
-                    </div>
-                  )}
-                  {!loading && !error && (
-                    <PredictionsTable
-                      items={items}
-                      loading={loading}
-                      error={error}
-                      onSelect={id => setSelectedId(id)}
-                      onDelete={handleDelete}
-                    />
-                  )}
-                  {data && (
-                    <div className="sticky bottom-0 z-30 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-t px-3 py-1 shadow-sm flex-shrink-0">
-                      <PredictionsPagination page={data.page} size={data.size} totalPages={data.totalPages} onChange={handlePageChange} />
-                    </div>
-                  )}
-                </div>
-              </div>
-            </CardContent>
           </Card>
         </div>
 
-        {/* Graphiques à droite - hauteur fixe optimisée */}
-        <div className="flex flex-col gap-3 w-[400px] flex-shrink-0">
-          <div className="bg-card rounded-lg border shadow-sm h-[45%] min-h-0">
+        {/* Graphiques à droite - premier graph hauteur fixe, second graph prend tout l'espace restant */}
+        <div className="flex flex-col gap-3 w-[40%] ">
+          <div className="bg-card rounded-lg border shadow-sm h-[50%]">
             <PredictionsNumbersGraph items={items} />
           </div>
-          <div className="bg-card rounded-lg border shadow-sm h-[45%] min-h-0">
+          <div className="bg-card rounded-lg border shadow-sm h-[50%]">
             <PredictionsNumbers3DScatter items={items} />
           </div>
         </div>
       </div>
 
-      <PredictionDetailModal id={selectedId} onClose={() => setSelectedId(null)} />
     </div>
   );
 };
