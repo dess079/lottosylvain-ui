@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { fetchAIRecommendation } from '../../services/api';
-import type { SpringAiPredictionResponse } from '../../types/SpringAiPredictionResponse';
-import { Card, CardDescription, CardHeader, CardTitle, LottoBall, Button } from '../shadcn';
+import { Card, CardDescription, CardHeader, CardTitle, LottoBall, Button, Alert, AlertTitle, AlertDescription, Badge } from '../shadcn';
 import './PredictionTab.css';
 import { LottoAIResponse } from '@/types/LottoAIResponse';
 
@@ -24,7 +23,7 @@ const PredictionTab: React.FC = () => {
       setIsLoading(true);
       setError(null);
 
-  const prediction: LottoAIResponse = await fetchAIRecommendation();
+      const prediction: LottoAIResponse = await fetchAIRecommendation();
 
       console.log('AI prediction loaded:', prediction);
       setAIPrediction(prediction);
@@ -68,14 +67,43 @@ const PredictionTab: React.FC = () => {
           </div>
         )}
 
+        {/* Bandeau d'état (déjà existante vs générée maintenant) */}
+        {!isLoading && aiPrediction && (
+          (() => {
+            const status = aiPrediction.metadataExtra?.predictionStatus as string | undefined;
+            const targetDate = aiPrediction.metadataExtra?.targetDate as string | undefined;
+            const ts = aiPrediction.metadataExtra?.predictionTimestamp as string | undefined;
+            const tsLabel = ts ? new Date(ts).toLocaleString() : undefined;
+            if (!status) return null;
+            const isExisting = status === 'already-exists';
+            const title = isExisting ? 'Prédiction déjà existante' : 'Nouvelle prédiction générée';
+            const desc = isExisting
+              ? `La prédiction pour le tirage du ${targetDate ?? '—'} existe déjà. Dernière génération: ${tsLabel ?? '—'}`
+              : `Prédiction générée pour le tirage du ${targetDate ?? '—'} à ${tsLabel ?? '—'}`;
+            return (
+              <div className="mb-6">
+                <Alert className={isExisting ? 'border-amber-400/60' : 'border-emerald-500/60'}>
+                  <AlertTitle className="flex items-center gap-2">
+                    <Badge variant="outline" className={isExisting ? 'border-amber-400 text-amber-600' : 'border-emerald-500 text-emerald-600'}>
+                      {status}
+                    </Badge>
+                    {title}
+                  </AlertTitle>
+                  <AlertDescription>{desc}</AlertDescription>
+                </Alert>
+              </div>
+            );
+          })()
+        )}
+
         {/* Affichage complet de la réponse IA */}
         {!isLoading && aiPrediction && (
           <div className="flex flex-col gap-8">
             {/* Métadonnées + bouton relancer */}
             <div className="mb-4 flex flex-wrap gap-6 items-center justify-between">
               <div className="flex flex-wrap gap-6 items-center">
-                <span className="text-sm">Horodatage de la prédiction : <span className="font-mono">{aiPrediction.lottoPrediction.timestamp}</span></span>
-                <span className="text-sm">Prochain tirage : <span className="font-mono ">{aiPrediction.lottoPrediction.nextDrawDate}</span></span>
+                <span className="text-sm">Horodatage de la prédiction : <span className="font-mono">{aiPrediction.metadataExtra?.predictionTimestamp || aiPrediction.lottoPrediction.timestamp}</span></span>
+                <span className="text-sm">Prochain tirage : <span className="font-mono ">{aiPrediction.metadataExtra?.targetDate || aiPrediction.lottoPrediction.nextDrawDate}</span></span>
               </div>
               <Button
                 onClick={loadAIPrediction}

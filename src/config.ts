@@ -8,7 +8,7 @@
 
 // API config for Docker/Container
 const API_CONFIG_CONTAINER = {
-  BASE_URL: '/api/v3/lotto',
+  BASE_URL: '/api/essais',
   ENDPOINTS: {
     PREVIOUS_RESULTS: '/lotto-matrix/previous-results',
     PREDICTIONS: '/lotto-matrix/recommendations',
@@ -24,7 +24,7 @@ const API_CONFIG_CONTAINER = {
 
 // API config for local dev
 const API_CONFIG_LOCAL = {
-  BASE_URL: 'http://localhost:8090/api/v3/lotto',
+  BASE_URL: 'http://localhost:8090/api/essais',
   ENDPOINTS: {
     PREVIOUS_RESULTS: '/lotto-matrix/previous-results',
     PREDICTIONS: '/lotto-matrix/recommendations',

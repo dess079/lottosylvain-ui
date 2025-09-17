@@ -8,7 +8,7 @@ import React, { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { fetchSpringAIPrediction } from '../../services/api';
 import { aiPredictionStateSignal } from '../../signals/predictionSignal';
-import { Button } from '../shadcn';
+import { Button, Alert, AlertTitle, AlertDescription, Badge } from '../shadcn';
 import ConfidenceBar from './ConfidenceBar';
 import ErrorMessage from './ErrorMessage';
 import ExpandableCard from './ExpandableCard';
@@ -99,6 +99,33 @@ const PredictionSection: React.FC = () => {
             {isAILoading ? 'Génération en cours...' : 'Générer Prédiction IA'}
           </Button>
         </div>
+
+        {/* Bandeau d'état (déjà existante vs générée maintenant) */}
+        {!isAILoading && lottoAIResponse && (() => {
+          const status = lottoAIResponse.metadataExtra?.['predictionStatus'] as string | undefined;
+          const targetDate = lottoAIResponse.metadataExtra?.['targetDate'] as string | undefined;
+          const ts = lottoAIResponse.metadataExtra?.['predictionTimestamp'] as string | undefined;
+          const tsLabel = ts ? new Date(ts).toLocaleString() : undefined;
+          if (!status) return null;
+          const isExisting = status === 'already-exists';
+          const title = isExisting ? 'Prédiction déjà existante' : 'Nouvelle prédiction générée';
+          const desc = isExisting
+            ? `La prédiction pour le tirage du ${targetDate ?? '—'} existe déjà. Dernière génération: ${tsLabel ?? '—'}`
+            : `Prédiction générée pour le tirage du ${targetDate ?? '—'} à ${tsLabel ?? '—'}`;
+          return (
+            <div className="mb-6">
+              <Alert className={isExisting ? 'border-amber-400/60' : 'border-emerald-500/60'}>
+                <AlertTitle className="flex items-center gap-2">
+                  <Badge variant="outline" className={isExisting ? 'border-amber-400 text-amber-600' : 'border-emerald-500 text-emerald-600'}>
+                    {status}
+                  </Badge>
+                  {title}
+                </AlertTitle>
+                <AlertDescription>{desc}</AlertDescription>
+              </Alert>
+            </div>
+          );
+        })()}
 
         {lottoAIResponse && (
           <motion.div

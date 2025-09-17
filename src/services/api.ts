@@ -1,5 +1,5 @@
 import { API_CONFIG } from '../config';
-import type { CustomPredictionParams, DrawStatistics, PredictionData, PreviousResult, AIResponse } from '../types';
+import type { CustomPredictionParams, PredictionData, PreviousResult, AIResponse } from '../types';
 import type { LottoAIResponse } from '@/types/LottoAIResponse';
 
 
@@ -95,19 +95,29 @@ export async function fetchPredictions(): Promise<LottoAIResponse> {
  */
 export async function fetchDetailedNumberStatistics(): Promise<Map<number, any>> {
   try {
-    // Utiliser l'URL complète pour l'endpoint des statistiques
-    const response = await fetch(`http://localhost:8090/api/essais/lotto-matrix/stats`);
+    // Utiliser la configuration API pour construire l'URL correcte selon l'environnement
+    const url = `${API_CONFIG.BASE_URL}/lotto-matrix/stats`;
+    console.log('[fetchDetailedNumberStatistics] Calling URL:', url);
+    
+    const response = await fetch(url);
     if (!response.ok) {
-      throw new Error('Failed to fetch detailed statistics');
+      throw new Error(`Failed to fetch detailed statistics: ${response.status} ${response.statusText}`);
     }
     const data = await response.json();
 
-    // Convertir l'objet en Map pour un accès plus facile
+    // Convertir les données en Map pour un accès plus facile
     const statsMap = new Map<number, any>();
+    
+    // La structure retournée par le backend existant: {success: true, data: {}, count: X}
     if (data.success && data.data) {
       Object.entries(data.data).forEach(([key, value]) => {
-        statsMap.set(parseInt(key), value);
+        const numberKey = parseInt(key);
+        // La valeur contient déjà toutes les statistiques pour ce numéro
+        statsMap.set(numberKey, value);
       });
+      console.log('[fetchDetailedNumberStatistics] Successfully mapped', statsMap.size, 'numbers');
+    } else {
+      console.warn('[fetchDetailedNumberStatistics] No success or data found in response:', data);
     }
 
     return statsMap;
@@ -188,14 +198,17 @@ export async function fetchCustomPredictions(params: CustomPredictionParams): Pr
  */
 export async function fetchDrawCount(): Promise<number> {
   try {
-    // Première tentative: endpoint spécifique pour le nombre de tirages
-    const response = await fetch(`${API_BASE_URL}${API_CONFIG.ENDPOINTS.DRAW_COUNT}`);
+    // Utiliser la configuration API pour construire l'URL correcte selon l'environnement
+    const url = `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.DRAW_COUNT}`;
+    console.log('[fetchDrawCount] Calling URL:', url);
+    
+    const response = await fetch(url);
     if (!response.ok) {
-      throw new Error('Failed to fetch draw count');
+      throw new Error(`Failed to fetch draw count: ${response.status} ${response.statusText}`);
     }
 
     const data = await response.json();
-    console.warn('[fetchDrawCount] Réponse brute API:', data);
+    console.log('[fetchDrawCount] Réponse brute API:', data);
 
     // Accepte { count: number }, { success: boolean, count: number } ou { totalDraws: number }
     if (data && typeof data.count === 'number') {
