@@ -100,7 +100,7 @@ const NumberFrequencyBarChart: React.FC<{ isActive: boolean }> = ({ isActive }) 
                 <YAxis
                   label={{ value: 'Fréquence d\'apparition', angle: -90, position: 'insideLeft', textAnchor: 'center' }}
                   allowDecimals={false}
-                  domain={['dataMin - 10', 'dataMax + 10']}
+               
                   tick={{ fontSize: 12 }}
                 />
         
