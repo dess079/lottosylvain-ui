@@ -14,6 +14,7 @@ The `essais` directory of lottoquebec project contains the API that exploits the
 - Jamais au grand jamais utiliser de script pour démarrer le projet
 - Toujours utiliser les commandes npm ou yarn pour démarrer le projet.
 - Jamais faire la création de données fictives dans le projet, si tu en vois tu dois les supprimer.
+- Configurations : Il y a deux configurations pour l'API : une pour le container (utilisant .env.container ou .env.docker avec VITE_API_URL=http://lottoquebec-backend:8080/) et une pour le poste local (utilisant .env.local avec VITE_API_URL=http://localhost:8090/). Vérifier les fichiers .env.*, config.ts et api.ts pour les configurations. Pour DirectAI, s'assurer que la bonne configuration est utilisée selon l'environnement.
 
 ## Coding Preferences
 - Use TypeScript for type safety
