@@ -6,6 +6,8 @@ export interface AiPredictionListItem {
   numbers: number[]; // ordre original
   modelName: string;
   confidencePercentage?: number; // 0-100
+  drawResult: number[]; // Résultat du tirage pour la dateTirageCible
+  drawNumber?: number; // Numéro du tirage
 }
 
 export interface AiPredictionPageResponse {

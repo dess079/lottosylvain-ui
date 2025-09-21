@@ -13,14 +13,25 @@ interface Props {
   onDelete?: (id: number) => Promise<void> | void; // optionnel
 }
 
+// Composant pour une ligne de prédiction
+interface PredictionRowProps {
+  prediction: AiPredictionListItem;
+  onSelect: (id: number) => void;
+  onDelete?: (id: number) => void;
+  deletingId: number | null;
+  confirmId: number | null;
+  startDelete: (e: React.MouseEvent, id: number) => void;
+  nextDrawResult?: number[];
+}
+
 // Composant pour les en-têtes de table
 const TableHeaders: React.FC = () => (
   <TableHeader className="sticky top-0 z-20 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 shadow-sm">
     <TableRow>
-      <TableHead className="w-8">ID</TableHead>
       <TableHead className="w-30">Date prédiction</TableHead>
       <TableHead className="w-22">Date tirage</TableHead>
-      <TableHead className="w-20">Numéros</TableHead>
+      <TableHead className="w-30">Numéros</TableHead>
+      <TableHead className="w-30">Résultat du Tirage</TableHead>
       <TableHead className="text-right w-30">Confiance %</TableHead>
       <TableHead className="w-20">Modèle</TableHead>
       <TableHead className="w-24 text-right">Actions</TableHead>
@@ -31,7 +42,7 @@ const TableHeaders: React.FC = () => (
 // Composant pour une ligne de chargement
 const LoadingRow: React.FC = () => (
   <TableRow>
-    <TableCell colSpan={7} className="text-center py-8 text-sm text-muted-foreground">
+    <TableCell colSpan={8} className="text-center py-8 text-sm text-muted-foreground">
       Chargement des prédictions...
     </TableCell>
   </TableRow>
@@ -40,7 +51,7 @@ const LoadingRow: React.FC = () => (
 // Composant pour une ligne d'erreur
 const ErrorRow: React.FC<{ error: string }> = ({ error }) => (
   <TableRow>
-    <TableCell colSpan={7} className="text-center py-6 text-destructive text-sm">
+    <TableCell colSpan={8} className="text-center py-6 text-destructive text-sm">
       Erreur: {error}
     </TableCell>
   </TableRow>
@@ -49,7 +60,7 @@ const ErrorRow: React.FC<{ error: string }> = ({ error }) => (
 // Composant pour une ligne vide
 const EmptyRow: React.FC = () => (
   <TableRow>
-    <TableCell colSpan={7} className="text-center py-6 text-sm text-muted-foreground italic">
+    <TableCell colSpan={8} className="text-center py-6 text-sm text-muted-foreground italic">
       Aucune prédiction trouvée avec les filtres courants.
     </TableCell>
   </TableRow>
@@ -108,6 +119,7 @@ interface PredictionRowProps {
   deletingId: number | null;
   confirmId: number | null;
   startDelete: (e: React.MouseEvent, id: number) => void;
+  nextDrawResult?: number[];
 }
 
 const PredictionRow: React.FC<PredictionRowProps> = ({
@@ -128,12 +140,24 @@ const PredictionRow: React.FC<PredictionRowProps> = ({
     }}
     aria-disabled={confirmId != null ? 'true' : undefined}
   >
-    <TableCell>{prediction.id}</TableCell>
     <TableCell className="whitespace-nowrap">
-      {new Date(prediction.dateHeurePrediction).toLocaleString()}
+      {new Date(prediction.dateHeurePrediction).toISOString().slice(0, 16).replace('T', ' ')}
     </TableCell>
     <TableCell>{prediction.dateTirageCible}</TableCell>
-    <TableCell>{prediction.numbers.join('-')}</TableCell>
+    <TableCell>
+      {prediction.numbers.map((num, index) => (
+        <span
+          key={index}
+          className={prediction.drawResult && prediction.drawResult.includes(num) ? 'font-bold text-green-600' : ''}
+        >
+          {num}
+          {index < prediction.numbers.length - 1 ? '-' : ''}
+        </span>
+      ))}
+    </TableCell>
+    <TableCell>
+      {prediction.drawResult && prediction.drawResult.length > 0 ? prediction.drawResult.join('-') : '—'}
+    </TableCell>
     <TableCell className="text-right">
       {prediction.confidencePercentage != null
         ? (prediction.confidencePercentage * 100).toFixed(0) + '%'

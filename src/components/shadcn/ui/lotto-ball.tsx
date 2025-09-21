@@ -248,8 +248,8 @@ const LottoBall: React.FC<LottoBallProps> = ({
         />
       </div>
 
-      {/* Numéro de la boule */}
-      <span className="z-10 relative">
+      {/* Numéro de la boule centré */}
+      <span className="z-10 relative flex items-center justify-center w-full h-full">
         {number}
       </span>
     </motion.div>

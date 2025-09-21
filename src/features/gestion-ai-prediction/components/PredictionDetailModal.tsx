@@ -1,30 +1,95 @@
 import React from 'react';
 import AnalysisMarkdownBox from '../../../components/AnalysisMarkdownBox';
-import { Button, Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Separator } from '../../../components/shadcn';
+import { Button, Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Separator, LottoBall } from '../../../components/shadcn';
 import { useAiPredictionDetail } from '../hooks/useAiPredictionDetail';
 
 interface Props { id: number | null; onClose: () => void; }
+
+/**
+ * Formate une date en YYYY-MM-DD HH:mm
+ * @param dateString La date à formater
+ * @returns string formaté
+ */
+const formatDate = (dateString: string | Date): string => {
+  const date = typeof dateString === 'string' ? new Date(dateString) : dateString;
+  const pad = (n: number) => n.toString().padStart(2, '0');
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}`;
+};
+
+/**
+ * Formate une date en YYYY-MM-DD (sans heure/minute)
+ * @param dateString La date à formater
+ * @returns string formaté
+ */
+const formatDateOnly = (dateString: string | Date): string => {
+  const date = typeof dateString === 'string' ? new Date(dateString) : dateString;
+  const pad = (n: number) => n.toString().padStart(2, '0');
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
+};
 
 const PredictionDetailModal: React.FC<Props> = ({ id, onClose }) => {
   const { data, loading, error } = useAiPredictionDetail(id);
   const open = id != null;
   return (
-    <Dialog open={open} onOpenChange={(o) => { if (!o) onClose(); }}>
+  <Dialog open={open} onOpenChange={(o) => { if (!o) onClose(); }}>
      <DialogContent size="6xl" className="w-full max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Prédiction #{id}</DialogTitle>
-          <DialogDescription>Détails complets de la prédiction AI sélectionnée.</DialogDescription>
+          <DialogTitle className="text-2xl font-bold">
+            {data
+              ? `Prédiction pour le tirage ${formatDateOnly(data.dateTirageCible)}`
+              : `Prédiction`}
+          </DialogTitle>
+          <DialogDescription className="mb-2 text-base text-muted-foreground">
+            Détails complets de la prédiction AI sélectionnée.
+          </DialogDescription>
         </DialogHeader>
         {loading && <p className="text-sm text-muted-foreground">Chargement...</p>}
         {error && <p className="text-sm text-destructive">{error}</p>}
         {data && (
           <div className="space-y-6">
-            <div className="grid md:grid-cols-2 gap-3 text-xs md:text-sm">
-              <div><span className="font-semibold">Date prédiction:</span> {new Date(data.dateHeurePrediction).toLocaleString()}</div>
-              <div><span className="font-semibold">Confiance:</span> {data.confidencePercentage != null ? `${data.confidencePercentage.toFixed(1)} %` : '—'}</div>
-              <div><span className="font-semibold">Date tirage cible:</span> {data.dateTirageCible}</div>
-              <div><span className="font-semibold">Modèle:</span> {data.modelName}</div>
-              <div className="font-mono"><span className="font-semibold">Numéros:</span> {data.numbers.join('-')} <span className="text-muted-foreground">(triés: {data.sortedNumbers.join('-')})</span></div>
+            {/* Bloc d'informations principales */}
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 p-4 rounded-lg border shadow-sm">
+              <div className="flex flex-col gap-1">
+                <span className="text-xs text-muted-foreground">Date de la prédiction</span>
+                <span className="font-semibold">{formatDate(data.dateHeurePrediction)}</span>
+              </div>
+              <div className="flex flex-col gap-1">
+                <span className="text-xs text-muted-foreground">Confiance</span>
+                <span className="font-semibold">{data.confidencePercentage != null ? `${data.confidencePercentage.toFixed(2)} %` : '—'}</span>
+              </div>
+              <div className="flex flex-col gap-1">
+                <span className="text-xs text-muted-foreground">Modèle</span>
+                <span className="font-semibold">{data.modelName}</span>
+              </div>
+            </div>
+            {/* Bloc comparatif des numéros prédiction/tirage */}
+            <div className="flex flex-col md:flex-row items-center justify-center gap-8 p-4 rounded-lg border shadow-sm">
+              <div className="flex flex-col gap-1 md:mr-6">
+                <span className="font-semibold text-center w-full">Numéros de la prédiction</span>
+                <div className="flex flex-wrap gap-2 mt-1">
+                  {data.numbers.map((num: number, idx: number) => {
+                    const isInDraw = Array.isArray(data.drawResult) && data.drawResult.includes(num);
+                    return (
+                      <LottoBall
+                        key={idx}
+                        number={num}
+                        size="md"
+                        type={isInDraw ? 'prediction' : 'regular'}
+                      />
+                    );
+                  })}
+                </div>
+              </div>
+              {Array.isArray(data.drawResult) && data.drawResult.length > 0 && (
+                <div className="flex flex-col gap-1 md:ml-6">
+                  <span className="font-semibold text-center w-full">Numéros du tirage</span>
+                  <div className="flex flex-wrap gap-2 mt-1">
+                    {data.drawResult.map((num: number, idx: number) => (
+                      <LottoBall key={"draw-"+idx} number={num} size="md" type="regular" />
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
             <Separator />
             <div className="space-y-2">

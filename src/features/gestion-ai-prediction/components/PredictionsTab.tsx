@@ -1,16 +1,14 @@
+import { RotateCcw } from 'lucide-react';
 import React, { useState } from 'react';
-import PredictionsTable from './PredictionsTable';
-import PredictionsPagination from './PredictionsPagination';
-import PredictionDetailModal from './PredictionDetailModal';
-import FilterSheet from './FilterSheet';
-import { useAiPredictions, invalidateAiPredictionsCache } from '../hooks/useAiPredictions';
+import { Button, Card, CardHeader, CardTitle } from '../../../components/shadcn';
+import { invalidateAiPredictionsCache, useAiPredictions } from '../hooks/useAiPredictions';
 import { deletePrediction } from '../services/aiPredictionsApi';
 import { AiPredictionFilters } from '../types/aiPrediction';
-import { Card, CardHeader, CardTitle, CardContent } from '../../../components/shadcn';
-import { Button } from '../../../components/shadcn';
-import { RotateCcw, Maximize2, Minimize2 } from 'lucide-react';
-import PredictionsNumbersGraph from './PredictionsNumbersGraph';
+import FilterSheet from './FilterSheet';
 import PredictionsNumbers3DScatter from './PredictionsNumbers3DScatter';
+import PredictionsNumbersGraph from './PredictionsNumbersGraph';
+import PredictionsTable from './PredictionsTable';
+import PredictionDetailModal from './PredictionDetailModal';
 
 const PredictionsTab: React.FC = () => {
   // Filtres appliqués (ceux réellement envoyés à l'API)
@@ -28,10 +26,7 @@ const PredictionsTab: React.FC = () => {
   }
 
   const items = data?.content || [];
-
-  /** Met à jour la page courante */
-  const handlePageChange = (p: number) => setAppliedFilters(f => ({ ...f, page: p }));
-
+  // Les drawResults sont maintenant inclus dans les items du backen
   /** Réinitialise les filtres (exemple d'action future) */
   const [resetSignal, setResetSignal] = useState(0);
   const resetFilters = () => {
@@ -39,8 +34,6 @@ const PredictionsTab: React.FC = () => {
     setResetSignal(s => s + 1); // informe le composant enfant de réinitialiser son état local
   };
 
-  // Mode plein écran (masque les filtres)
-  const [fullScreen, setFullScreen] = useState(false);
   const [refreshSpin, setRefreshSpin] = useState(false);
 
   // Résumé lisible des filtres appliqués
@@ -123,7 +116,7 @@ const PredictionsTab: React.FC = () => {
           </div>
         </div>
       </div>
-
+      <PredictionDetailModal id={selectedId} onClose={() => setSelectedId(null)} />
     </div>
   );
 };
