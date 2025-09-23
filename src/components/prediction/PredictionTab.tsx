@@ -75,7 +75,8 @@ const PredictionTab: React.FC = () => {
             const ts = aiPrediction.metadataExtra?.predictionTimestamp as string | undefined;
             const tsLabel = ts ? new Date(ts).toLocaleString() : undefined;
             if (!status) return null;
-            const isExisting = status === 'already-exists';
+            // Statuts qui indiquent une prédiction existante (en français depuis le backend)
+            const isExisting = status === 'prediction-deja-faite' || status === 'regeneree' || status === 'existante';
             const title = isExisting ? 'Prédiction déjà existante' : 'Nouvelle prédiction générée';
             const desc = isExisting
               ? `La prédiction pour le tirage du ${targetDate ?? '—'} existe déjà. Dernière génération: ${tsLabel ?? '—'}`

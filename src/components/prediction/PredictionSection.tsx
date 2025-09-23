@@ -109,7 +109,8 @@ const PredictionSection: React.FC = () => {
           const ts = lottoAIResponse.metadataExtra?.['predictionTimestamp'] as string | undefined;
           const tsLabel = ts ? formatDate(new Date(ts), 'yyyy-MM-dd hh:mm') : undefined;
           if (!status) return null;
-          const isExisting = status === 'already-exists';
+          // Statuts qui indiquent une prédiction existante (en français depuis le backend)
+          const isExisting = status === 'prediction-deja-faite' || status === 'regeneree' || status === 'existante';
           const title = isExisting ? 'Prédiction déjà existante' : 'Nouvelle prédiction générée';
           const desc = isExisting
             ? `La prédiction pour le tirage du ${targetDate ?? '—'} existe déjà. Dernière génération: ${tsLabel ?? '—'}`
