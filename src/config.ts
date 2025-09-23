@@ -16,7 +16,7 @@ const API_CONFIG_CONTAINER = {
     CUSTOM_PREDICTIONS: '/lotto-matrix/recommend',
     DRAW_COUNT: '/lotto-matrix/draw-count',
     DATA_STATS: '/lotto-matrix/data-stats',
-    SPRING_AI_RECOMMENDATIONS: '/recommendations',
+    SPRING_AI_RECOMMENDATIONS: '/predictions/recommendations',
     SPRING_AI_STREAMING: '/predictions/stream',
     SPRING_AI_HEALTH: '/health'
   }
@@ -32,7 +32,7 @@ const API_CONFIG_LOCAL = {
     CUSTOM_PREDICTIONS: '/lotto-matrix/recommend',
     DRAW_COUNT: '/lotto-matrix/draw-count',
     DATA_STATS: '/lotto-matrix/data-stats',
-    SPRING_AI_RECOMMENDATIONS: '/recommendations',
+    SPRING_AI_RECOMMENDATIONS: '/predictions/recommendations',
     SPRING_AI_STREAMING: '/predictions/stream',
     SPRING_AI_HEALTH: '/health'
   }

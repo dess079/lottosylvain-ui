@@ -251,13 +251,16 @@ export const fetchAIRecommendation = async (): Promise<LottoAIResponse> => {
  * @param targetDate Date cible optionnelle (format YYYY-MM-DD)
  * @returns Les données retournées par Spring AI
  */
-export async function fetchSpringAIPrediction(targetDate?: string): Promise<LottoAIResponse> {
+export async function fetchSpringAIPrediction(targetDate?: Date): Promise<LottoAIResponse> {
   let url = `${API_BASE_URL}${API_CONFIG.ENDPOINTS.SPRING_AI_RECOMMENDATIONS}`;
+
   if (targetDate) {
-    url += `?targetDate=${encodeURIComponent(targetDate)}`;
+    url += `?targetDate=${encodeURIComponent(targetDate?.toISOString().split('T')[0])}`;
   }
+
   console.log('fetchSpringAIPrediction: Calling URL', url);
   const response = await fetch(url);
+
   if (!response.ok) {
     throw new Error(`Erreur lors de la récupération de la prédiction Spring AI: ${response.status} - ${response.statusText}`);
   }

@@ -1,6 +1,6 @@
 import React from 'react';
 import AnalysisMarkdownBox from '../../../components/AnalysisMarkdownBox';
-import { Button, Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Separator, LottoBall } from '../../../components/shadcn';
+import { Button, Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Separator, LottoBall, Alert, AlertDescription } from '../../../components/shadcn';
 import { useAiPredictionDetail } from '../hooks/useAiPredictionDetail';
 
 interface Props { id: number | null; onClose: () => void; }
@@ -62,6 +62,22 @@ const PredictionDetailModal: React.FC<Props> = ({ id, onClose }) => {
                 <span className="font-semibold">{data.modelName}</span>
               </div>
             </div>
+            
+            {/* Alerte si prédiction déjà calculée */}
+            {data.metadata?.alreadyCalculated && (
+              <Alert className="border-blue-200 bg-blue-50">
+                <AlertDescription className="text-blue-800">
+                  ℹ️ {data.metadata.message || "Cette prédiction avait déjà été calculée par l'IA"}
+                  {data.metadata.originalCreateDate && (
+                    <span className="block text-sm mt-1">
+                      Créée le {new Date(data.metadata.originalCreateDate).toLocaleString('fr-FR')}
+                      {data.metadata.originalCreateUser && ` par ${data.metadata.originalCreateUser}`}
+                    </span>
+                  )}
+                </AlertDescription>
+              </Alert>
+            )}
+            
             {/* Bloc comparatif des numéros prédiction/tirage */}
             <div className="flex flex-col md:flex-row items-center justify-center gap-8 p-4 rounded-lg border shadow-sm">
               <div className="flex flex-col gap-1 md:mr-6">
@@ -83,10 +99,18 @@ const PredictionDetailModal: React.FC<Props> = ({ id, onClose }) => {
               {Array.isArray(data.drawResult) && data.drawResult.length > 0 && (
                 <div className="flex flex-col gap-1 md:ml-6">
                   <span className="font-semibold text-center w-full">Numéros du tirage</span>
-                  <div className="flex flex-wrap gap-2 mt-1">
-                    {data.drawResult.map((num: number, idx: number) => (
-                      <LottoBall key={"draw-"+idx} number={num} size="md" type="regular" />
+                  <div className="flex flex-wrap gap-2 mt-1 items-center">
+                    {/* Affichage des 6 premiers numéros (numéros principaux) en vert */}
+                    {data.drawResult.slice(0, 6).map((num: number, idx: number) => (
+                      <LottoBall key={"draw-"+idx} number={num} size="md" type="prediction" />
                     ))}
+                    {/* Affichage du numéro bonus à la suite s'il existe (7ème numéro) */}
+                    {data.drawResult.length > 6 && (
+                      <>
+                        <span className="text-sm text-muted-foreground mx-2">+</span>
+                        <LottoBall number={data.drawResult[6]} size="md" type="bonus" />
+                      </>
+                    )}
                   </div>
                 </div>
               )}

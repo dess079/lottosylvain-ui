@@ -31,6 +31,7 @@ const TableHeaders: React.FC = () => (
       <TableHead className="w-30">Date prédiction</TableHead>
       <TableHead className="w-22">Date tirage</TableHead>
       <TableHead className="w-30">Numéros</TableHead>
+      <TableHead className="w-16 text-center">Hit</TableHead>
       <TableHead className="w-30">Résultat du Tirage</TableHead>
       <TableHead className="text-right w-30">Confiance %</TableHead>
       <TableHead className="w-20">Modèle</TableHead>
@@ -42,7 +43,7 @@ const TableHeaders: React.FC = () => (
 // Composant pour une ligne de chargement
 const LoadingRow: React.FC = () => (
   <TableRow>
-    <TableCell colSpan={8} className="text-center py-8 text-sm text-muted-foreground">
+    <TableCell colSpan={9} className="text-center py-8 text-sm text-muted-foreground">
       Chargement des prédictions...
     </TableCell>
   </TableRow>
@@ -51,7 +52,7 @@ const LoadingRow: React.FC = () => (
 // Composant pour une ligne d'erreur
 const ErrorRow: React.FC<{ error: string }> = ({ error }) => (
   <TableRow>
-    <TableCell colSpan={8} className="text-center py-6 text-destructive text-sm">
+    <TableCell colSpan={9} className="text-center py-6 text-destructive text-sm">
       Erreur: {error}
     </TableCell>
   </TableRow>
@@ -60,7 +61,7 @@ const ErrorRow: React.FC<{ error: string }> = ({ error }) => (
 // Composant pour une ligne vide
 const EmptyRow: React.FC = () => (
   <TableRow>
-    <TableCell colSpan={8} className="text-center py-6 text-sm text-muted-foreground italic">
+    <TableCell colSpan={9} className="text-center py-6 text-sm text-muted-foreground italic">
       Aucune prédiction trouvée avec les filtres courants.
     </TableCell>
   </TableRow>
@@ -154,6 +155,20 @@ const PredictionRow: React.FC<PredictionRowProps> = ({
           {index < prediction.numbers.length - 1 ? '-' : ''}
         </span>
       ))}
+    </TableCell>
+    <TableCell className="text-center font-semibold">
+      {prediction.drawResult && prediction.drawResult.length > 0
+        ? (() => {
+            const hitCount = prediction.numbers.filter(num => prediction.drawResult.includes(num)).length;
+            const totalNumbers = prediction.numbers.length;
+            return (
+              <span className={hitCount > 0 ? 'text-green-600' : ''}>
+                {hitCount}/{totalNumbers}
+              </span>
+            );
+          })()
+        : '—'
+      }
     </TableCell>
     <TableCell>
       {prediction.drawResult && prediction.drawResult.length > 0 ? prediction.drawResult.join('-') : '—'}

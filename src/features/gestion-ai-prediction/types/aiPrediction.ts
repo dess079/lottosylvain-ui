@@ -28,6 +28,7 @@ export interface AiPredictionDetail extends AiPredictionListItem {
   recCreateUserId?: string;
   recUpdateDateTime?: string;
   recUpdateUserId?: string;
+  metadata?: Record<string, any>; // Métadonnées additionnelles du backend
 }
 
 export interface AiPredictionFilters {

@@ -42,7 +42,8 @@ const PredictionSection: React.FC = () => {
     };
 
     try {
-      const data: LottoAIResponse = await fetchSpringAIPrediction();
+
+      const data: LottoAIResponse = await fetchSpringAIPrediction(getNextDrawDate());
       console.log('API Prediction Response:', data);
       
       // Adapte selon la vraie structure de la réponse
@@ -58,6 +59,7 @@ const PredictionSection: React.FC = () => {
         isAILoading: false,
         error: 'Erreur lors de la récupération de la prédiction IA.',
       };
+      throw err;
     }
   };
 
@@ -105,7 +107,7 @@ const PredictionSection: React.FC = () => {
           const status = lottoAIResponse.metadataExtra?.['predictionStatus'] as string | undefined;
           const targetDate = lottoAIResponse.metadataExtra?.['targetDate'] as string | undefined;
           const ts = lottoAIResponse.metadataExtra?.['predictionTimestamp'] as string | undefined;
-          const tsLabel = ts ? new Date(ts).toLocaleString() : undefined;
+          const tsLabel = ts ? formatDate(new Date(ts), 'yyyy-MM-dd hh:mm') : undefined;
           if (!status) return null;
           const isExisting = status === 'already-exists';
           const title = isExisting ? 'Prédiction déjà existante' : 'Nouvelle prédiction générée';

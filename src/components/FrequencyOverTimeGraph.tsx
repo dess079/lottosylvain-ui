@@ -3,7 +3,7 @@ import { Chart, registerables } from 'chart.js';
 import { Chart as ReactChart } from 'react-chartjs-2';
 import { ChartData, ChartOptions } from 'chart.js';
 import { useTheme } from '../context/ThemeContext';
-import ErrorBoundary from './ErrorBoundary';
+import ErrorBoundary from './errorBundaries/ErrorBoundary';
 
 // Register all necessary Chart.js components
 Chart.register(...registerables);
