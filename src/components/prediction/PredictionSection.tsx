@@ -1,4 +1,3 @@
-import { getNextDrawDate } from '@/lib/utils';
 import type { LottoAIResponse } from '@/types/LottoAIResponse';
 import { useSignals } from '@preact/signals-react/runtime';
 import { formatDate } from 'date-fns';
@@ -29,7 +28,7 @@ const PredictionSection: React.FC = () => {
   const [isMetadataOpen, setIsMetadataOpen] = useState(false);
   const [isFullResponseOpen, setIsFullResponseOpen] = useState(false);
   const [isThinkOpen, setIsThinkOpen] = useState(false);
-  const nextDrawDate = getNextDrawDate();
+  const nextDrawDate = new Date();
 
   /**
    * Charge la recommandation IA principale
@@ -43,7 +42,7 @@ const PredictionSection: React.FC = () => {
 
     try {
 
-      const data: LottoAIResponse = await fetchSpringAIPrediction(getNextDrawDate());
+      const data: LottoAIResponse = await fetchSpringAIPrediction(nextDrawDate);
       console.log('API Prediction Response:', data);
       
       // Adapte selon la vraie structure de la réponse

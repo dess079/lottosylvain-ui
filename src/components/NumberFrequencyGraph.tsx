@@ -30,6 +30,7 @@ const NumberFrequencyGraph: React.FC<NumberFrequencyGraphProps> = ({ data, optio
 
   const dynamicOptions: ChartOptions<'line'> = {
     ...options,
+    backgroundColor: 'transparent',
     plugins: {
       ...options?.plugins,
       legend: {
@@ -43,10 +44,16 @@ const NumberFrequencyGraph: React.FC<NumberFrequencyGraphProps> = ({ data, optio
         ticks: {
           color: theme === 'dark' ? '#ffffff' : '#000000',
         },
+        grid: {
+          color: theme === 'dark' ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.2)',
+        },
       },
       y: {
         ticks: {
           color: theme === 'dark' ? '#ffffff' : '#000000',
+        },
+        grid: {
+          color: theme === 'dark' ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.2)',
         },
       },
     },

@@ -138,7 +138,7 @@ const PredictionTab: React.FC = () => {
                       Score de confiance :{' '}
                       <span className="font-mono text-green-700 dark:text-green-400">
                         {typeof aiPrediction.lottoPrediction?.confidenceScore === 'number'
-                          ? aiPrediction.lottoPrediction.confidenceScore.toFixed(3)
+                          ? `${(aiPrediction.lottoPrediction.confidenceScore * 100).toFixed(1)}%`
                           : 'N/A'}
                       </span>
                     </div>

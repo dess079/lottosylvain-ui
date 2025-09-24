@@ -3,6 +3,7 @@ import { FooterSection } from './components/FooterSection';
 import { FuturisticToolbar } from './components/shadcn';
 import { TabsLotto } from './components/tabs/ui';
 import { ErrorBoundaryUI } from './components/errorBundaries/ErrorBoundaryUI';
+import { ThemeProvider } from './context/ThemeContext';
 
 /**
  * ErrorBoundary pour capturer les erreurs de rendu des composants enfants.
@@ -38,17 +39,19 @@ class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boole
 const App: React.FC = () => {
 
   return (
-    <ErrorBoundary>
-      <div className="flex flex-col min-h-screen bg-background text-foreground">
-        {/* Barre d'outils futuriste avec ref pour mesurer sa hauteur */}
-        <FuturisticToolbar />
-        {/* TabsLotto occupe tout l'espace disponible entre la toolbar et le footer */}
-        <div className="flex-1 flex flex-col">
-          <TabsLotto />
+    <ThemeProvider>
+      <ErrorBoundary>
+        <div className="flex flex-col min-h-screen bg-background text-foreground">
+          {/* Barre d'outils futuriste avec ref pour mesurer sa hauteur */}
+          <FuturisticToolbar />
+          {/* TabsLotto occupe tout l'espace disponible entre la toolbar et le footer */}
+          <div className="flex-1 flex flex-col">
+            <TabsLotto />
+          </div>
+          <FooterSection />
         </div>
-        <FooterSection />
-      </div>
-    </ErrorBoundary>
+      </ErrorBoundary>
+    </ThemeProvider>
   );
 };
 

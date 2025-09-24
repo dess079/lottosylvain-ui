@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { LottoTemporalGraphData, TemporalGraphResponse } from '../types/lottoTemporalGraph';
 import FrequencyOverTimeGraph from './FrequencyOverTimeGraph';
 import NumberFrequencyGraph from './NumberFrequencyGraph';
+import { useTheme } from '../context/ThemeContext';
 import './LottoTemporalGraphScreen.css';
 
 /**
@@ -9,6 +10,7 @@ import './LottoTemporalGraphScreen.css';
  * Permet de saisir une date de début et de fin, puis d'afficher le graphique temporel
  */
 const LottoTemporalGraphScreen: React.FC = () => {
+  const { theme } = useTheme();
   const [startDate, setStartDate] = useState('2020-01-01');
   const [endDate, setEndDate] = useState(new Date().toISOString().slice(0, 10));
   const [data, setData] = useState<LottoTemporalGraphData | null>(null);
@@ -76,8 +78,8 @@ const LottoTemporalGraphScreen: React.FC = () => {
         {
           label: 'Frequency of Numbers Over Time',
           data: frequencies,
-          borderColor: '#1976d2',
-          backgroundColor: 'rgba(25, 118, 210, 0.5)',
+          borderColor: theme === 'dark' ? '#64b5f6' : '#1976d2',
+          backgroundColor: theme === 'dark' ? 'rgba(100, 181, 246, 0.5)' : 'rgba(25, 118, 210, 0.5)',
         },
       ],
     };
@@ -108,15 +110,15 @@ const LottoTemporalGraphScreen: React.FC = () => {
         {
           label: 'Frequency of Numbers (1 to 49)',
           data: numberFrequencies,
-          borderColor: '#1976d2',
-          backgroundColor: 'rgba(25, 118, 210, 0.5)',
+          borderColor: theme === 'dark' ? '#64b5f6' : '#1976d2',
+          backgroundColor: theme === 'dark' ? 'rgba(100, 181, 246, 0.5)' : 'rgba(25, 118, 210, 0.5)',
         },
       ],
     };
   };
 
   return (
-    <div className="flex flex-col lotto-temporal-graph-screen">
+    <div className="flex flex-col lotto-temporal-graph-screen bg-background">
       <div className="flex flex-col items-center mb-8">
         <h2 className="title">Graphique temporel Lotto 6/49</h2>
         <form
