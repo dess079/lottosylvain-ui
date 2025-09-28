@@ -61,7 +61,7 @@ const PredictionsNumbers3DScatter: React.FC<Props> = ({ items }) => {
           font: { size: 20, color: isDarkMode ? '#fff' : '#000' }
         }, 
         tickformat: '%d/%m/%Y',
-        tickfont: { color: isDarkMode ? '#fff' : '#000', size: 15 },
+        tickfont: { color: isDarkMode ? '#fff' : '#000', size: 9 },
         showgrid: true,
         gridcolor: isDarkMode ? '#444' : '#ccc',
         gridwidth: 3
@@ -71,7 +71,7 @@ const PredictionsNumbers3DScatter: React.FC<Props> = ({ items }) => {
           text: 'Index numéro',
           font: { size: 20, color: isDarkMode ? '#fff' : '#000' }
         },
-        tickfont: { color: isDarkMode ? '#fff' : '#000', size: 15 },
+        tickfont: { color: isDarkMode ? '#fff' : '#000', size: 9 },
         showgrid: true,
         gridcolor: isDarkMode ? '#444' : '#ccc',
         gridwidth: 3
@@ -79,9 +79,10 @@ const PredictionsNumbers3DScatter: React.FC<Props> = ({ items }) => {
       zaxis: { 
         title: { 
           text: 'Numéro',
-          font: { size: 20, color: isDarkMode ? '#fff' : '#000' }
+          font: { size: 25, color: isDarkMode ? '#fff' : '#000' },
+          standoff: 20
         },
-        tickfont: { color: isDarkMode ? '#fff' : '#000', size: 15 },
+        tickfont: { color: isDarkMode ? '#fff' : '#000', size: 9 },
         showgrid: true,
         gridcolor: isDarkMode ? '#444' : '#ccc',
         gridwidth: 3

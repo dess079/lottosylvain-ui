@@ -1,5 +1,5 @@
 import React, { useEffect, useReducer } from 'react';
-import { addDays, subDays, getDay, format as formatDate } from 'date-fns';
+import { getDay, format as formatDate } from 'date-fns';
 import { LottoBall } from '../shadcn';
 import { fetchPreviousResults } from '../../services/api';
 import type { PreviousResult } from '../../types';
@@ -13,44 +13,20 @@ interface PreviousDrawTabProps {
 }
 
 /**
- * Calcule la date du dernier tirage (mercredi ou samedi le plus récent)
- * et la date du prochain tirage (mercredi ou samedi suivant)
- * @param today Date de référence (au format 'YYYY-MM-DD')
- * @returns Un tuple [dateDernierTirage, dateProchainTirage]
+ * Vérifie si aujourd'hui est un jour de tirage (mercredi ou samedi)
  */
-function getDrawDates(today: string): [string, string] {
-  /**
-   * Utilise date-fns pour calculer le dernier et le prochain tirage (mercredi ou samedi)
-   * @param today Date au format 'YYYY-MM-DD'
-   * @returns [dateDernierTirage, dateProchainTirage] au format 'YYYY-MM-DD'
-   */
-  const date = new Date(today);
-  const day = getDay(date); // 0 = dimanche, 1 = lundi, ..., 6 = samedi
-  const drawDays = [3, 6]; // mercredi, samedi
+function isTodayDrawDay(): boolean {
+  const today = new Date();
+  const day = getDay(today);
+  return day === 3 || day === 6; // mercredi ou samedi
+}
 
-  // Trouver le dernier tirage
-  let lastDraw = date;
-  if (!drawDays.includes(day)) {
-    // Cherche le plus proche jour de tirage passé
-    const daysAgo = drawDays
-      .map(d => (d <= day ? day - d : day + 7 - d))
-      .sort((a, b) => a - b)[0];
-    lastDraw = subDays(date, daysAgo);
-  }
-
-  // Trouver le prochain tirage (toujours après le dernier tirage)
-  let nextDraw: Date;
-  const lastDay = getDay(lastDraw);
-  if (lastDay === 3) {
-    // Dernier tirage mercredi -> prochain samedi
-    nextDraw = addDays(lastDraw, 3);
-  } else {
-    // Dernier tirage samedi -> prochain mercredi
-    nextDraw = addDays(lastDraw, 4);
-  }
-
-  // Format YYYY-MM-DD
-  return [formatDate(lastDraw, 'yyyy-MM-dd'), formatDate(nextDraw, 'yyyy-MM-dd')];
+/**
+ * Vérifie si la date du tirage affiché correspond à aujourd'hui
+ */
+function isDrawFromToday(drawDate: string): boolean {
+  const today = new Date().toISOString().slice(0, 10);
+  return drawDate === today;
 }
 
 /**
@@ -79,14 +55,13 @@ const PreviousDrawTab: React.FC<PreviousDrawTabProps> = ({ isActive, ballSize })
   | { type: 'SET_DATES_EDITED'; payload: boolean };
 
   const today = new Date().toISOString().slice(0, 10);
-  const [initialStartDate, initialEndDate] = getDrawDates(today);
   const initialState: State = {
     previousDraw: null,
     drawError: null,
     drawLoading: false,
     hasLoaded: false,
-    startDate: initialStartDate,
-    endDate: initialEndDate,
+    startDate: today,
+    endDate: today,
   datesEditedByUser: false,
   };
 
@@ -125,17 +100,16 @@ const PreviousDrawTab: React.FC<PreviousDrawTabProps> = ({ isActive, ballSize })
   }, [state.drawError, state.previousDraw]);
 
   useEffect(() => {
-    // Utilise getDrawDates pour garantir la logique métier
-    const [start, end] = getDrawDates(today);
-    loadPreviousDraw(start, end);
+    // Charger le dernier tirage disponible (sans spécifier de dates)
+    loadPreviousDraw();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Charge les données seulement quand l'onglet devient actif
+    // Charge les données seulement quand l'onglet devient actif
   useEffect(() => {
     if (isActive && !state.hasLoaded) {
-      const [start, end] = getDrawDates(today);
-      loadPreviousDraw(start, end);
+      // Charger le dernier tirage disponible (sans spécifier de dates)
+      loadPreviousDraw();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isActive, state.hasLoaded]);
@@ -160,19 +134,29 @@ const PreviousDrawTab: React.FC<PreviousDrawTabProps> = ({ isActive, ballSize })
 
   /**
    * Récupère les données du dernier tirage
-   * Envoie toujours les dates, même si elles sont undefined, pour éviter null côté backend
+   * Si aucun paramètre n'est fourni, demande le dernier tirage au backend
+   * Sinon, recherche dans la période spécifiée
    */
   const loadPreviousDraw = async (start?: string, end?: string) => {
     try {
       dispatch({ type: 'SET_LOADING', payload: true });
       dispatch({ type: 'SET_ERROR', payload: null });
-      const today = new Date().toISOString().slice(0, 10);
-      const startDate = start ? start.slice(0, 10) : today;
-      const endDate = end ? end.slice(0, 10) : today;
 
-      const previousResult: PreviousResult | any = await fetchPreviousResults(startDate, endDate);
-      console.log('[PreviousDrawTab] loadPreviousDraw', { startDate, endDate, previousResult });
-      
+      let previousResult: PreviousResult | any;
+
+      // Si aucun paramètre n'est fourni, demander le dernier tirage au backend
+      if (start === undefined && end === undefined) {
+        previousResult = await fetchPreviousResults();
+      } else {
+        // Sinon, rechercher dans la période spécifiée
+        const today = new Date().toISOString().slice(0, 10);
+        const startDate = start ? start.slice(0, 10) : today;
+        const endDate = end ? end.slice(0, 10) : today;
+        previousResult = await fetchPreviousResults(startDate, endDate);
+      }
+
+      console.log('[PreviousDrawTab] loadPreviousDraw', { start, end, previousResult });
+
       // Gérer le cas où le backend renvoie directement un tableau
       let normalizedResult: PreviousResult;
       if (Array.isArray(previousResult)) {
@@ -184,7 +168,7 @@ const PreviousDrawTab: React.FC<PreviousDrawTabProps> = ({ isActive, ballSize })
       } else {
         normalizedResult = { previousResult: [] };
       }
- 
+
       if (!normalizedResult.previousResult || normalizedResult.previousResult.length === 0) {
         dispatch({ type: 'SET_ERROR', payload: 'Aucun tirage trouvé pour la période sélectionnée.' });
         dispatch({ type: 'SET_PREVIOUS_DRAW', payload: normalizedResult });
@@ -274,120 +258,127 @@ const PreviousDrawTab: React.FC<PreviousDrawTabProps> = ({ isActive, ballSize })
         {state.drawError && (
           <div className="mb-4 p-3 bg-red-500/10 border border-red-500/30 rounded-lg flex items-center justify-center w-full max-w-xl">
             <span className="text-red-500">{state.drawError}</span>
-            <pre className="text-xs text-red-700 mt-2">{JSON.stringify(state, null, 2)}</pre>
           </div>
         )}
         
         {/* Résultat ou message si aucun résultat */}
         {!state.drawLoading && state.previousDraw && Array.isArray(state.previousDraw.previousResult) && state.previousDraw.previousResult.length > 0 ? (
-          state.previousDraw.previousResult.length === 1 ? (
-            // Affichage spécial pour un seul tirage : boules très grosses centrées
-            <div className="flex flex-col items-center justify-center gap-8 previous-draw-animation animate-fade-in w-full">
-              {state.previousDraw.previousResult.slice(0, 1).map((draw, idx) => (
-                <div key={draw.previousResultDate + '-' + idx} className="w-full flex flex-col items-center gap-6">
+          <>
+            {state.previousDraw.previousResult.length === 1 ? (
+              // Affichage spécial pour un seul tirage : boules très grosses centrées
+              <div className="flex flex-col items-center justify-center gap-8 previous-draw-animation animate-fade-in w-full">
+                {state.previousDraw.previousResult.slice(0, 1).map((draw, idx) => (
+                  <div key={draw.previousResultDate + '-' + idx} className="w-full flex flex-col items-center gap-6">
+                    {/* Date du tirage */}
+                    <div className="text-center">
+                      <h3 className="text-xl font-semibold text-slate-600 dark:text-slate-300 mb-2">
+                        Tirage du
+                      </h3>
+                      <p className="text-3xl font-bold text-indigo-600 dark:text-indigo-400">
+                        {formatDate(new Date(draw.previousResultDate), 'yyyy-MM-dd')}
+                      </p>
+                      {/* Message si le tirage du jour n'est pas encore disponible */}
+                      {isTodayDrawDay() && !isDrawFromToday(draw.previousResultDate) && (
+                        <p className="text-sm text-amber-600 dark:text-amber-400 mt-2 italic">
+                          ⚠️ Le tirage d'aujourd'hui n'est pas encore disponible
+                        </p>
+                      )}
+                    </div>
+
+                    {/* Les 6 numéros principaux en très grand, prenant toute la largeur */}
+                    <div className="flex justify-center gap-8 mb-6 w-full max-w-6xl flex-wrap">
+                      {Array.isArray(draw.resultNumbers) && draw.resultNumbers.length > 0 ? (
+                        draw.resultNumbers.map((num: number, i: number) => (
+                          <LottoBall
+                            key={i}
+                            number={num}
+                            size="xl"
+                            type="regular"
+                            className="!w-32 !h-32 !text-5xl !leading-[8rem]"
+                          />
+                        ))
+                      ) : (
+                        <span className="text-slate-400 text-2xl">Aucun numéro à afficher</span>
+                      )}
+                    </div>
+
+                    {/* Numéro bonus centré en dessous */}
+                    {typeof draw.bonusNumber === 'number' && (
+                      <div className="flex flex-col items-center gap-4">
+                        <h4 className="text-2xl font-semibold text-slate-600 dark:text-slate-300">
+                          Numéro Bonus
+                        </h4>
+                        <LottoBall
+                          number={draw.bonusNumber}
+                          size="xl"
+                          type="bonus"
+                          className="!w-32 !h-32 !text-5xl !leading-[8rem]"
+                        />
+                      </div>
+                    )}
+
+                    {/* Message d'erreur s'il y en a un */}
+                    {draw.message && (
+                      <div className="text-sm text-red-500 text-center mt-4">
+                        {draw.message}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            ) : (
+              // Affichage normal pour plusieurs tirages : cards
+              <div className="flex flex-wrap justify-center gap-4 previous-draw-animation animate-fade-in w-full">
+                {state.previousDraw.previousResult.slice(0, 25).map((draw, idx) => (
+                <div 
+                  key={draw.previousResultDate + '-' + idx} 
+                  className="rounded-lg shadow-lg border-2 p-3 min-w-[240px] max-w-[280px] flex-shrink-0"
+                >
                   {/* Date du tirage */}
-                  <div className="text-center">
-                    <h3 className="text-xl font-semibold text-slate-600 dark:text-slate-300 mb-2">
+                  <div className="text-center mb-3">
+                    <h3 className="text-sm font-semibold text-slate-600 dark:text-slate-300 mb-1">
                       Tirage du
                     </h3>
-                    <p className="text-3xl font-bold text-indigo-600 dark:text-indigo-400">
+                    <p className="text-lg font-bold text-indigo-600 dark:text-indigo-400">
                       {formatDate(new Date(draw.previousResultDate), 'yyyy-MM-dd')}
                     </p>
                   </div>
 
-                  {/* Les 6 numéros principaux en très grand, prenant toute la largeur */}
-                  <div className="flex justify-center gap-8 mb-6 w-full max-w-6xl flex-wrap">
+                  {/* Numéros du tirage */}
+                  <div className="flex justify-center gap-1 mb-3">
                     {Array.isArray(draw.resultNumbers) && draw.resultNumbers.length > 0 ? (
                       draw.resultNumbers.map((num: number, i: number) => (
                         <LottoBall
                           key={i}
                           number={num}
-                          size="xl"
+                          size={ballSize || 'xs'}
                           type="regular"
-                          className="!w-32 !h-32 !text-5xl !leading-[8rem]"
                         />
                       ))
                     ) : (
-                      <span className="text-slate-400 text-2xl">Aucun numéro à afficher</span>
+                      <span className="text-slate-400 text-base">Aucun numéro à afficher</span>
+                    )}
+                    {/* Boule bonus */}
+                    {typeof draw.bonusNumber === 'number' && (
+                      <LottoBall
+                        number={draw.bonusNumber}
+                        size={ballSize || 'xs'}
+                        type="bonus"
+                      />
                     )}
                   </div>
 
-                  {/* Numéro bonus centré en dessous */}
-                  {typeof draw.bonusNumber === 'number' && (
-                    <div className="flex flex-col items-center gap-4">
-                      <h4 className="text-2xl font-semibold text-slate-600 dark:text-slate-300">
-                        Numéro Bonus
-                      </h4>
-                      <LottoBall
-                        number={draw.bonusNumber}
-                        size="xl"
-                        type="bonus"
-                        className="!w-32 !h-32 !text-5xl !leading-[8rem]"
-                      />
-                    </div>
-                  )}
-
                   {/* Message d'erreur s'il y en a un */}
                   {draw.message && (
-                    <div className="text-sm text-red-500 text-center mt-4">
+                    <div className="text-xs text-red-500 text-center mt-2">
                       {draw.message}
                     </div>
                   )}
                 </div>
               ))}
             </div>
-          ) : (
-            // Affichage normal pour plusieurs tirages : cards
-            <div className="flex flex-wrap justify-center gap-4 previous-draw-animation animate-fade-in w-full">
-              {state.previousDraw.previousResult.slice(0, 25).map((draw, idx) => (
-              <div 
-                key={draw.previousResultDate + '-' + idx} 
-                className="rounded-lg shadow-lg border-2 p-3 min-w-[240px] max-w-[280px] flex-shrink-0"
-              >
-                {/* Date du tirage */}
-                <div className="text-center mb-3">
-                  <h3 className="text-sm font-semibold text-slate-600 dark:text-slate-300 mb-1">
-                    Tirage du
-                  </h3>
-                  <p className="text-lg font-bold text-indigo-600 dark:text-indigo-400">
-                    {formatDate(new Date(draw.previousResultDate), 'yyyy-MM-dd')}
-                  </p>
-                </div>
-
-                {/* Numéros du tirage */}
-                <div className="flex justify-center gap-1 mb-3">
-                  {Array.isArray(draw.resultNumbers) && draw.resultNumbers.length > 0 ? (
-                    draw.resultNumbers.map((num: number, i: number) => (
-                      <LottoBall
-                        key={i}
-                        number={num}
-                        size={ballSize || 'xs'}
-                        type="regular"
-                      />
-                    ))
-                  ) : (
-                    <span className="text-slate-400 text-base">Aucun numéro à afficher</span>
-                  )}
-                  {/* Boule bonus */}
-                  {typeof draw.bonusNumber === 'number' && (
-                    <LottoBall
-                      number={draw.bonusNumber}
-                      size={ballSize || 'xs'}
-                      type="bonus"
-                    />
-                  )}
-                </div>
-
-                {/* Message d'erreur s'il y en a un */}
-                {draw.message && (
-                  <div className="text-xs text-red-500 text-center mt-2">
-                    {draw.message}
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-          )
+            )}
+          </>
         ) : (
           !state.drawLoading && !state.drawError && (
             <div className="w-full max-w-xl text-center text-base text-slate-500 dark:text-slate-400 flex flex-col items-center justify-center">

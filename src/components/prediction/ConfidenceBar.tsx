@@ -8,11 +8,11 @@ const ConfidenceBar: React.FC<{ score: number }> = ({ score }) => {
   const scorePercentage = score * 100;
 
   const getColor = useCallback(() => {
-    if (scorePercentage > 80) return 'from-emerald-400 via-green-500 to-emerald-600';
-    if (scorePercentage > 60) return 'from-teal-400 via-cyan-500 to-teal-600';
-    if (scorePercentage > 40) return 'from-blue-400 via-indigo-500 to-blue-600';
-    if (scorePercentage > 20) return 'from-amber-400 via-yellow-500 to-amber-600';
-    return 'from-red-400 via-rose-500 to-red-600';
+    if (scorePercentage > 80) return 'bg-emerald-500';
+    if (scorePercentage > 60) return 'bg-teal-500';
+    if (scorePercentage > 40) return 'bg-blue-500';
+    if (scorePercentage > 20) return 'bg-amber-500';
+    return 'bg-red-500';
   }, [scorePercentage]);
 
   // convertir le score en texte avec une précision de 0 chiffres après la virgule
