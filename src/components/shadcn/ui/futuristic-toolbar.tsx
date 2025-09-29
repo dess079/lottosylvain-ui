@@ -3,7 +3,7 @@ import React from 'react';
 import ThemeToggle from './theme-toggle';
 import { useTabStyle } from '../../../context/TabStyleContext';
 import { useLanguage } from '../../../context/LanguageContext';
-import { SearchIcon, SettingsIcon, BellIcon, UserIcon } from 'lucide-react';
+import { SearchIcon, SettingsIcon, BellIcon, UserIcon, HomeIcon } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Toolbar, ToolbarButton, ToolbarSeparator, ToolbarTitle } from '../ui/toolbar';
 
@@ -12,6 +12,7 @@ interface FuturisticToolbarProps {
   onProfileClick?: () => void;
   onSearchClick?: () => void;
   onNotificationsClick?: () => void;
+  onHomeClick?: () => void;
 }
 
 /**
@@ -22,7 +23,8 @@ const FuturisticToolbar: React.FC<FuturisticToolbarProps> = ({
   onSettingsClick,
   onProfileClick,
   onSearchClick,
-  onNotificationsClick
+  onNotificationsClick,
+  onHomeClick
 }) => {
   const { styleMode, setStyleMode } = useTabStyle();
   const { lang, t, setLang } = useLanguage();
@@ -33,7 +35,7 @@ const FuturisticToolbar: React.FC<FuturisticToolbarProps> = ({
         type="button"
         onPointerDown={() => setStyleMode('pills')}
         onClick={() => setStyleMode('pills')}
-  className={`px-3 py-1 rounded-md text-sm font-medium transition duration-150 ease-out will-change-transform ${
+        className={`px-3 py-1 rounded-md text-sm font-medium transition duration-150 ease-out will-change-transform ${
           styleMode === 'pills' ? '' : 'text-gray-600 dark:text-gray-300'
         }`}
         aria-pressed={styleMode === 'pills'}
@@ -99,7 +101,22 @@ const FuturisticToolbar: React.FC<FuturisticToolbarProps> = ({
   return (
     <div className="flex p-2 z-50 w-full">
       <Toolbar className="flex items-center justify-between">
-        <ToolbarTitle>{t.toolbarTitle[lang]}</ToolbarTitle>
+        <div className="flex items-center gap-3">
+          <ToolbarButton asChild>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={onHomeClick}
+              aria-label="Retour au portail"
+              title="Retour au portail"
+              className="mr-2"
+            >
+              <HomeIcon className="h-5 w-5 text-foreground" />
+            </Button>
+          </ToolbarButton>
+          
+          <ToolbarTitle>{t.toolbarTitle[lang]}</ToolbarTitle>
+        </div>
 
         <div className="flex items-center gap-2 sm:gap-3">
           <ToolbarButton asChild>
