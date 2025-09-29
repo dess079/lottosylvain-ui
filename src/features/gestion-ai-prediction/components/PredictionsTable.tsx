@@ -175,7 +175,7 @@ const PredictionRow: React.FC<PredictionRowProps> = ({
     </TableCell>
     <TableCell className="text-right">
       {prediction.confidencePercentage != null
-        ? (prediction.confidencePercentage * 100).toFixed(0) + '%'
+        ? prediction.confidencePercentage.toFixed(0) + '%'
         : '—'
       }
     </TableCell>
