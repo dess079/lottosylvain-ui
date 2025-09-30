@@ -3,12 +3,17 @@
  */
 
 /**
- * API configuration
+ * Environment detection
  */
+const IS_DEVELOPMENT = import.meta.env.DEV;
+const IS_CONTAINER = import.meta.env.VITE_ENVIRONMENT === 'container';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080/';
 
-// API config for Docker/Container
-const API_CONFIG_CONTAINER = {
-  BASE_URL: '/api/essais',
+/**
+ * API configuration unifiée basée sur les variables d'environnement
+ */
+export const API_CONFIG = {
+  BASE_URL: `${API_BASE_URL}api/essais`,
   ENDPOINTS: {
     PREVIOUS_RESULTS: '/lotto-matrix/previous-results',
     PREDICTIONS: '/lotto-matrix/recommendations',
@@ -22,27 +27,32 @@ const API_CONFIG_CONTAINER = {
   }
 };
 
-// API config for local dev
-const API_CONFIG_LOCAL = {
-  BASE_URL: 'http://localhost:8090/api/essais',
-  ENDPOINTS: {
-    PREVIOUS_RESULTS: '/lotto-matrix/previous-results',
-    PREDICTIONS: '/lotto-matrix/recommendations',
-    STATISTICS: '/lotto-matrix/stats',
-    CUSTOM_PREDICTIONS: '/lotto-matrix/recommend',
-    DRAW_COUNT: '/lotto-matrix/draw-count',
-    DATA_STATS: '/lotto-matrix/data-stats',
-    SPRING_AI_RECOMMENDATIONS: '/predictions/recommendations',
-    SPRING_AI_STREAMING: '/predictions/stream',
-    SPRING_AI_HEALTH: '/health'
-  }
+/**
+ * Fonction utilitaire pour construire une URL complète d'API
+ */
+export function buildApiUrl(endpoint: string): string {
+  const baseUrl = API_CONFIG.BASE_URL.replace(/\/$/, '');
+  const cleanEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
+  return `${baseUrl}${cleanEndpoint}`;
+}
+
+/**
+ * Configuration de débogage
+ */
+export const DEBUG_CONFIG = {
+  ENABLED: IS_DEVELOPMENT,
+  LOG_API_CALLS: IS_DEVELOPMENT,
+  SHOW_ENV_INFO: IS_DEVELOPMENT
 };
 
-// Export config based on environment
-export const API_CONFIG =
-  import.meta.env.MODE === 'development'
-    ? API_CONFIG_LOCAL
-    : API_CONFIG_CONTAINER;
+/**
+ * Fonction utilitaire pour logger selon l'environnement
+ */
+export function debugLog(message: string, data?: any): void {
+  if (DEBUG_CONFIG.ENABLED) {
+    console.log(`[LOTTOSYLVAIN] ${message}`, data || '');
+  }
+}
 
 /**
  * Application configuration

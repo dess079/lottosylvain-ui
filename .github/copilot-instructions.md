@@ -1,5 +1,19 @@
 # Lotto-Sylvain UI Project
 
+## ⚠️ RÈGLE ABSOLUE - CONFIGURATIONS D'ENVIRONNEMENT
+
+**CRITICAL** : Ce projet suit la règle fondamentale de l'écosystème :
+**DEUX configurations d'environnement OBLIGATOIRES pour TOUS les projets**
+
+1. **Local Development** (développement sur machine locale)
+2. **Container Environment** (déploiement Docker)
+
+**Fichiers requis :**
+- Frontend : `.env.local`, `.env.container`, `src/lib/config.ts`
+- Backend associé : `application-local.yml`, `application-container.yml`
+
+Cette règle est NON-NÉGOCIABLE et doit être appliquée à tous les nouveaux projets.
+
 ## Project Context
 This is a Lotto-Sylvain UI project built with modern web technologies. 
 The `essais` directory of lottoquebec project contains the API that exploits the data.
@@ -17,6 +31,7 @@ The `essais` directory of lottoquebec project contains the API that exploits the
 - Configurations : Il y a deux configurations pour l'API : une pour le container (utilisant .env.container ou .env.docker avec VITE_API_URL=http://lottoquebec-backend:8080/) et une pour le poste local (utilisant .env.local avec VITE_API_URL=http://localhost:8090/). Vérifier les fichiers .env.*, config.ts et api.ts pour les configurations. Pour DirectAI, s'assurer que la bonne configuration est utilisée selon l'environnement.
 
 ## Coding Preferences
+- **File Size Rule**: NO FILE should exceed 300 lines. Split large files into smaller, focused modules. For components, extract hooks, types, and utilities into separate files.
 - Use TypeScript for type safety
 - Follow ReactJS 19 best practices and hooks patterns
 - Use functional components over class components
