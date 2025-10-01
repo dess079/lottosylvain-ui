@@ -57,7 +57,7 @@ const App: React.FC = () => {
       // Environnement local de développement
       window.location.href = 'http://localhost:8085/';
     } else if (isLocalhost && currentPort === '80') {
-      // Via nginx proxy en local
+  // Frontend accesses backend via local host ports in Docker dev mode
       window.location.href = 'http://localhost:8085/';
     } else {
       // Environnement container ou autre - utilise une redirection relative

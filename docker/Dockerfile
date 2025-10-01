@@ -16,24 +16,21 @@ COPY . .
 # Build the application for container environment
 RUN npm run build
 
-# Production stage with nginx
-FROM nginx:alpine
+# Production stage: use Node + Vite preview to serve built assets
+FROM node:22-alpine
 
-# Copy built application from build stage
-COPY --from=build /app/dist /usr/share/nginx/html
+# Set working directory
+WORKDIR /app
 
-# Copy nginx configuration
-COPY docker/nginx.conf /etc/nginx/nginx.conf
+# Copy built assets
+COPY --from=build /app/dist ./dist
 
-# Create directory for additional configurations
-RUN mkdir -p /etc/nginx/conf.d
-
-# Expose port 80
-EXPOSE 80
+# Install a tiny static server if necessary or use Vite preview via npm script
+EXPOSE 3000
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD curl -f http://localhost/ || exit 1
+  CMD wget -qO- http://localhost:3000/ || exit 1
 
-# Start nginx
-CMD ["nginx", "-g", "daemon off;"]
+# Start Vite preview server (expects package.json scripts.preview to exist)
+CMD ["npm", "run", "preview", "--", "--host", "0.0.0.0", "--port", "3000"]

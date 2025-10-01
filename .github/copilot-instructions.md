@@ -1,18 +1,19 @@
 # Lotto-Sylvain UI Project
 
-## ⚠️ RÈGLE ABSOLUE - CONFIGURATIONS D'ENVIRONNEMENT
+Utilise les instructions centralisées : [Instructions Frontend](/Users/sd/dev/dockerportail/copilot-instructions-frontend.md)
 
-**CRITICAL** : Ce projet suit la règle fondamentale de l'écosystème :
-**DEUX configurations d'environnement OBLIGATOIRES pour TOUS les projets**
+## Spécificités de ce projet
 
-1. **Local Development** (développement sur machine locale)
-2. **Container Environment** (déploiement Docker)
+- **Répertoire** : `/Users/sd/dev/lotterie/lottosylvain-ui`
+- **Port** : 3000
+- **API Backend** : lottoquebec (essais directory)
 
-**Fichiers requis :**
-- Frontend : `.env.local`, `.env.container`, `src/lib/config.ts`
-- Backend associé : `application-local.yml`, `application-container.yml`
+## Configurations spéciales
+- `.env.local` : `VITE_API_URL=http://localhost:8090/`
+- `.env.container` : `VITE_API_URL=http://lottoquebec-backend:8080/`
+- Interface pour l'analyse des tirages de loterie
 
-Cette règle est NON-NÉGOCIABLE et doit être appliquée à tous les nouveaux projets.
+**Remember** : Always start your response with the name of the project follow by a line space
 
 ## Project Context
 This is a Lotto-Sylvain UI project built with modern web technologies. 
@@ -23,6 +24,14 @@ The `essais` directory of lottoquebec project contains the API that exploits the
 
 ## Always start your response
 - Always start your response with the name of the project follow by a line space
+
+## ⚠️ RÈGLE CRITIQUE - VÉRIFICATION DU RÉPERTOIRE
+
+**TOUJOURS** vérifier que vous êtes dans le répertoire `/Users/sd/dev/lotterie/lottosylvain-ui` avant de lancer toute commande :
+```bash
+cd /Users/sd/dev/lotterie/lottosylvain-ui
+pwd  # vérifier le répertoire
+```
 
 ## A retenir
 - Jamais au grand jamais utiliser de script pour démarrer le projet

@@ -5,7 +5,7 @@ Ce répertoire contient les fichiers de configuration Docker pour l'application 
 ## Structure
 
 - `Dockerfile` : Configuration multi-stage pour builder et servir l'application React/Vite
-- `nginx.conf` : Configuration Nginx pour servir l'application en production
+Note: nginx configuration removed; Dockerfile now uses Node + Vite preview to serve built assets.
 - `README.md` : Ce fichier de documentation
 
 ## Utilisation
@@ -21,7 +21,8 @@ docker build -f docker/Dockerfile -t lottosylvain-ui .
 ### Démarrage du container
 
 ```bash
-docker run -d -p 4000:80 --name lottosylvain-ui-container lottosylvain-ui
+# The container now serves the app via Vite preview on port 3000
+docker run -d -p 4000:3000 --name lottosylvain-ui-container lottosylvain-ui
 ```
 
 ### Via Docker Compose
@@ -42,25 +43,18 @@ docker-compose up lottosylvain-ui
 
 ### Ports
 
-- Port du container : 80
-- Port exposé par défaut : 4000
+- Internal serve port: 3000 (Vite preview)
+- Exposed host port in docker-compose: 4000
 
 ### Health Check
 
 L'image inclut un health check qui vérifie la disponibilité de l'application toutes les 30 secondes.
 
-## Nginx
-
-La configuration Nginx inclut :
-- Serveur de fichiers statiques pour l'application React
-- Proxy vers l'API backend sur `/api/*`
-- Headers CORS configurés
-- Compression gzip
-- Headers de sécurité
-- Gestion des erreurs
+## Static serving
+The Docker image serves the built static files using Vite preview. API calls should be routed directly to the backend service configured via `VITE_API_URL`.
 
 ## Notes
 
 - L'application est buildée avec Node 22 Alpine
-- Les fichiers statiques sont servis par Nginx Alpine
+- Les fichiers statiques sont servis par Vite preview (Node)
 - La configuration supporte le routing côté client (SPA)
