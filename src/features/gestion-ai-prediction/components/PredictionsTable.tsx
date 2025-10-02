@@ -33,6 +33,7 @@ const TableHeaders: React.FC = () => (
       <TableHead className="w-30">Numéros</TableHead>
       <TableHead className="w-16 text-center">Hit</TableHead>
       <TableHead className="w-30">Résultat du Tirage</TableHead>
+      <TableHead className="w-20 text-center">Bonus</TableHead>
       <TableHead className="text-right w-30">Confiance %</TableHead>
       <TableHead className="w-20">Modèle</TableHead>
       <TableHead className="w-24 text-right">Actions</TableHead>
@@ -149,7 +150,7 @@ const PredictionRow: React.FC<PredictionRowProps> = ({
       {prediction.numbers.map((num, index) => (
         <span
           key={index}
-          className={prediction.drawResult && prediction.drawResult.includes(num) ? 'font-bold text-green-600' : ''}
+          className={prediction.winningNumbers && prediction.winningNumbers.includes(num) ? 'font-bold text-green-600' : ''}
         >
           {num}
           {index < prediction.numbers.length - 1 ? '-' : ''}
@@ -157,9 +158,9 @@ const PredictionRow: React.FC<PredictionRowProps> = ({
       ))}
     </TableCell>
     <TableCell className="text-center font-semibold">
-      {prediction.drawResult && prediction.drawResult.length > 0
+      {prediction.winningNumbers && prediction.winningNumbers.length > 0
         ? (() => {
-            const hitCount = prediction.numbers.filter(num => prediction.drawResult.includes(num)).length;
+            const hitCount = prediction.numbers.filter(num => prediction.winningNumbers.includes(num)).length;
             const totalNumbers = prediction.numbers.length;
             return (
               <span className={hitCount > 0 ? 'text-green-600' : ''}>
@@ -171,7 +172,10 @@ const PredictionRow: React.FC<PredictionRowProps> = ({
       }
     </TableCell>
     <TableCell>
-      {prediction.drawResult && prediction.drawResult.length > 0 ? prediction.drawResult.join('-') : '—'}
+      {prediction.winningNumbers && prediction.winningNumbers.length > 0 ? prediction.winningNumbers.join('-') : '—'}
+    </TableCell>
+    <TableCell className="text-center">
+      {prediction.bonusNumber != null ? prediction.bonusNumber : '—'}
     </TableCell>
     <TableCell className="text-right">
       {prediction.confidencePercentage != null

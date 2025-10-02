@@ -84,7 +84,7 @@ const PredictionDetailModal: React.FC<Props> = ({ id, onClose }) => {
                 <span className="font-semibold text-center w-full">Numéros de la prédiction</span>
                 <div className="flex flex-wrap gap-2 mt-1">
                   {data.numbers.map((num: number, idx: number) => {
-                    const isInDraw = Array.isArray(data.drawResult) && data.drawResult.includes(num);
+                    const isInDraw = Array.isArray(data.winningNumbers) && data.winningNumbers.includes(num);
                     return (
                       <LottoBall
                         key={idx}
@@ -96,19 +96,19 @@ const PredictionDetailModal: React.FC<Props> = ({ id, onClose }) => {
                   })}
                 </div>
               </div>
-              {Array.isArray(data.drawResult) && data.drawResult.length > 0 && (
+              {Array.isArray(data.winningNumbers) && data.winningNumbers.length > 0 && (
                 <div className="flex flex-col gap-1 md:ml-6">
                   <span className="font-semibold text-center w-full">Numéros du tirage</span>
                   <div className="flex flex-wrap gap-2 mt-1 items-center">
-                    {/* Affichage des 6 premiers numéros (numéros principaux) en vert */}
-                    {data.drawResult.slice(0, 6).map((num: number, idx: number) => (
+                    {/* Affichage des 6 numéros principaux en vert */}
+                    {data.winningNumbers.map((num: number, idx: number) => (
                       <LottoBall key={"draw-"+idx} number={num} size="md" type="prediction" />
                     ))}
-                    {/* Affichage du numéro bonus à la suite s'il existe (7ème numéro) */}
-                    {data.drawResult.length > 6 && (
+                    {/* Affichage du numéro bonus s'il existe */}
+                    {data.bonusNumber != null && (
                       <>
                         <span className="text-sm text-muted-foreground mx-2">+</span>
-                        <LottoBall number={data.drawResult[6]} size="md" type="bonus" />
+                        <LottoBall number={data.bonusNumber} size="md" type="bonus" />
                       </>
                     )}
                   </div>

@@ -6,7 +6,8 @@ export interface AiPredictionListItem {
   numbers: number[]; // ordre original
   modelName: string;
   confidencePercentage?: number; // 0-100
-  drawResult: number[]; // Résultat du tirage pour la dateTirageCible
+  winningNumbers: number[]; // Les 6 numéros gagnants principaux
+  bonusNumber?: number; // Le numéro bonus séparé
   drawNumber?: number; // Numéro du tirage
 }
 
