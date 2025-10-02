@@ -21,13 +21,11 @@ pnpm-debug.log*
 lerna-debug.log*
 
 # ===== ENVIRONMENT =====
-.env
-.env.local
+# Only ignore .env if it's the active file (users should copy from templates)
+# Template files .env.local, .env.container, .env.docker are tracked
 .env.development.local
 .env.test.local
 .env.production.local
-.env.container
-.env.docker
 
 # ===== CACHE =====
 .cache/

@@ -5,12 +5,12 @@ Ce projet supporte deux environnements de développement :
 ## Environnements Disponibles
 
 ### 1. Environnement Local
-- **Backend** : `http://localhost:8080`
+- **Backend** : `http://localhost:8090`
 - **Base de données** : PostgreSQL sur `localhost:5432`
 - **Ollama** : `http://localhost:11434`
 
 ### 2. Environnement Docker
-- **Backend** : `http://localhost:8080` (via conteneur)
+- **Backend** : `http://lottoquebec-backend:8090` (via conteneur)
 - **Base de données** : PostgreSQL dans conteneur
 - **Ollama** : `http://host.docker.internal:11434`
 
@@ -54,12 +54,14 @@ chmod +x start-env.sh
 
 ### .env.local
 ```env
-VITE_API_URL=http://localhost:8080/
+VITE_API_URL=http://localhost:8090/
+VITE_ENVIRONMENT=development
 ```
 
 ### .env.docker
 ```env
-VITE_API_URL=http://localhost:8080/
+VITE_API_URL=http://lottoquebec-backend:8090/
+VITE_ENVIRONMENT=docker
 ```
 
 ## Architecture
@@ -71,7 +73,7 @@ Le proxy Vite est configuré pour rediriger automatiquement toutes les requêtes
 server: {
   proxy: {
     '/api': {
-      target: process.env.VITE_API_URL || 'http://localhost:8080/',
+      target: process.env.VITE_API_URL || 'http://localhost:8090/',
       changeOrigin: true,
       secure: false,
     },

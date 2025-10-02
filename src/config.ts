@@ -7,7 +7,7 @@
  */
 const IS_DEVELOPMENT = import.meta.env.DEV;
 const IS_CONTAINER = import.meta.env.VITE_ENVIRONMENT === 'container';
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080/';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8090/';
 
 /**
  * API configuration unifiée basée sur les variables d'environnement

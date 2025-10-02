@@ -177,7 +177,7 @@ src/
 
 #### 🔧 **Configuration environnements**
 - **Local** : `localhost:8090` (développement)
-- **Container** : `lottoquebec-backend:8080` (production)
+- **Container** : `lottoquebec-backend:8090` (production)
 - Configuration automatique basée sur l'environnement
 
 ---

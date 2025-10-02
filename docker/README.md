@@ -38,7 +38,7 @@ docker-compose up lottosylvain-ui
 
 ### Variables d'environnement
 
-- `VITE_API_URL` : URL du backend API (par défaut: http://lottoquebec-backend:8080)
+- `VITE_API_URL` : URL du backend API (par défaut: http://lottoquebec-backend:8090)
 - `VITE_ENVIRONMENT` : Environnement d'exécution (container|local)
 
 ### Ports
