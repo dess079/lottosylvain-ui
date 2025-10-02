@@ -45,7 +45,7 @@ EXPOSE 3000
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD wget -qO- http://localhost:3000/ || exit 1
+  CMD curl -f http://localhost:3000/ || exit 1
 
 # Install a tiny static server and serve built assets from /app/dist
 RUN npm install -g serve --no-audit --no-fund || true
