@@ -31,7 +31,7 @@ export const API_VERSION_CONFIG = {
 export async function fetchPreviousResults(startDate?: string, endDate?: string): Promise<PreviousResult> {
   try {
     // Construction de l'URL avec paramètres de dates si fournis
-    let url = `${API_BASE_URL}${API_CONFIG.ENDPOINTS.PREVIOUS_RESULTS}`;
+  let url = `${API_BASE_URL}${API_CONFIG.ENDPOINTS.PREVIOUS_RESULTS}`;
     const params: string[] = [];
     if (startDate) params.push(`start=${encodeURIComponent(startDate)}`);
     if (endDate) params.push(`end=${encodeURIComponent(endDate)}`);

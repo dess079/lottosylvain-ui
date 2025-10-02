@@ -7,7 +7,7 @@
  */
 const IS_DEVELOPMENT = import.meta.env.DEV;
 const IS_CONTAINER = import.meta.env.VITE_ENVIRONMENT === 'container';
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080/';
+const API_BASE_URL = import.meta.env.VITE_API_URL;
 
 /**
  * API configuration unifiée basée sur les variables d'environnement
@@ -15,7 +15,7 @@ const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080/';
 export const API_CONFIG = {
   BASE_URL: `${API_BASE_URL}api/essais`,
   ENDPOINTS: {
-    PREVIOUS_RESULTS: '/lotto-matrix/previous-results',
+  PREVIOUS_RESULTS: '/lotto-matrix/previous-results',
     PREDICTIONS: '/lotto-matrix/recommendations',
     STATISTICS: '/lotto-matrix/stats',
     CUSTOM_PREDICTIONS: '/lotto-matrix/recommend',
