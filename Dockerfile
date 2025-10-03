@@ -19,6 +19,14 @@ RUN apk add --no-cache curl
 # Copy source code
 COPY . .
 
+# Arguments de build pour les variables d'environnement Vite
+ARG VITE_API_URL=http://lottosylvain-backend:8090/
+ARG VITE_ENVIRONMENT=container
+
+# Export en variables d'environnement pour le build
+ENV VITE_API_URL=${VITE_API_URL}
+ENV VITE_ENVIRONMENT=${VITE_ENVIRONMENT}
+
 # Build the application for container environment
 RUN npm run build
 
